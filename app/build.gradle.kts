@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.material.icons.extended)
     implementation(libs.coil)
     implementation(libs.ktor.core)
     implementation(libs.ktor.okhttp)
