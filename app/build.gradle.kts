@@ -1,8 +1,13 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -20,6 +25,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = Properties()
+        properties.load(FileInputStream(rootProject.file("local.properties")))
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
+        buildConfigField("String", "API_SECRET", "\"${properties.getProperty("API_SECRET")}\"")
     }
 
     buildTypes {
@@ -40,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
@@ -68,9 +79,17 @@ dependencies {
     implementation(libs.ktor.client.mock)
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
+    implementation(libs.sandwich.core)
+    implementation(libs.sandwich.ktor)
     implementation(libs.kotlinx.serialization)
 
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.runtime)
+
+    kspTest(libs.hilt.compiler)
     testImplementation(libs.junit)
+
+    kspAndroidTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))

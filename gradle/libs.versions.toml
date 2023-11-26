@@ -1,7 +1,9 @@
 [versions]
 agp = "8.1.4"
 kotlin = "1.9.20"
+ksp = "1.9.20-1.0.14"
 kotlinx-serialization = "1.6.0"
+hilt = "2.48.1"
 core-ktx = "1.9.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
@@ -12,6 +14,7 @@ compose-bom = "2023.10.01"
 compose-compiler = "1.5.4"
 coil = "2.5.0"
 ktor = "2.3.5"
+sandwich = "2.0.4"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -35,12 +38,18 @@ ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "k
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 ktor-content-negotation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+sandwich-core = { group = "com.github.skydoves", name = "sandwich", version.ref = "sandwich" }
+sandwich-ktor = { group = "com.github.skydoves", name = "sandwich-ktor", version.ref = "sandwich" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-runtime = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [bundles]
 
