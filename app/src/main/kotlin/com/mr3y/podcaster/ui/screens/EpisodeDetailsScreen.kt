@@ -52,6 +52,8 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcastWithDetails
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
+import com.mr3y.podcaster.ui.theme.primaryTertiary
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -126,8 +128,8 @@ fun EpisodeDetailsScreen(
                         onClick = { /*TODO*/ },
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                         ),
                         contentPadding = PaddingValues(
                             start = 16.dp,
@@ -154,8 +156,8 @@ fun EpisodeDetailsScreen(
                             .clip(CircleShape)
                             .padding(8.dp),
                         colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                         )
                     ) {
                         Icon(
@@ -173,9 +175,9 @@ fun EpisodeDetailsScreen(
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.primary
+                        contentColor = MaterialTheme.colorScheme.primaryTertiary
                     ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryTertiary)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.ArrowDownward,

@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +46,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onTertiaryPrimary
+import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 
 @Composable
@@ -89,7 +92,12 @@ fun ExpandedPlayerViewScreen(
             Slider(
                 value = 0.5f,
                 onValueChange = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primaryTertiary,
+                    activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
+                    activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f)
+                )
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,8 +153,8 @@ fun ExpandedPlayerViewScreen(
                         .size(56.dp)
                         .clip(CircleShape),
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                     )
                 ) {
                     Icon(
