@@ -1,0 +1,52 @@
+CREATE TABLE IF NOT EXISTS episodeEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    podcastId INTEGER NOT NULL,
+    guid TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    episodeUrl TEXT NOT NULL,
+    datePublishedTimestamp INTEGER NOT NULL,
+    datePublishedFormatted TEXT NOT NULL,
+    durationInSec INTEGER AS kotlin.Int,
+    episodeNum INTEGER AS kotlin.Int,
+    artworkUrl TEXT NOT NULL,
+    enclosureUrl TEXT NOT NULL,
+    enclosureSizeInBytes INTEGER NOT NULL,
+    podcastTitle TEXT,
+    isDownloaded INTEGER AS kotlin.Boolean NOT NULL,
+    isCompleted INTEGER AS kotlin.Boolean NOT NULL,
+    progressInSec INTEGER AS kotlin.Int
+);
+
+getEpisodesForPodcasts:
+SELECT * FROM episodeEntity WHERE podcastId IN :podcastsIds ORDER BY datePublishedTimestamp DESC LIMIT :limit;
+
+getEpisodesForPodcast:
+SELECT * FROM episodeEntity WHERE podcastId == :podcastId ORDER BY datePublishedTimestamp DESC;
+
+getDownloadedEpisodes:
+SELECT * FROM episodeEntity WHERE isDownloaded == 1;
+
+getCompletedEpisodes:
+SELECT * FROM episodeEntity WHERE isCompleted == 1;
+
+getEpisode:
+SELECT * FROM episodeEntity WHERE id == :id;
+
+insertEpisode:
+INSERT OR REPLACE INTO episodeEntity(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isDownloaded, isCompleted, progressInSec) VALUES ?;
+
+setEpisodeDownloaded:
+UPDATE episodeEntity SET isDownloaded = 1 WHERE id = :id;
+
+setEpisodeCompleted:
+UPDATE episodeEntity SET isCompleted = 1 WHERE id = :id;
+
+updateEpisodeProgress:
+UPDATE episodeEntity SET progressInSec = :progressInSec WHERE id = :id;
+
+updateEpisodePodcastTitle:
+UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE id = :id;
+
+deleteUndownloadedEpisodesForPodcast:
+DELETE FROM episodeEntity WHERE podcastId == :podcastId AND isDownloaded == 0;

@@ -1,0 +1,35 @@
+import com.mr3y.podcaster.core.model.Genre;
+import kotlin.collections.List;
+
+CREATE TABLE IF NOT EXISTS podcastEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    guid TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    podcastUrl TEXT NOT NULL,
+    website TEXT NOT NULL,
+    artworkUrl TEXT NOT NULL,
+    author TEXT NOT NULL,
+    owner TEXT NOT NULL,
+    languageCode TEXT NOT NULL,
+    episodeCount INTEGER AS kotlin.Int NOT NULL,
+    genres TEXT AS List<Genre> NOT NULL
+);
+
+getAllPodcasts:
+SELECT * FROM podcastEntity;
+
+getPodcast:
+SELECT * FROM podcastEntity WHERE id == :id;
+
+insertPodcast:
+INSERT OR REPLACE INTO podcastEntity(id, guid, title, description, podcastUrl, website, artworkUrl, author, owner, languageCode, episodeCount, genres) VALUES ?;
+
+countPodcasts:
+SELECT count(*) FROM podcastEntity;
+
+hasPodcast:
+SELECT 1 FROM podcastEntity WHERE id = :id;
+
+deletePodcast:
+DELETE FROM podcastEntity WHERE id = :id;

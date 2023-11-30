@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS recentSearchEntry (
+    queryText TEXT PRIMARY KEY NOT NULL,
+    added_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+getAllRecentSearchEntries:
+SELECT * FROM recentSearchEntry ORDER BY datetime(added_at) DESC;
+
+insertNewRecentSearchEntry:
+INSERT OR REPLACE INTO recentSearchEntry (queryText) VALUES (:queryText);
+
+deleteRecentSearchEntry:
+DELETE FROM recentSearchEntry WHERE queryText = :queryText;

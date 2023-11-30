@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.sqldelight)
 }
 
 android {
@@ -62,6 +63,14 @@ android {
     }
 }
 
+sqldelight {
+    databases {
+        create("PodcasterDatabase") {
+            packageName.set("com.mr3y.podcaster")
+        }
+    }
+}
+
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
@@ -85,6 +94,10 @@ dependencies {
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
+
+    implementation(libs.sqldelight.driver)
+    implementation(libs.sqldelight.flowext)
+    implementation(libs.sqldelight.primitiveadapters)
 
     kspTest(libs.hilt.compiler)
     testImplementation(libs.junit)
