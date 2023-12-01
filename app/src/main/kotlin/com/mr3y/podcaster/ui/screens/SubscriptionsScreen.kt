@@ -1,9 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,10 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.ArrowDownward
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +31,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,10 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.Episodes
+import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
@@ -215,14 +210,12 @@ fun SubscriptionsScreen(
     }
 }
 
-
-
-
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PodcasterPreview
 @Composable
-fun SubscriptionsScreenPreview() {
-    PodcasterTheme(dynamicColor = false) {
+fun SubscriptionsScreenPreview(
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+) {
+    PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         SubscriptionsScreen(
             modifier = Modifier.fillMaxSize()
         )

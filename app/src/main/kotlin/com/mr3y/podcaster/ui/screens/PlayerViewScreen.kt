@@ -42,9 +42,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
+import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onTertiaryPrimary
@@ -250,22 +253,24 @@ fun CollapsedPlayerView(
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PodcasterPreview
 @Composable
-fun ExpandedPlayerViewScreenPreview() {
-    PodcasterTheme(dynamicColor = false) {
+fun ExpandedPlayerViewScreenPreview(
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+) {
+    PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         ExpandedPlayerViewScreen(
             modifier = Modifier.fillMaxSize()
         )
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PodcasterPreview
 @Composable
-fun CollapsedPlayerViewPreview() {
-    PodcasterTheme(dynamicColor = false) {
+fun CollapsedPlayerViewPreview(
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+) {
+    PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         CollapsedPlayerView(
             modifier = Modifier.padding(16.dp)
         )

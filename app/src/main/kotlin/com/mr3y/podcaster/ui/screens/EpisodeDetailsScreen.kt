@@ -45,12 +45,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcastWithDetails
+import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
@@ -218,11 +221,12 @@ fun EpisodeDetailsScreen(
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PodcasterPreview
 @Composable
-fun EpisodeDetailsScreenPreview() {
-    PodcasterTheme(dynamicColor = false) {
+fun EpisodeDetailsScreenPreview(
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+) {
+    PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         EpisodeDetailsScreen(
             modifier = Modifier.fillMaxSize()
         )

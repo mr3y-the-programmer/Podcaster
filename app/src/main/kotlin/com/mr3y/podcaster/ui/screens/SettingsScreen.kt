@@ -23,7 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
+import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,11 +137,12 @@ private fun SettingsEntryButton(
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PodcasterPreview
 @Composable
-fun SettingsScreenPreview() {
-    PodcasterTheme(dynamicColor = false) {
+fun SettingsScreenPreview(
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+) {
+    PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         SettingsScreen(modifier = Modifier.fillMaxSize())
     }
 }
