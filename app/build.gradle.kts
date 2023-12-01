@@ -1,3 +1,5 @@
+import app.cash.sqldelight.core.capitalize
+import app.cash.sqldelight.gradle.SqlDelightTask
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -59,6 +61,19 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        // TODO: find a way to get rid of the obscure `afterEvaluate` here
+        afterEvaluate {
+            val sqlDelightTask = this.project.tasks.named ("generate${variant.name.capitalize()}PodcasterDatabaseInterface").get() as SqlDelightTask
+
+            project.tasks.getByName("ksp" + variant.name.capitalize() + "Kotlin") {
+                (this as org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>).setSource(sqlDelightTask.outputDirectory)
+            }
         }
     }
 }
