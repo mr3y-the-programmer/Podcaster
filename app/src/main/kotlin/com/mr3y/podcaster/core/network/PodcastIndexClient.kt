@@ -1,10 +1,12 @@
 package com.mr3y.podcaster.core.network
 
+import com.github.michaelbull.result.Result
 import com.mr3y.podcaster.core.network.model.NetworkEpisode
 import com.mr3y.podcaster.core.network.model.NetworkEpisodes
 import com.mr3y.podcaster.core.network.model.NetworkPodcasts
 import com.mr3y.podcaster.core.network.model.NetworkPodcast
-import com.skydoves.sandwich.ApiResponse
+
+typealias ApiResponse<T> = Result<T, Any>
 
 interface PodcastIndexClient {
 

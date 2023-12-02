@@ -1,12 +1,12 @@
 package com.mr3y.podcaster.core.network.internal
 
+import com.mr3y.podcaster.core.network.ApiResponse
 import com.mr3y.podcaster.core.network.PodcastIndexClient
 import com.mr3y.podcaster.core.network.model.NetworkEpisode
 import com.mr3y.podcaster.core.network.model.NetworkEpisodes
 import com.mr3y.podcaster.core.network.model.NetworkPodcast
 import com.mr3y.podcaster.core.network.model.NetworkPodcasts
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.ktor.getApiResponse
+import com.mr3y.podcaster.core.network.utils.getApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import javax.inject.Inject

@@ -103,8 +103,7 @@ dependencies {
     implementation(libs.ktor.client.mock)
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
-    implementation(libs.sandwich.core)
-    implementation(libs.sandwich.ktor)
+    implementation(libs.result)
     implementation(libs.kotlinx.serialization)
 
     ksp(libs.hilt.compiler)
