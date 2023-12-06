@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS episodeEntity (
     enclosureUrl TEXT NOT NULL,
     enclosureSizeInBytes INTEGER NOT NULL,
     podcastTitle TEXT,
-    isDownloaded INTEGER AS kotlin.Boolean NOT NULL,
-    isCompleted INTEGER AS kotlin.Boolean NOT NULL,
+    isDownloaded INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
+    isCompleted INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
     progressInSec INTEGER AS kotlin.Int
 );
 
@@ -34,7 +34,23 @@ getEpisode:
 SELECT * FROM episodeEntity WHERE id == :id;
 
 insertEpisode:
-INSERT OR REPLACE INTO episodeEntity(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isDownloaded, isCompleted, progressInSec) VALUES ?;
+INSERT OR REPLACE INTO episodeEntity(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle) VALUES ?;
+
+updateEpisodeInfo:
+UPDATE episodeEntity SET
+    guid = :guid,
+    title = :title,
+    description = :description,
+    episodeUrl = :episodeUrl,
+    datePublishedTimestamp = :datePublishedTimestamp,
+    datePublishedFormatted = :datePublishedFormatted,
+    durationInSec = :durationInSec,
+    episodeNum = :episodeNum,
+    artworkUrl = :artworkUrl,
+    enclosureUrl = :enclosureUrl,
+    enclosureSizeInBytes = :enclosureSizeInBytes,
+    podcastTitle = :podcastTitle
+WHERE id = :id;
 
 setEpisodeDownloaded:
 UPDATE episodeEntity SET isDownloaded = 1 WHERE id = :id;
@@ -45,8 +61,11 @@ UPDATE episodeEntity SET isCompleted = 1 WHERE id = :id;
 updateEpisodeProgress:
 UPDATE episodeEntity SET progressInSec = :progressInSec WHERE id = :id;
 
-updateEpisodePodcastTitle:
+updateEpisodePodcastTitleById:
 UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE id = :id;
 
-deleteUndownloadedEpisodesForPodcast:
-DELETE FROM episodeEntity WHERE podcastId == :podcastId AND isDownloaded == 0;
+updateEpisodePodcastTitleByPodcastId:
+UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE podcastId = :podcastId;
+
+deleteUntouchedEpisodesForPodcast:
+DELETE FROM episodeEntity WHERE podcastId == :podcastId AND (isDownloaded == 0 AND isCompleted == 0 AND progressInSec < 30);

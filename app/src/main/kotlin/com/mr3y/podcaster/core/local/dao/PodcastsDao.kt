@@ -2,6 +2,7 @@ package com.mr3y.podcaster.core.local.dao
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.di.IODispatcher
 import com.mr3y.podcaster.core.local.mapToEpisode
@@ -18,9 +19,9 @@ interface PodcastsDao {
 
     fun getAllPodcasts(): Flow<List<Podcast>>
 
-    fun getPodcast(podcastId: Long): Podcast?
+    fun getPodcast(podcastId: Long): Flow<Podcast?>
 
-    fun addPodcast(podcast: Podcast)
+    fun upsertPodcast(podcast: Podcast)
 
     fun deletePodcast(podcastId: Long)
 
@@ -32,9 +33,9 @@ interface PodcastsDao {
 
     fun getCompletedEpisodes(): Flow<List<Episode>>
 
-    fun getEpisode(episodeId: Long): Episode?
+    fun getEpisode(episodeId: Long): Flow<Episode?>
 
-    fun addEpisode(episode: Episode)
+    fun upsertEpisode(episode: Episode)
 
     fun markEpisodeAsDownloaded(episodeId: Long)
 
@@ -42,7 +43,9 @@ interface PodcastsDao {
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 
-    fun deleteUndownloadedEpisodes(podcastId: Long)
+    fun updateEpisodesPodcastTitle(title: String, podcastId: Long)
+
+    fun deleteUntouchedEpisodes(podcastId: Long)
 }
 
 class DefaultPodcastsDao @Inject constructor(
@@ -56,11 +59,13 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getPodcast(podcastId: Long): Podcast? {
-        return database.podcastEntityQueries.getPodcast(podcastId, mapper = ::mapToPodcast).executeAsOneOrNull()
+    override fun getPodcast(podcastId: Long): Flow<Podcast?> {
+        return database.podcastEntityQueries.getPodcast(podcastId, mapper = ::mapToPodcast)
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
     }
 
-    override fun addPodcast(podcast: Podcast) {
+    override fun upsertPodcast(podcast: Podcast) {
         database.podcastEntityQueries.insertPodcast(podcast.toPodcastEntity())
     }
 
@@ -92,12 +97,36 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getEpisode(episodeId: Long): Episode? {
-        return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode).executeAsOneOrNull()
+    override fun getEpisode(episodeId: Long): Flow<Episode?> {
+        return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode)
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
     }
 
-    override fun addEpisode(episode: Episode) {
-        database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+    override fun upsertEpisode(episode: Episode) {
+        val queries = database.episodeEntityQueries
+        queries.transaction {
+            val episodeEntity = queries.getEpisode(id = episode.id, mapper = ::mapToEpisode).executeAsOneOrNull()
+            if (episodeEntity != null) {
+                queries.updateEpisodeInfo(
+                    id = episode.id,
+                    guid = episode.guid,
+                    title = episode.title,
+                    description = episode.description,
+                    episodeUrl = episode.episodeUrl,
+                    datePublishedTimestamp = episode.datePublishedTimestamp,
+                    datePublishedFormatted = episode.datePublishedFormatted,
+                    durationInSec = episode.durationInSec,
+                    episodeNum = episode.episodeNum,
+                    artworkUrl = episode.artworkUrl,
+                    enclosureUrl = episode.enclosureUrl,
+                    enclosureSizeInBytes = episode.enclosureSizeInBytes,
+                    podcastTitle = episode.podcastTitle
+                )
+            } else {
+                database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+            }
+        }
     }
 
     override fun markEpisodeAsDownloaded(episodeId: Long) {
@@ -112,7 +141,11 @@ class DefaultPodcastsDao @Inject constructor(
         database.episodeEntityQueries.updateEpisodeProgress(progressInSec, episodeId)
     }
 
-    override fun deleteUndownloadedEpisodes(podcastId: Long) {
-        database.episodeEntityQueries.deleteUndownloadedEpisodesForPodcast(podcastId)
+    override fun updateEpisodesPodcastTitle(title: String, podcastId: Long) {
+        database.episodeEntityQueries.updateEpisodePodcastTitleByPodcastId(title, podcastId)
+    }
+
+    override fun deleteUntouchedEpisodes(podcastId: Long) {
+        database.episodeEntityQueries.deleteUntouchedEpisodesForPodcast(podcastId)
     }
 }
