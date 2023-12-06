@@ -18,4 +18,26 @@ data class Episode(
     val isDownloaded: Boolean = false,
     val isCompleted: Boolean = false,
     val progressInSec: Int? = null
-)
+) {
+    override fun toString(): String {
+        return "\nEpisode(\n" +
+            "id = ${id}L,\n" +
+            "podcastId = ${podcastId}L,\n" +
+            "guid = \"$guid\",\n" +
+            "title = \"$title\",\n" +
+            "description = \"$description\",\n" +
+            "episodeUrl = \"$episodeUrl\",\n" +
+            "datePublishedTimestamp = ${datePublishedTimestamp}L,\n" +
+            "datePublishedFormatted = \"$datePublishedFormatted\",\n" +
+            "durationInSec = ${durationInSec},\n" +
+            "episodeNum = ${episodeNum},\n" +
+            "artworkUrl = \"$artworkUrl\",\n" +
+            "enclosureUrl = \"$enclosureUrl\",\n" +
+            "enclosureSizeInBytes = ${enclosureSizeInBytes}L,\n" +
+            "podcastTitle = \"$podcastTitle\",\n" +
+            "isDownloaded = $isDownloaded,\n" +
+            "isCompleted = $isCompleted,\n" +
+            "progressInSec = $progressInSec\n" +
+        ")"
+    }
+}

@@ -88,7 +88,7 @@ fun ExpandedPlayerViewScreen(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = EpisodeWithDetails.podcastTitle,
+                text = EpisodeWithDetails.podcastTitle ?: "",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium
             )
