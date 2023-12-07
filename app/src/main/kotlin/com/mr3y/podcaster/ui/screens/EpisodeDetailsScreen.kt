@@ -63,6 +63,7 @@ import kotlin.time.toDuration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EpisodeDetailsScreen(
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -70,7 +71,7 @@ fun EpisodeDetailsScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = onNavigateUp,
                         colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
                     ) {
                         Icon(
@@ -228,6 +229,7 @@ fun EpisodeDetailsScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         EpisodeDetailsScreen(
+            onNavigateUp = {},
             modifier = Modifier.fillMaxSize()
         )
     }

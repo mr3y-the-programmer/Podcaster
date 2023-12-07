@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,6 +89,8 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PodcastDetailsScreen(
+    onNavigateUp: () -> Unit,
+    onEpisodeClick: (episodeId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -95,7 +98,7 @@ fun PodcastDetailsScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = onNavigateUp,
                         colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
                     ) {
                         Icon(
@@ -264,7 +267,9 @@ fun PodcastDetailsScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(onClick = { onEpisodeClick(episode.id) })
                     ) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -339,6 +344,8 @@ fun PodcastDetailsScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         PodcastDetailsScreen(
+            {},
+            {},
             modifier = Modifier.fillMaxSize()
         )
     }

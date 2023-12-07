@@ -63,6 +63,7 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
+    onPodcastClick: (podcastId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchBarInteractionSource = remember { MutableInteractionSource() }
@@ -190,6 +191,7 @@ fun ExploreScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         ExploreScreen(
+            {},
             modifier = Modifier.fillMaxSize()
         )
     }

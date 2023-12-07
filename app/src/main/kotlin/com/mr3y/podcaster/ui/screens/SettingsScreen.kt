@@ -32,6 +32,9 @@ import com.mr3y.podcaster.ui.theme.PodcasterTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onNavigateUp: () -> Unit,
+    onDownloadsClick: () -> Unit,
+    onFeedbackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -39,7 +42,7 @@ fun SettingsScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = onNavigateUp,
                         colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
                     ) {
                         Icon(
@@ -143,6 +146,11 @@ fun SettingsScreenPreview(
     @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
-        SettingsScreen(modifier = Modifier.fillMaxSize())
+        SettingsScreen(
+            {},
+            {},
+            {},
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
