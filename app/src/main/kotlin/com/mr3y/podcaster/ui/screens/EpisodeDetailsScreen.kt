@@ -81,26 +81,27 @@ fun EpisodeDetailsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
+                    // TODO: set the color to artwork's dominant color
+                    containerColor = Color.Red
                 ),
                 title = { /*TODO*/ },
                 actions = {},
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        // TODO: set the color to artwork's dominant color
-        containerColor = Color.Red,
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
         Box(
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Box(
                 Modifier
                     .height(96.dp)
-                    .background(Color.Red)
+                    .background(Color.Red) // TODO: set the color to artwork's dominant color
                     .fillMaxWidth()
             )
 
@@ -145,7 +146,9 @@ fun EpisodeDetailsScreen(
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
                             contentDescription = null,
-                            modifier = Modifier.size(32.dp).padding(end = 4.dp)
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(end = 4.dp)
                         )
                         Text(
                             text = "${EpisodeWithDetails.durationInSec.toDuration(DurationUnit.SECONDS)}",
@@ -195,7 +198,6 @@ fun EpisodeDetailsScreen(
                     .padding(top = 96.dp)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface)
-                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 4.dp)
                     .padding(top = 64.dp)
                     .zIndex(1f),

@@ -108,15 +108,14 @@ fun PodcastDetailsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
+                    containerColor = Color.Red // TODO: set the color to artwork's dominant color
                 ),
                 title = { /*TODO*/ },
                 actions = {},
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        // TODO: set the color to artwork's dominant color
-        containerColor = Color.Red,
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
         Box(
@@ -127,7 +126,7 @@ fun PodcastDetailsScreen(
             Box(
                 Modifier
                     .height(96.dp)
-                    .background(Color.Red)
+                    .background(Color.Red) // TODO: set the color to artwork's dominant color
                     .fillMaxWidth()
             )
 

@@ -1,6 +1,7 @@
 package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.ArrowDownward
@@ -61,11 +63,22 @@ fun SubscriptionsScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long) -> Unit,
     onSettingsClick: () -> Unit,
+    onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = onNavDrawerClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Tap to open Navigation drawer"
+                        )
+                    }
+                },
                 title = { },
                 actions = {
                     IconButton(
@@ -78,13 +91,14 @@ fun SubscriptionsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
+                    containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
                     actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        containerColor = MaterialTheme.colorScheme.primaryTertiary,
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
         Box(
@@ -93,7 +107,9 @@ fun SubscriptionsScreen(
                 .fillMaxSize()
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryTertiary),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
@@ -223,6 +239,7 @@ fun SubscriptionsScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         SubscriptionsScreen(
+            {},
             {},
             {},
             {},

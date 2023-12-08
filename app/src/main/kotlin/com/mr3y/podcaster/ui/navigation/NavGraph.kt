@@ -18,6 +18,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 @Composable
 fun PodcasterNavGraph(
     navController: NavHostController,
+    onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -29,12 +30,14 @@ fun PodcasterNavGraph(
             SubscriptionsScreen(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
                 onEpisodeClick = { episodeId -> navController.navigate(Destinations.EpisodeDetails(episodeId)) },
+                onNavDrawerClick = onNavDrawerClick,
                 onSettingsClick = { navController.navigate(Destinations.Settings) }
             )
         }
         composable<Destinations.Explore> {
             ExploreScreen(
-                onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) }
+                onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
+                onNavDrawerClick = onNavDrawerClick
             )
         }
         composable<Destinations.PodcastDetails> {
@@ -54,6 +57,9 @@ fun PodcasterNavGraph(
                 onDownloadsClick = { /*TODO*/ },
                 onFeedbackClick = { /*TODO*/ }
             )
+        }
+        composable<Destinations.Downloads> {
+
         }
     }
 }

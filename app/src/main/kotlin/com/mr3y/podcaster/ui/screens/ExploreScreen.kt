@@ -26,6 +26,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
@@ -64,47 +65,23 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @Composable
 fun ExploreScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
+    onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchBarInteractionSource = remember { MutableInteractionSource() }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        leadingIcon = {
-                            IconButton(
-                                onClick = { },
-                                modifier = Modifier.clearAndSetSemantics { }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxHeight()
-                                )
-                            }
-                        },
-                        placeholder = {
-                            Text(text = "Search for a podcast or add RSS Url")
-                        },
-                        interactionSource = searchBarInteractionSource,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = {}),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedPlaceholderColor = MaterialTheme.colorScheme.primaryTertiary,
-                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.primaryTertiary,
-                            focusedBorderColor = MaterialTheme.colorScheme.primaryTertiary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primaryTertiary,
-                            focusedLeadingIconColor = MaterialTheme.colorScheme.primaryTertiary,
-                            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primaryTertiary
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                navigationIcon = {
+                    IconButton(
+                        onClick = onNavDrawerClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Tap to open Navigation drawer"
+                        )
+                    }
                 },
+                title = {},
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent
@@ -118,65 +95,103 @@ fun ExploreScreen(
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
+        val searchBarInteractionSource = remember { MutableInteractionSource() }
         val isSearchBarFocused by searchBarInteractionSource.collectIsFocusedAsState()
-        AnimatedVisibility(
-            visible = isSearchBarFocused,
-            enter = fadeIn() + slideInVertically(),
-            exit = slideOutVertically() + fadeOut(),
-            label = "Animated Recent Searches",
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            // Display recent search entries
-            val recentSearchEntries = listOf("android", "podcast", "culture", "tech")
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Recent Searches",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                repeat(recentSearchEntries.size) { index ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp)
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                leadingIcon = {
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier.clearAndSetSemantics { }
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.SavedSearch,
+                            imageVector = Icons.Filled.Search,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            modifier = Modifier.fillMaxHeight()
                         )
-                        Text(
-                            text = recentSearchEntries[index],
-                            style = MaterialTheme.typography.titleLarge,
-                            maxLines = 1,
+                    }
+                },
+                placeholder = {
+                    Text(text = "Search for a podcast or add RSS Url")
+                },
+                interactionSource = searchBarInteractionSource,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = {}),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.primaryTertiary,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.primaryTertiary,
+                    focusedBorderColor = MaterialTheme.colorScheme.primaryTertiary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.primaryTertiary,
+                    focusedLeadingIconColor = MaterialTheme.colorScheme.primaryTertiary,
+                    unfocusedLeadingIconColor = MaterialTheme.colorScheme.primaryTertiary
+                ),
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            AnimatedVisibility(
+                visible = isSearchBarFocused,
+                enter = fadeIn() + slideInVertically(),
+                exit = slideOutVertically() + fadeOut(),
+                label = "Animated Recent Searches"
+            ) {
+                // Display recent search entries
+                val recentSearchEntries = listOf("android", "podcast", "culture", "tech")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Recent Searches",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    repeat(recentSearchEntries.size) { index ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 8.dp)
-                        )
-                        IconButton(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .size(48.dp)
-                                .padding(8.dp),
-                            colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary)
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Close,
+                                imageVector = Icons.Filled.SavedSearch,
                                 contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            Text(
+                                text = recentSearchEntries[index],
+                                style = MaterialTheme.typography.titleLarge,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp)
+                            )
+                            IconButton(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(8.dp),
+                                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = null,
+                                )
+                            }
                         }
-                    }
-                    if (index != recentSearchEntries.lastIndex) {
-                        Divider()
+                        if (index != recentSearchEntries.lastIndex) {
+                            Divider()
+                        }
                     }
                 }
             }
@@ -191,6 +206,7 @@ fun ExploreScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         ExploreScreen(
+            {},
             {},
             modifier = Modifier.fillMaxSize()
         )
