@@ -13,9 +13,9 @@ interface PodcastsRepository {
 
     fun getPodcast(podcastId: Long): Flow<Result<Podcast, Any>>
 
-    fun getEpisodesForPodcast(podcastId: Long): Flow<Result<List<Episode>, Any>>
+    fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Flow<Result<List<Episode>, Any>>
 
-    fun getEpisode(episodeId: Long): Flow<Result<Episode, Any>>
+    fun getEpisode(episodeId: Long, podcastArtworkUrl: String): Flow<Result<Episode, Any>>
 
     fun getDownloadedEpisodes(): Flow<List<Episode>>
 
@@ -41,7 +41,7 @@ interface PodcastsRepository {
 
     suspend fun refreshPodcast(podcastId: Long): Boolean
 
-    suspend fun refreshEpisodesForPodcast(podcastId: Long): Boolean
+    suspend fun refreshEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean
 
-    suspend fun refreshEpisode(episodeId: Long): Boolean
+    suspend fun refreshEpisode(episodeId: Long, podcastArtworkUrl: String): Boolean
 }

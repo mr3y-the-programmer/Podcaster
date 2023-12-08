@@ -39,24 +39,24 @@ class DefaultPodcastsRepository @Inject constructor(
             }
     }
 
-    override fun getEpisodesForPodcast(podcastId: Long): Flow<Result<List<Episode>, Any>> {
+    override fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Flow<Result<List<Episode>, Any>> {
         return podcastsDao.getEpisodesForPodcast(podcastId)
             .map { episodes ->
                 if (episodes.isNotEmpty()) {
                     Ok(episodes)
                 } else {
-                    networkClient.getEpisodesByPodcastId(podcastId).map { it.mapToEpisodes() }
+                    networkClient.getEpisodesByPodcastId(podcastId).map { it.mapToEpisodes(podcastTitle, podcastArtworkUrl) }
                 }
             }
     }
 
-    override fun getEpisode(episodeId: Long): Flow<Result<Episode, Any>> {
+    override fun getEpisode(episodeId: Long, podcastArtworkUrl: String): Flow<Result<Episode, Any>> {
         return podcastsDao.getEpisode(episodeId)
             .map { episode ->
                 if (episode != null) {
                     Ok(episode)
                 } else {
-                    networkClient.getEpisodeById(episodeId).map { it.mapToEpisode() }
+                    networkClient.getEpisodeById(episodeId).map { it.mapToEpisode(null, podcastArtworkUrl) }
                 }
             }
     }
@@ -113,10 +113,10 @@ class DefaultPodcastsRepository @Inject constructor(
             )
     }
 
-    override suspend fun refreshEpisodesForPodcast(podcastId: Long): Boolean {
+    override suspend fun refreshEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodesByPodcastId(podcastId)
             .map {
-                it.mapToEpisodes().forEach { episode ->
+                it.mapToEpisodes(podcastTitle, podcastArtworkUrl).forEach { episode ->
                     podcastsDao.upsertEpisode(episode)
                 }
             }.mapBoth(
@@ -125,10 +125,10 @@ class DefaultPodcastsRepository @Inject constructor(
             )
     }
 
-    override suspend fun refreshEpisode(episodeId: Long): Boolean {
+    override suspend fun refreshEpisode(episodeId: Long, podcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodeById(episodeId)
             .map {
-                podcastsDao.upsertEpisode(it.mapToEpisode())
+                podcastsDao.upsertEpisode(it.mapToEpisode(null, podcastArtworkUrl))
             }.mapBoth(
                 success = { true },
                 failure = { false }

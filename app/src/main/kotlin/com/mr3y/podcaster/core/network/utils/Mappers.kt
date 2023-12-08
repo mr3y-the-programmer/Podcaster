@@ -14,9 +14,9 @@ fun NetworkPodcast.mapToPodcast(): Podcast = this.feed.mapToPodcast()
 
 fun NetworkPodcasts.mapToPodcasts(): List<Podcast> = this.feeds.map(PodcastFeed::mapToPodcast)
 
-fun NetworkEpisode.mapToEpisode(): Episode = this.episodeFeed.mapToEpisode()
+fun NetworkEpisode.mapToEpisode(podcastTitle: String?, podcastArtworkUrl: String?): Episode = this.episodeFeed.mapToEpisode(podcastTitle, podcastArtworkUrl)
 
-fun NetworkEpisodes.mapToEpisodes(): List<Episode> = this.episodesFeed.map(PodcastEpisodeFeed::mapToEpisode)
+fun NetworkEpisodes.mapToEpisodes(podcastTitle: String?, podcastArtworkUrl: String?): List<Episode> = this.episodesFeed.map { it.mapToEpisode(podcastTitle, podcastArtworkUrl) }
 
 fun PodcastFeed.mapToPodcast() = Podcast(
     id = id,
@@ -33,7 +33,7 @@ fun PodcastFeed.mapToPodcast() = Podcast(
     genres = genres.map { (id, label) -> Genre(id, label) }
 )
 
-fun PodcastEpisodeFeed.mapToEpisode() = Episode(
+fun PodcastEpisodeFeed.mapToEpisode(podcastTitle: String?, podcastArtworkUrl: String?) = Episode(
     id = id,
     podcastId = podcastId,
     guid = guid,
@@ -44,10 +44,10 @@ fun PodcastEpisodeFeed.mapToEpisode() = Episode(
     datePublishedFormatted = datePublishedFormatted,
     durationInSec = durationInSec,
     episodeNum = episodeNum,
-    artworkUrl = artworkUrl,
+    artworkUrl = artworkUrl.takeIf { it.isNotEmpty() } ?: podcastArtworkUrl ?: "",
     enclosureUrl = enclosureUrl,
     enclosureSizeInBytes = enclosureSizeInBytes,
-    podcastTitle = podcastTitle,
+    podcastTitle = this.podcastTitle ?: podcastTitle,
     isDownloaded = false,
     isCompleted = false,
     progressInSec = null,
