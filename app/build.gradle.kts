@@ -89,6 +89,7 @@ sqldelight {
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.activity.compose)
 
     implementation(platform(libs.compose.bom))
@@ -99,6 +100,8 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.navigation)
     implementation(libs.navigation.typed)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.molecule)
     implementation(libs.coil)
     implementation(libs.ktor.core)
     implementation(libs.ktor.okhttp)
