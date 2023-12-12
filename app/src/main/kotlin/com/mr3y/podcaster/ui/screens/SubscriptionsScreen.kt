@@ -65,7 +65,7 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.components.PullToRefresh
-import com.mr3y.podcaster.ui.presenter.subscriptions.RefreshResult
+import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider

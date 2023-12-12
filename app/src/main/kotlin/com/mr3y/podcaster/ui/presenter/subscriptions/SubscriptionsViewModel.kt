@@ -14,6 +14,7 @@ import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
+import com.mr3y.podcaster.ui.presenter.RefreshResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
