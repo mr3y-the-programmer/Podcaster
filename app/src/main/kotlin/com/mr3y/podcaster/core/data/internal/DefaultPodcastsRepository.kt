@@ -97,7 +97,7 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getRecentSearchQueries(): Flow<List<String>> = recentSearchesDao.recentSearchQueries()
 
-    override fun addNewSearchQuery(searchQuery: String) = recentSearchesDao.addNewSearchQuery(searchQuery)
+    override fun saveNewSearchQuery(searchQuery: String) = recentSearchesDao.addNewSearchQuery(searchQuery)
 
     override fun deleteSearchQuery(searchQuery: String) = recentSearchesDao.deleteSearchQuery(searchQuery)
 

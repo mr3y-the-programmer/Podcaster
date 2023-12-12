@@ -35,7 +35,7 @@ interface PodcastsRepository {
 
     fun getRecentSearchQueries(): Flow<List<String>>
 
-    fun addNewSearchQuery(searchQuery: String)
+    fun saveNewSearchQuery(searchQuery: String)
 
     fun deleteSearchQuery(searchQuery: String)
 
