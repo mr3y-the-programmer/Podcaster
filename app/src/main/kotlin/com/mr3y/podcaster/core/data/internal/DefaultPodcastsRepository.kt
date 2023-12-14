@@ -28,26 +28,37 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long) = podcastsDao.getEpisodesForPodcasts(podcastsIds, limit)
 
-    override fun getPodcast(podcastId: Long): Flow<Result<Podcast, Any>> {
-        return podcastsDao.getPodcast(podcastId)
-            .map { podcast ->
-                if (podcast != null) {
-                    Ok(podcast)
-                } else {
-                    networkClient.getPodcastById(podcastId).map { it.mapToPodcast() }
-                }
-            }
+    override suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast? {
+        suspend fun fetchFromNetwork(): Podcast? {
+            return networkClient.getPodcastById(podcastId).mapBoth(
+                success = { it.mapToPodcast() },
+                failure = { null }
+            )
+        }
+
+        return if (forceRefresh) {
+            fetchFromNetwork()
+        } else {
+            val localPodcast = podcastsDao.getPodcast(podcastId)
+            localPodcast ?: fetchFromNetwork()
+        }
     }
 
-    override fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Flow<Result<List<Episode>, Any>> {
-        return podcastsDao.getEpisodesForPodcast(podcastId)
-            .map { episodes ->
-                if (episodes.isNotEmpty()) {
-                    Ok(episodes)
-                } else {
-                    networkClient.getEpisodesByPodcastId(podcastId).map { it.mapToEpisodes(podcastTitle, podcastArtworkUrl) }
-                }
-            }
+    override suspend fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String, forceRefresh: Boolean): List<Episode>? {
+        val isPodcastAvailableLocally = podcastsDao.isPodcastAvailableNonObservable(podcastId)
+        return if (forceRefresh || !isPodcastAvailableLocally) {
+            networkClient.getEpisodesByPodcastId(podcastId)
+                .mapBoth(
+                    success = { it.mapToEpisodes(podcastTitle, podcastArtworkUrl) },
+                    failure = { null }
+                )
+        } else {
+            podcastsDao.getEpisodesForPodcast(podcastId)
+        }
+    }
+
+    override fun isPodcastFromSubscriptions(podcastId: Long): Flow<Boolean> {
+        return podcastsDao.isPodcastAvailable(podcastId)
     }
 
     override fun getEpisode(episodeId: Long, podcastArtworkUrl: String): Flow<Result<Episode, Any>> {
@@ -105,8 +116,10 @@ class DefaultPodcastsRepository @Inject constructor(
         return networkClient.getPodcastById(podcastId)
             .map {
                 val podcast = it.mapToPodcast()
-                podcastsDao.upsertPodcast(podcast)
-                podcastsDao.updateEpisodesPodcastTitle(title = podcast.title, podcastId = podcast.id)
+                if (podcastsDao.isPodcastAvailableNonObservable(podcastId)) {
+                    podcastsDao.upsertPodcast(podcast)
+                    podcastsDao.updateEpisodesPodcastTitle(title = podcast.title, podcastId = podcast.id)
+                }
             }.mapBoth(
                 success = { true },
                 failure = { false }
@@ -116,8 +129,15 @@ class DefaultPodcastsRepository @Inject constructor(
     override suspend fun refreshEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodesByPodcastId(podcastId)
             .map {
-                it.mapToEpisodes(podcastTitle, podcastArtworkUrl).forEach { episode ->
-                    podcastsDao.upsertEpisode(episode)
+                val episodes = it.mapToEpisodes(podcastTitle, podcastArtworkUrl)
+                if (podcastsDao.isPodcastAvailableNonObservable(podcastId)) {
+                    episodes.forEach { episode -> podcastsDao.upsertEpisode(episode) }
+                    return@map
+                }
+                episodes.forEach { episode ->
+                    if (podcastsDao.isEpisodeAvailableNonObservable(episode.id)) {
+                        podcastsDao.upsertEpisode(episode)
+                    }
                 }
             }.mapBoth(
                 success = { true },

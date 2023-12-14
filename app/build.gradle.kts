@@ -93,6 +93,8 @@ dependencies {
     implementation(libs.activity.compose)
 
     implementation(platform(libs.compose.bom))
+    implementation(libs.compose.richeditor)
+    implementation(libs.kmpalette.core)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)

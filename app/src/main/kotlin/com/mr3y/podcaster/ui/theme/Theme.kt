@@ -97,6 +97,14 @@ val ColorScheme.onTertiaryPrimary
     @Composable
     get() = if (!isSystemInDarkTheme()) onTertiary else onPrimary
 
+val ColorScheme.primaryTertiaryContainer
+    @Composable
+    get() = if (!isSystemInDarkTheme()) primaryContainer else tertiaryContainer
+
+val ColorScheme.onPrimaryTertiaryContainer
+    @Composable
+    get() = if (!isSystemInDarkTheme()) onPrimaryContainer else onTertiaryContainer
+
 @Composable
 fun PodcasterTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

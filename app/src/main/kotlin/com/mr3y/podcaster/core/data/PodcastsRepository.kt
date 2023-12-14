@@ -11,9 +11,11 @@ interface PodcastsRepository {
 
     fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<Episode>>
 
-    fun getPodcast(podcastId: Long): Flow<Result<Podcast, Any>>
+    suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast?
 
-    fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Flow<Result<List<Episode>, Any>>
+    suspend fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String, forceRefresh: Boolean): List<Episode>?
+
+    fun isPodcastFromSubscriptions(podcastId: Long): Flow<Boolean>
 
     fun getEpisode(episodeId: Long, podcastArtworkUrl: String): Flow<Result<Episode, Any>>
 

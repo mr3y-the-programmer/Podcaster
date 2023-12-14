@@ -13,13 +13,18 @@ import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 interface PodcastsDao {
 
     fun getAllPodcasts(): Flow<List<Podcast>>
 
-    fun getPodcast(podcastId: Long): Flow<Podcast?>
+    fun getPodcast(podcastId: Long): Podcast?
+
+    fun isPodcastAvailable(podcastId: Long): Flow<Boolean>
+
+    fun isPodcastAvailableNonObservable(podcastId: Long): Boolean
 
     fun upsertPodcast(podcast: Podcast)
 
@@ -27,13 +32,17 @@ interface PodcastsDao {
 
     fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<Episode>>
 
-    fun getEpisodesForPodcast(podcastId: Long): Flow<List<Episode>>
+    fun getEpisodesForPodcast(podcastId: Long): List<Episode>
 
     fun getDownloadedEpisodes(): Flow<List<Episode>>
 
     fun getCompletedEpisodes(): Flow<List<Episode>>
 
     fun getEpisode(episodeId: Long): Flow<Episode?>
+
+    fun isEpisodeAvailable(episodeId: Long): Flow<Boolean>
+
+    fun isEpisodeAvailableNonObservable(episodeId: Long): Boolean
 
     fun upsertEpisode(episode: Episode)
 
@@ -59,10 +68,22 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getPodcast(podcastId: Long): Flow<Podcast?> {
+    override fun getPodcast(podcastId: Long): Podcast? {
         return database.podcastEntityQueries.getPodcast(podcastId, mapper = ::mapToPodcast)
+            .executeAsOneOrNull()
+    }
+
+    override fun isPodcastAvailable(podcastId: Long): Flow<Boolean> {
+        return database.podcastEntityQueries.hasPodcast(podcastId)
             .asFlow()
             .mapToOneOrNull(dispatcher)
+            .map { it == 1L }
+    }
+
+    override fun isPodcastAvailableNonObservable(podcastId: Long): Boolean {
+        return database.podcastEntityQueries.hasPodcast(podcastId)
+            .executeAsOneOrNull()
+            .let { it == 1L }
     }
 
     override fun upsertPodcast(podcast: Podcast) {
@@ -79,10 +100,9 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getEpisodesForPodcast(podcastId: Long): Flow<List<Episode>> {
+    override fun getEpisodesForPodcast(podcastId: Long): List<Episode> {
         return database.episodeEntityQueries.getEpisodesForPodcast(podcastId, mapper = ::mapToEpisode)
-            .asFlow()
-            .mapToList(dispatcher)
+            .executeAsList()
     }
 
     override fun getDownloadedEpisodes(): Flow<List<Episode>> {
@@ -101,6 +121,19 @@ class DefaultPodcastsDao @Inject constructor(
         return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode)
             .asFlow()
             .mapToOneOrNull(dispatcher)
+    }
+
+    override fun isEpisodeAvailable(episodeId: Long): Flow<Boolean> {
+        return database.episodeEntityQueries.hasEpisode(episodeId)
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
+            .map { it == 1L }
+    }
+
+    override fun isEpisodeAvailableNonObservable(episodeId: Long): Boolean {
+        return database.episodeEntityQueries.hasEpisode(episodeId)
+            .executeAsOneOrNull()
+            .let { it == 1L }
     }
 
     override fun upsertEpisode(episode: Episode) {
