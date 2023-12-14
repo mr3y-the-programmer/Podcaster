@@ -34,7 +34,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -61,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -75,6 +73,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.presenter.explore.ExploreUIState
 import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
 import com.mr3y.podcaster.ui.presenter.explore.SearchResult
@@ -390,21 +389,6 @@ private fun RecentSearches(
             }
         }
     }
-}
-
-@Composable
-private fun LoadingIndicator(
-    modifier: Modifier = Modifier
-) {
-   Box(
-       contentAlignment = Alignment.Center,
-       modifier = modifier
-   ) {
-       CircularProgressIndicator(
-           color = MaterialTheme.colorScheme.primaryTertiary,
-           strokeCap = StrokeCap.Round
-       )
-   }
 }
 
 @Composable
