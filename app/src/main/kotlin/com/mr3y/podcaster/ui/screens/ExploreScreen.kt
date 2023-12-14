@@ -34,7 +34,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -73,6 +72,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.presenter.explore.ExploreUIState
 import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
@@ -81,7 +81,6 @@ import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
-import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 
@@ -466,39 +465,6 @@ private fun PodcastsList(
                     HorizontalDivider()
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun Error(
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Text(
-            text = "Sorry, Something went wrong",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        ElevatedButton(
-            onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
-            ),
-        ) {
-            Text(
-                text = "Retry",
-                style = MaterialTheme.typography.labelLarge
-            )
         }
     }
 }
