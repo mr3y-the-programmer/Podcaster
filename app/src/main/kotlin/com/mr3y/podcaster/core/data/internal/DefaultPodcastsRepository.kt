@@ -115,7 +115,7 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun deleteSearchQuery(searchQuery: String) = recentSearchesDao.deleteSearchQuery(searchQuery)
 
-    override suspend fun refreshPodcast(podcastId: Long): Boolean {
+    override suspend fun syncRemotePodcastWithLocal(podcastId: Long): Boolean {
         return networkClient.getPodcastById(podcastId)
             .map {
                 val podcast = it.mapToPodcast()
@@ -129,7 +129,7 @@ class DefaultPodcastsRepository @Inject constructor(
             )
     }
 
-    override suspend fun refreshEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean {
+    override suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodesByPodcastId(podcastId)
             .map {
                 val episodes = it.mapToEpisodes(podcastTitle, podcastArtworkUrl)
@@ -148,7 +148,7 @@ class DefaultPodcastsRepository @Inject constructor(
             )
     }
 
-    override suspend fun refreshEpisode(episodeId: Long, podcastArtworkUrl: String): Boolean {
+    override suspend fun syncRemoteEpisodeWithLocal(episodeId: Long, podcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodeById(episodeId)
             .map {
                 podcastsDao.upsertEpisode(it.mapToEpisode(null, podcastArtworkUrl))

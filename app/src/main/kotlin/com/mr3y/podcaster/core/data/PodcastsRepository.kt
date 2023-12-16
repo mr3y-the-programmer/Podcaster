@@ -41,9 +41,9 @@ interface PodcastsRepository {
 
     fun deleteSearchQuery(searchQuery: String)
 
-    suspend fun refreshPodcast(podcastId: Long): Boolean
+    suspend fun syncRemotePodcastWithLocal(podcastId: Long): Boolean
 
-    suspend fun refreshEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean
+    suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean
 
-    suspend fun refreshEpisode(episodeId: Long, podcastArtworkUrl: String): Boolean
+    suspend fun syncRemoteEpisodeWithLocal(episodeId: Long, podcastArtworkUrl: String): Boolean
 }

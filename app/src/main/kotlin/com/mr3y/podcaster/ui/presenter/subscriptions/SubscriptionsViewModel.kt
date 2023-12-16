@@ -61,8 +61,8 @@ internal fun SubscriptionsPresenter(
                 is SubscriptionsUIEvent.Refresh -> {
                     val aggregatedRefreshResults = podcasts.map { podcast ->
                         async {
-                            val result1 = repository.refreshPodcast(podcast.id)
-                            val result2 = repository.refreshEpisodesForPodcast(podcast.id, podcast.title, podcast.artworkUrl)
+                            val result1 = repository.syncRemotePodcastWithLocal(podcast.id)
+                            val result2 = repository.syncRemoteEpisodesForPodcastWithLocal(podcast.id, podcast.title, podcast.artworkUrl)
                             result1 && result2
                         }
                     }.awaitAll()
