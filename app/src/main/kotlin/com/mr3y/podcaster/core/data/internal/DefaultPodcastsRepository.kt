@@ -1,6 +1,5 @@
 package com.mr3y.podcaster.core.data.internal
 
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapBoth
@@ -15,7 +14,6 @@ import com.mr3y.podcaster.core.network.utils.mapToEpisodes
 import com.mr3y.podcaster.core.network.utils.mapToPodcast
 import com.mr3y.podcaster.core.network.utils.mapToPodcasts
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DefaultPodcastsRepository @Inject constructor(
@@ -61,15 +59,20 @@ class DefaultPodcastsRepository @Inject constructor(
         return podcastsDao.isPodcastAvailable(podcastId)
     }
 
-    override fun getEpisode(episodeId: Long, podcastArtworkUrl: String): Flow<Result<Episode, Any>> {
-        return podcastsDao.getEpisode(episodeId)
-            .map { episode ->
-                if (episode != null) {
-                    Ok(episode)
-                } else {
-                    networkClient.getEpisodeById(episodeId).map { it.mapToEpisode(null, podcastArtworkUrl) }
-                }
-            }
+    override suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode? {
+        suspend fun fetchFromNetwork(): Episode? {
+            return networkClient.getEpisodeById(episodeId).mapBoth(
+                success = { it.mapToEpisode(null, podcastArtworkUrl) },
+                failure = { null }
+            )
+        }
+
+        return if (forceRefresh) {
+            fetchFromNetwork()
+        } else {
+            val localEpisode = podcastsDao.getEpisode(episodeId)
+            localEpisode ?: fetchFromNetwork()
+        }
     }
 
     override fun getDownloadedEpisodes(): Flow<List<Episode>> = podcastsDao.getDownloadedEpisodes()

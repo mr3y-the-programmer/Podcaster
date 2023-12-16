@@ -29,7 +29,7 @@ fun PodcasterNavGraph(
         composable<Destinations.Subscriptions> {
             SubscriptionsScreen(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
-                onEpisodeClick = { episodeId -> navController.navigate(Destinations.EpisodeDetails(episodeId)) },
+                onEpisodeClick = { episodeId, artworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, artworkUrl)) },
                 onNavDrawerClick = onNavDrawerClick,
                 onSettingsClick = { navController.navigate(Destinations.Settings) }
             )
@@ -43,7 +43,7 @@ fun PodcasterNavGraph(
         composable<Destinations.PodcastDetails> {
             PodcastDetailsScreen(
                 onNavigateUp = navController::navigateUp,
-                onEpisodeClick = { episodeId -> navController.navigate(Destinations.EpisodeDetails(episodeId)) }
+                onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, podcastArtworkUrl)) }
             )
         }
         composable<Destinations.EpisodeDetails> {

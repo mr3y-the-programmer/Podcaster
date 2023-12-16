@@ -81,7 +81,7 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @Composable
 fun SubscriptionsScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
-    onEpisodeClick: (episodeId: Long) -> Unit,
+    onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -104,7 +104,7 @@ fun SubscriptionsScreen(
 fun SubscriptionsScreen(
     state: SubscriptionsUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
-    onEpisodeClick: (episodeId: Long) -> Unit,
+    onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
     onRefresh: () -> Unit,
@@ -251,7 +251,7 @@ private fun ColumnScope.SubscriptionsHeader(
 @Composable
 private fun ColumnScope.EpisodesList(
     episodes: List<Episode>,
-    onEpisodeClick: (episodeId: Long) -> Unit
+    onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -271,7 +271,7 @@ private fun ColumnScope.EpisodesList(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(onClick = { onEpisodeClick(episode.id) })
+                            .clickable(onClick = { onEpisodeClick(episode.id, episode.artworkUrl) })
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         AsyncImage(
@@ -373,7 +373,7 @@ fun SubscriptionsScreenPreview(
         SubscriptionsScreen(
             state = state,
             onPodcastClick = {},
-            onEpisodeClick = {},
+            onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
             onNavDrawerClick = {},
             onRefresh = {},
@@ -399,7 +399,7 @@ fun EmptySubscriptionsScreenPreview() {
         SubscriptionsScreen(
             state = state,
             onPodcastClick = {},
-            onEpisodeClick = {},
+            onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
             onNavDrawerClick = {},
             onRefresh = {},

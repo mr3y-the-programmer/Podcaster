@@ -38,7 +38,7 @@ interface PodcastsDao {
 
     fun getCompletedEpisodes(): Flow<List<Episode>>
 
-    fun getEpisode(episodeId: Long): Flow<Episode?>
+    fun getEpisode(episodeId: Long): Episode?
 
     fun isEpisodeAvailable(episodeId: Long): Flow<Boolean>
 
@@ -117,10 +117,9 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getEpisode(episodeId: Long): Flow<Episode?> {
+    override fun getEpisode(episodeId: Long): Episode? {
         return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode)
-            .asFlow()
-            .mapToOneOrNull(dispatcher)
+            .executeAsOneOrNull()
     }
 
     override fun isEpisodeAvailable(episodeId: Long): Flow<Boolean> {

@@ -134,7 +134,7 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @Composable
 fun PodcastDetailsScreen(
     onNavigateUp: () -> Unit,
-    onEpisodeClick: (episodeId: Long) -> Unit,
+    onEpisodeClick: (episodeId: Long, podcastArtworkUrl: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PodcastDetailsViewModel = hiltViewModel()
 ) {
@@ -161,7 +161,7 @@ fun PodcastDetailsScreen(
     onRefresh: () -> Unit,
     onConsumeResult: () -> Unit,
     onRetry: () -> Unit,
-    onEpisodeClick: (episodeId: Long) -> Unit,
+    onEpisodeClick: (episodeId: Long, podcastArtworkUrl: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -290,7 +290,7 @@ fun PodcastDetailsScreen(
                                         state.episodes,
                                         key = { _, episode -> episode.id }
                                     ) { index, episode ->
-                                        Episode(episode = episode, onEpisodeClick = onEpisodeClick)
+                                        Episode(episode = episode, onEpisodeClick = { episodeId -> onEpisodeClick(episodeId, state.podcast.artworkUrl) })
                                         if (index != state.episodes.lastIndex) {
                                             HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
                                         }
@@ -614,7 +614,7 @@ fun PodcastDetailsScreenPreview(
             onRefresh = {},
             onConsumeResult = {},
             onRetry = {},
-            onEpisodeClick = {},
+            onEpisodeClick = { _, _ -> },
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -640,7 +640,7 @@ fun PodcastDetailsScreenErrorPreview() {
             onRefresh = {},
             onConsumeResult = {},
             onRetry = {},
-            onEpisodeClick = {},
+            onEpisodeClick = { _, _ -> },
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -666,7 +666,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
             onRefresh = {},
             onConsumeResult = {},
             onRetry = {},
-            onEpisodeClick = {},
+            onEpisodeClick = { _, _ -> },
             modifier = Modifier.fillMaxSize()
         )
     }

@@ -15,7 +15,7 @@ sealed interface Destinations : Destination {
     data class PodcastDetails(val podcastId: Long) : Destinations
 
     @Serializable
-    data class EpisodeDetails(val episodeId: Long) : Destinations
+    data class EpisodeDetails(val episodeId: Long, val podcastArtworkUrl: String) : Destinations
 
     @Serializable
     data object Settings : Destinations
