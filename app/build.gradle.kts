@@ -86,6 +86,10 @@ sqldelight {
     }
 }
 
+ksp {
+    arg("lyricist.packageName", "com.mr3y.podcaster")
+}
+
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
@@ -95,6 +99,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.richeditor)
     implementation(libs.kmpalette.core)
+    implementation(libs.lyricist)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
@@ -113,6 +118,7 @@ dependencies {
     implementation(libs.result)
     implementation(libs.kotlinx.serialization)
 
+    ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
 

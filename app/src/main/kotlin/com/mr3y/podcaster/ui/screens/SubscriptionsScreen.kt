@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.components.PullToRefresh
@@ -112,17 +113,18 @@ fun SubscriptionsScreen(
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
+    val strings = LocalStrings.current
     LaunchedEffect(state.refreshResult) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = "Couldn't refresh feeds"
+                    message = strings.subscriptions_refresh_result_error
                 )
                 onRefreshResultConsumed()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = "Couldn't refresh some feeds"
+                    message = strings.subscriptions_refresh_result_mixed
                 )
                 onRefreshResultConsumed()
             }
@@ -170,6 +172,7 @@ private fun SubscriptionsTopAppBar(
     onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
@@ -177,7 +180,7 @@ private fun SubscriptionsTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Tap to open Navigation drawer"
+                    contentDescription = strings.icon_menu_content_description
                 )
             }
         },
@@ -188,7 +191,7 @@ private fun SubscriptionsTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = "Tap to navigate to settings"
+                    contentDescription = strings.icon_settings_content_description
                 )
             }
         },
@@ -206,8 +209,9 @@ private fun ColumnScope.SubscriptionsHeader(
     podcasts: List<Podcast>,
     onPodcastClick: (podcastId: Long) -> Unit
 ) {
+    val strings = LocalStrings.current
     Text(
-        text = "Subscriptions",
+        text = strings.subscriptions_label,
         color = MaterialTheme.colorScheme.onPrimaryTertiary,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     )
@@ -236,7 +240,7 @@ private fun ColumnScope.SubscriptionsHeader(
     } else {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = "You aren't subscribed to any podcast.\nYour subscriptions will show up here.",
+            text = strings.subscriptions_empty_list,
             color = MaterialTheme.colorScheme.onPrimaryTertiary,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
@@ -340,9 +344,10 @@ private fun ColumnScope.EpisodesList(
                 }
             }
         } else {
+            val strings = LocalStrings.current
             Spacer(modifier = Modifier.height(80.dp))
             Text(
-                text = "Start subscribing podcasts by clicking on ☰ icon -> then Explore.",
+                text = strings.subscriptions_episodes_empty_list,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,

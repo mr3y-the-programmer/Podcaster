@@ -26,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import kotlinx.coroutines.launch
@@ -40,21 +41,22 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val currentDestination = navBackStackEntry?.destination
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val strings = LocalStrings.current
     val drawerTabs = listOf(
         DrawerTab(
-            "Subscriptions",
+            strings.tab_subscriptions_label,
             Icons.Outlined.Home,
             createRoutePattern<Destinations.Subscriptions>(),
             Destinations.Subscriptions
         ),
         DrawerTab(
-            "Explore",
+            strings.tab_explore_label,
             Icons.Outlined.Search,
             createRoutePattern<Destinations.Explore>(),
             Destinations.Explore
         ),
         DrawerTab(
-            "Downloads",
+            strings.tab_downloads_label,
             Icons.Outlined.FileDownload,
             createRoutePattern<Destinations.Downloads>(),
             Destinations.Downloads

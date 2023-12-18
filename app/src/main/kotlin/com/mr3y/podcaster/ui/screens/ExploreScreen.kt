@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
@@ -183,13 +184,14 @@ fun ExploreScreen(
                 if (state.searchResult is SearchResult.Error && !state.searchResult.isFeedUrl) {
                     Error(onRetry = onRetry, modifier = contentModifier)
                 }
+                val strings = LocalStrings.current
                 LaunchedEffect(state.searchResult) {
                     if (state.searchResult is SearchResult.SearchByUrlSuccess) {
                         onConsumeResult()
                         onPodcastClick(state.searchResult.podcast.id)
                     }
                     if (state.searchResult is SearchResult.Error && state.searchResult.isFeedUrl) {
-                        snackBarHostState.showSnackbar("Make sure the feed url is correct and you're connected to Internet.")
+                        snackBarHostState.showSnackbar(strings.feed_url_incorrect_message)
                         onConsumeResult()
                     }
                 }
@@ -204,6 +206,7 @@ private fun ExploreTopAppBar(
     onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
@@ -211,7 +214,7 @@ private fun ExploreTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Tap to open Navigation drawer"
+                    contentDescription = strings.icon_menu_content_description
                 )
             }
         },
@@ -233,6 +236,7 @@ private fun ExploreSearchBar(
     onConfirmButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     OutlinedTextField(
         value = searchQuery,
         onValueChange = onSearchQueryChange,
@@ -249,7 +253,7 @@ private fun ExploreSearchBar(
             }
         },
         placeholder = {
-            Text(text = "Search for a podcast or add RSS Url")
+            Text(text = strings.search_for_podcast_placeholder)
         },
         trailingIcon = {
             if (showConfirmButton) {
@@ -323,8 +327,9 @@ private fun RecentSearches(
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
             ) {
+                val strings = LocalStrings.current
                 Text(
-                    text = "Recent Searches",
+                    text = strings.recent_searches_label,
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.alignByBaseline()
@@ -337,7 +342,7 @@ private fun RecentSearches(
                     modifier = Modifier.alignByBaseline()
                 ) {
                     Text(
-                        text = "CLOSE",
+                        text = strings.close_label,
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
@@ -396,13 +401,14 @@ private fun PodcastsList(
     onPodcastClick: (podcastId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     if (podcasts.isEmpty()) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
         ) {
             Text(
-                text = "No podcasts found matching your search.",
+                text = strings.search_podcasts_empty_list,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center

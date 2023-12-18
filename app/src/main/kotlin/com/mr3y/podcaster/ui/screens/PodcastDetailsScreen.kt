@@ -108,6 +108,7 @@ import coil.size.Scale
 import com.kmpalette.rememberDominantColorState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.R
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
@@ -165,17 +166,18 @@ fun PodcastDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
+    val strings = LocalStrings.current
     LaunchedEffect(state.refreshResult) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = "Something went wrong, refreshing failed!."
+                    message = strings.podcast_details_refresh_result_error
                 )
                 onConsumeResult()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = "Something went wrong."
+                    message = strings.podcast_details_refresh_result_mixed
                 )
                 onConsumeResult()
             }
@@ -313,6 +315,7 @@ private fun PodcastDetailsTopBar(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
@@ -321,7 +324,7 @@ private fun PodcastDetailsTopBar(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
+                    contentDescription = strings.icon_navigate_up_content_description,
                 )
             }
         },
@@ -383,6 +386,7 @@ private fun BoxScope.Header(
             .zIndex(2f),
         horizontalArrangement = Arrangement.End
     ) {
+        val strings = LocalStrings.current
         AnimatedContent(
             targetState = subscriptionState,
             transitionSpec = {
@@ -411,7 +415,7 @@ private fun BoxScope.Header(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Unsubscribe",
+                            text = strings.unsubscribe_label,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -427,7 +431,7 @@ private fun BoxScope.Header(
                         )
                     ) {
                         Text(
-                            text = "Subscribe",
+                            text = strings.subscribe_label,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -488,8 +492,9 @@ private fun LazyItemScope.Metadata(
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
+    val strings = LocalStrings.current
     Text(
-        text = "About",
+        text = strings.about_label,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.SemiBold
@@ -507,7 +512,7 @@ private fun LazyItemScope.Metadata(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Episodes",
+            text = strings.episodes_label,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold

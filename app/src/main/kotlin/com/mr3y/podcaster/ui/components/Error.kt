@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 
@@ -22,13 +23,14 @@ fun Error(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
         Text(
-            text = "Sorry, Something went wrong",
+            text = strings.generic_error_message,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
@@ -43,7 +45,7 @@ fun Error(
             ),
         ) {
             Text(
-                text = "Retry",
+                text = strings.retry_label,
                 style = MaterialTheme.typography.labelLarge
             )
         }

@@ -65,6 +65,7 @@ import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.kmpalette.rememberDominantColorState
+import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
@@ -110,17 +111,18 @@ fun EpisodeDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
+    val strings = LocalStrings.current
     LaunchedEffect(state.refreshResult) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = "Something went wrong, refreshing failed!."
+                    message = strings.episode_details_refresh_result_error
                 )
                 onConsumeResult()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = "Something went wrong."
+                    message = strings.episode_details_refresh_result_mixed
                 )
                 onConsumeResult()
             }
@@ -210,6 +212,7 @@ private fun EpisodeDetailsTopAppBar(
     contentColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
@@ -218,7 +221,7 @@ private fun EpisodeDetailsTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
+                    contentDescription = strings.icon_navigate_up_content_description,
                 )
             }
         },
