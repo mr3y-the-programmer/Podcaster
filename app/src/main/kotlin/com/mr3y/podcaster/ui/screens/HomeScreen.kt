@@ -64,7 +64,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     )
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = false,
+        gesturesEnabled = currentDestination?.route in drawerTabs.map { it.route },
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(Modifier.height(16.dp))
