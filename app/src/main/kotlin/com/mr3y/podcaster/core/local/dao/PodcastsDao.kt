@@ -24,6 +24,8 @@ interface PodcastsDao {
 
     fun isPodcastAvailable(podcastId: Long): Flow<Boolean>
 
+    fun hasPodcasts(): Flow<Boolean>
+
     fun isPodcastAvailableNonObservable(podcastId: Long): Boolean
 
     fun upsertPodcast(podcast: Podcast)
@@ -78,6 +80,13 @@ class DefaultPodcastsDao @Inject constructor(
             .asFlow()
             .mapToOneOrNull(dispatcher)
             .map { it == 1L }
+    }
+
+    override fun hasPodcasts(): Flow<Boolean> {
+        return database.podcastEntityQueries.countPodcasts()
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
+            .map { it != null && it != 0L }
     }
 
     override fun isPodcastAvailableNonObservable(podcastId: Long): Boolean {

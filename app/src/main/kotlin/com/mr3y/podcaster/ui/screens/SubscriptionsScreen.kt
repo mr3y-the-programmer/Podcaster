@@ -65,6 +65,7 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
@@ -157,8 +158,16 @@ fun SubscriptionsScreen(
                         .background(MaterialTheme.colorScheme.primaryTertiary),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    SubscriptionsHeader(podcasts = state.subscriptions, onPodcastClick = onPodcastClick)
-                    EpisodesList(episodes = state.episodes, onEpisodeClick = onEpisodeClick)
+                    SubscriptionsHeader(
+                        isLoading = state.isSubscriptionsLoading,
+                        podcasts = state.subscriptions,
+                        onPodcastClick = onPodcastClick
+                    )
+                    EpisodesList(
+                        isLoading = state.isEpisodesLoading,
+                        episodes = state.episodes,
+                        onEpisodeClick = onEpisodeClick
+                    )
                 }
             }
         }
@@ -206,6 +215,7 @@ private fun SubscriptionsTopAppBar(
 
 @Composable
 private fun ColumnScope.SubscriptionsHeader(
+    isLoading: Boolean,
     podcasts: List<Podcast>,
     onPodcastClick: (podcastId: Long) -> Unit
 ) {
@@ -215,45 +225,54 @@ private fun ColumnScope.SubscriptionsHeader(
         color = MaterialTheme.colorScheme.onPrimaryTertiary,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     )
-    if (podcasts.isNotEmpty()) {
-        LazyRow(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-        ) {
-            items(podcasts, key = { it.id }) { podcast ->
-                AsyncImage(
-                    model = podcast.artworkUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable(onClick = { onPodcastClick(podcast.id) }),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-        }
-    } else {
+    if (isLoading) {
         Spacer(modifier = Modifier.height(40.dp))
-        Text(
-            text = strings.subscriptions_empty_list,
+        LoadingIndicator(
             color = MaterialTheme.colorScheme.onPrimaryTertiary,
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
-                .height(120.dp)
+            modifier = Modifier.fillMaxWidth()
         )
+    } else {
+        if (podcasts.isNotEmpty()) {
+            LazyRow(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                items(podcasts, key = { it.id }) { podcast ->
+                    AsyncImage(
+                        model = podcast.artworkUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(onClick = { onPodcastClick(podcast.id) }),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(40.dp))
+            Text(
+                text = strings.subscriptions_empty_list,
+                color = MaterialTheme.colorScheme.onPrimaryTertiary,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(120.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun ColumnScope.EpisodesList(
+    isLoading: Boolean,
     episodes: List<Episode>,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit
 ) {
@@ -264,98 +283,111 @@ private fun ColumnScope.EpisodesList(
             .fillMaxWidth()
             .weight(1f)
     ) {
-        if (episodes.isNotEmpty()) {
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                itemsIndexed(episodes, key = { _, episode -> episode.id }) { index, episode ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = { onEpisodeClick(episode.id, episode.artworkUrl) })
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        AsyncImage(
-                            model = episode.artworkUrl,
-                            contentDescription = null,
+        if (isLoading) {
+            Spacer(modifier = Modifier.height(80.dp))
+            LoadingIndicator(
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            if (episodes.isNotEmpty()) {
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    itemsIndexed(episodes, key = { _, episode -> episode.id }) { index, episode ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier
-                                .size(64.dp)
-                                .aspectRatio(1f)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.FillBounds
-                        )
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.weight(1f)
+                                .fillMaxWidth()
+                                .clickable(onClick = {
+                                    onEpisodeClick(
+                                        episode.id,
+                                        episode.artworkUrl
+                                    )
+                                })
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Text(
-                                text = episode.title,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = episode.description,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                        Column(
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            IconButton(
-                                onClick = { /*TODO*/ },
+                            AsyncImage(
+                                model = episode.artworkUrl,
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .padding(8.dp),
-                                colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryPrimary, contentColor = MaterialTheme.colorScheme.onTertiaryPrimary)
+                                    .size(64.dp)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.FillBounds
+                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = null,
+                                Text(
+                                    text = episode.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = episode.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
-                            OutlinedIconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .padding(8.dp),
-                                shape = CircleShape,
-                                colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary),
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiaryPrimary)
+                            Column(
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ArrowDownward,
-                                    contentDescription = null,
-                                )
+                                IconButton(
+                                    onClick = { /*TODO*/ },
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(CircleShape)
+                                        .padding(8.dp),
+                                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryPrimary, contentColor = MaterialTheme.colorScheme.onTertiaryPrimary)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.PlayArrow,
+                                        contentDescription = null,
+                                    )
+                                }
+                                OutlinedIconButton(
+                                    onClick = { /*TODO*/ },
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .padding(8.dp),
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiaryPrimary)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowDownward,
+                                        contentDescription = null,
+                                    )
+                                }
                             }
                         }
-                    }
-                    if (index != episodes.lastIndex) {
-                        HorizontalDivider()
+                        if (index != episodes.lastIndex) {
+                            HorizontalDivider()
+                        }
                     }
                 }
+            } else {
+                val strings = LocalStrings.current
+                Spacer(modifier = Modifier.height(80.dp))
+                Text(
+                    text = strings.subscriptions_episodes_empty_list,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxSize()
+                        .align(Alignment.CenterHorizontally)
+                )
             }
-        } else {
-            val strings = LocalStrings.current
-            Spacer(modifier = Modifier.height(80.dp))
-            Text(
-                text = strings.subscriptions_episodes_empty_list,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxSize()
-                    .align(Alignment.CenterHorizontally)
-            )
         }
     }
 }
@@ -369,6 +401,8 @@ fun SubscriptionsScreenPreview(
         val state by remember {
             mutableStateOf(
                 SubscriptionsUIState(
+                    isSubscriptionsLoading = false,
+                    isEpisodesLoading = false,
                     refreshResult = null,
                     subscriptions = Podcasts,
                     episodes = Episodes
@@ -395,6 +429,8 @@ fun EmptySubscriptionsScreenPreview() {
         val state by remember {
             mutableStateOf(
                 SubscriptionsUIState(
+                    isSubscriptionsLoading = false,
+                    isEpisodesLoading = false,
                     refreshResult = null,
                     subscriptions = emptyList(),
                     episodes = emptyList()

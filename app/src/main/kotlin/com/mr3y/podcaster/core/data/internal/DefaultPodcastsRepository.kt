@@ -59,6 +59,8 @@ class DefaultPodcastsRepository @Inject constructor(
         return podcastsDao.isPodcastAvailable(podcastId)
     }
 
+    override fun hasSubscriptions(): Flow<Boolean> = podcastsDao.hasPodcasts()
+
     override suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode? {
         suspend fun fetchFromNetwork(): Episode? {
             return networkClient.getEpisodeById(episodeId).mapBoth(

@@ -17,6 +17,8 @@ interface PodcastsRepository {
 
     fun isPodcastFromSubscriptions(podcastId: Long): Flow<Boolean>
 
+    fun hasSubscriptions(): Flow<Boolean>
+
     suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode?
 
     fun getDownloadedEpisodes(): Flow<List<Episode>>
