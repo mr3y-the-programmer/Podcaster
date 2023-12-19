@@ -69,18 +69,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             ModalDrawerSheet {
                 Spacer(Modifier.height(16.dp))
                 drawerTabs.forEach { tab ->
+                    val isSelected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
                     NavigationDrawerItem(
                         label = { Text(text = tab.label) },
                         icon = { Icon(imageVector = tab.icon, contentDescription = null) },
-                        selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+                        selected = isSelected,
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate(tab.destination) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                            if (!isSelected) {
+                                navController.navigate(tab.destination) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     )
