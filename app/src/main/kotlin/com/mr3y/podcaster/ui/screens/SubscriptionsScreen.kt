@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,7 +32,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -53,7 +53,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,6 +73,7 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.core.model.dateTimePublished
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -79,6 +88,9 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onTertiaryPrimary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.tertiaryPrimary
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SubscriptionsScreen(
@@ -233,12 +245,33 @@ private fun ColumnScope.SubscriptionsHeader(
         )
     } else {
         if (podcasts.isNotEmpty()) {
+            val edgeWidth = 32.dp
+            val color = MaterialTheme.colorScheme.primaryTertiary
+            fun ContentDrawScope.drawFadedEdge(leftEdge: Boolean) {
+                val edgeWidthPx = edgeWidth.toPx()
+                drawRect(
+                    topLeft = Offset(if (leftEdge) 0f else size.width - edgeWidthPx, 0f),
+                    size = Size(edgeWidthPx, size.height),
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color.Transparent, color),
+                        startX = if (leftEdge) 0f else size.width,
+                        endX = if (leftEdge) edgeWidthPx else size.width - edgeWidthPx
+                    ),
+                    blendMode = BlendMode.DstIn
+                )
+            }
             LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
+                contentPadding = PaddingValues(start = 16.dp + edgeWidth, end = 8.dp + edgeWidth),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                    .drawWithContent {
+                        drawContent()
+                        drawFadedEdge(leftEdge = true)
+                        drawFadedEdge(leftEdge = false)
+                    }
                     .verticalScroll(rememberScrollState())
             ) {
                 items(podcasts, key = { it.id }) { podcast ->
@@ -309,15 +342,31 @@ private fun ColumnScope.EpisodesList(
                                 })
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            AsyncImage(
-                                model = episode.artworkUrl,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.FillBounds
-                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(72.dp)
+                            ) {
+                                AsyncImage(
+                                    model = episode.artworkUrl,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .aspectRatio(1f)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.FillBounds
+                                )
+                                val formattedEpisodeDate = remember(episode) { format(episode.dateTimePublished) }
+                                Text(
+                                    text = formattedEpisodeDate,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.inverseSurface,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.weight(1f)
@@ -390,6 +439,11 @@ private fun ColumnScope.EpisodesList(
             }
         }
     }
+}
+
+private fun format(dateTime: ZonedDateTime): String {
+    val pattern = if (ZonedDateTime.now(ZoneId.systemDefault()).year != dateTime.year) "MMM d, yyyy" else "MMM d"
+    return DateTimeFormatter.ofPattern(pattern).format(dateTime.toLocalDate())
 }
 
 @PodcasterPreview
