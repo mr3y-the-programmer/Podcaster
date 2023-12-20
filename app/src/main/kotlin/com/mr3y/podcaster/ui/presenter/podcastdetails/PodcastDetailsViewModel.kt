@@ -79,6 +79,7 @@ internal fun PodcastDetailsPresenter(
 ): PodcastDetailsUIState {
     var isPodcastLoading by remember { mutableStateOf(true) }
     var isEpisodesLoading by remember { mutableStateOf(true) }
+    var isRefreshing by remember { mutableStateOf(false) }
     var podcast: Podcast? by remember { mutableStateOf(null) }
     var episodes: List<Episode>? by remember { mutableStateOf(null) }
     var subscriptionState by remember { mutableStateOf(SubscriptionState.NotSubscribed) }
@@ -127,6 +128,7 @@ internal fun PodcastDetailsPresenter(
                 is PodcastDetailsUIEvent.Refresh -> {
                     val temp1 = podcast
                     if (temp1 != null) {
+                        isRefreshing = true
                         val result1 = repository.getPodcast(podcastId, true)
                         val result2 = repository.getEpisodesForPodcast(temp1.id, temp1.title, temp1.artworkUrl, true)
 
@@ -136,6 +138,7 @@ internal fun PodcastDetailsPresenter(
                         if (result2 != null) {
                             episodes = result2
                         }
+                        isRefreshing = false
                         refreshResult = when {
                             result1 != null && result2 != null -> RefreshResult.Ok
                             result1 == null && result2 == null -> RefreshResult.Error
@@ -185,6 +188,7 @@ internal fun PodcastDetailsPresenter(
         subscriptionState = subscriptionState,
         isSubscriptionStateInEditMode = isSubscriptionStateInEditMode,
         episodes = episodes,
+        isRefreshing = isRefreshing,
         refreshResult = refreshResult
     )
 }

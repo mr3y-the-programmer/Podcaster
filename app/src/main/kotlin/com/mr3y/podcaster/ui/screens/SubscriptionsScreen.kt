@@ -145,6 +145,7 @@ fun SubscriptionsScreen(
         }
     }
     PullToRefresh(
+        isRefreshingDone = !state.isRefreshing,
         onRefresh = onRefresh
     ) {
         Scaffold(
@@ -457,6 +458,7 @@ fun SubscriptionsScreenPreview(
                 SubscriptionsUIState(
                     isSubscriptionsLoading = false,
                     isEpisodesLoading = false,
+                    isRefreshing = false,
                     refreshResult = null,
                     subscriptions = Podcasts,
                     episodes = Episodes
@@ -485,6 +487,7 @@ fun EmptySubscriptionsScreenPreview() {
                 SubscriptionsUIState(
                     isSubscriptionsLoading = false,
                     isEpisodesLoading = false,
+                    isRefreshing = false,
                     refreshResult = null,
                     subscriptions = emptyList(),
                     episodes = emptyList()

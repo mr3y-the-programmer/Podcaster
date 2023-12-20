@@ -69,6 +69,7 @@ internal fun EpisodeDetailsPresenter(
     events: Flow<EpisodeDetailsUIEvent>
 ): EpisodeDetailsUIState {
     var isLoading by remember { mutableStateOf(true) }
+    var isRefreshing by remember { mutableStateOf(false) }
     var episode: Episode? by remember { mutableStateOf(null) }
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
 
@@ -91,11 +92,13 @@ internal fun EpisodeDetailsPresenter(
                 EpisodeDetailsUIEvent.Refresh -> {
                     val temp = episode
                     if (temp != null) {
+                        isRefreshing = true
                         val result = repository.getEpisode(episodeId, podcastArtworkUrl, true)
 
                         if (result != null) {
                             episode = result
                         }
+                        isRefreshing = false
                         refreshResult = if (result != null) RefreshResult.Ok else RefreshResult.Error
                     }
                 }
@@ -107,6 +110,7 @@ internal fun EpisodeDetailsPresenter(
     return EpisodeDetailsUIState(
         isLoading = isLoading,
         episode = episode,
+        isRefreshing = isRefreshing,
         refreshResult = refreshResult,
     )
 }

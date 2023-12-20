@@ -16,6 +16,7 @@ import com.mr3y.podcaster.ui.theme.primaryTertiary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PullToRefresh(
+    isRefreshingDone: Boolean,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primaryTertiary,
@@ -25,6 +26,11 @@ fun PullToRefresh(
     LaunchedEffect(state.isRefreshing) {
         if (state.isRefreshing) {
             onRefresh()
+        }
+    }
+
+    LaunchedEffect(isRefreshingDone) {
+        if (isRefreshingDone && state.isRefreshing) {
             state.endRefresh()
         }
     }

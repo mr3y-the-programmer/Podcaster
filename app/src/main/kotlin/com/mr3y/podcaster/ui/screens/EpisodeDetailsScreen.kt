@@ -146,6 +146,7 @@ fun EpisodeDetailsScreen(
         }
     }
     PullToRefresh(
+        isRefreshingDone = !state.isRefreshing,
         onRefresh = onRefresh
     ) {
         Scaffold(
@@ -388,6 +389,7 @@ fun EpisodeDetailsScreenPreview(
             state = EpisodeDetailsUIState(
                 isLoading = false,
                 episode = EpisodeWithDetails,
+                isRefreshing = false,
                 refreshResult = null
             ),
             onNavigateUp = {},
@@ -407,6 +409,7 @@ fun EpisodeDetailsErrorPreview() {
             state = EpisodeDetailsUIState(
                 isLoading = false,
                 episode = null,
+                isRefreshing = false,
                 refreshResult = null
             ),
             onNavigateUp = {},

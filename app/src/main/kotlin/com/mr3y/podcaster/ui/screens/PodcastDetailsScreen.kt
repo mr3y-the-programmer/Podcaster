@@ -201,6 +201,7 @@ fun PodcastDetailsScreen(
         }
     }
     PullToRefresh(
+        isRefreshingDone = !state.isRefreshing,
         onRefresh = onRefresh
     ) {
         Scaffold(
@@ -611,6 +612,7 @@ fun PodcastDetailsScreenPreview(
                 subscriptionState = SubscriptionState.NotSubscribed,
                 isSubscriptionStateInEditMode = false,
                 episodes = Episodes.take(4),
+                isRefreshing = false,
                 refreshResult = null
             ),
             onNavigateUp = {},
@@ -637,6 +639,7 @@ fun PodcastDetailsScreenErrorPreview() {
                 subscriptionState = SubscriptionState.NotSubscribed,
                 isSubscriptionStateInEditMode = false,
                 episodes = null,
+                isRefreshing = false,
                 refreshResult = null
             ),
             onNavigateUp = {},
@@ -663,6 +666,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 subscriptionState = SubscriptionState.NotSubscribed,
                 isSubscriptionStateInEditMode = false,
                 episodes = null,
+                isRefreshing = false,
                 refreshResult = null
             ),
             onNavigateUp = {},

@@ -6,6 +6,7 @@ import com.mr3y.podcaster.ui.presenter.RefreshResult
 data class EpisodeDetailsUIState(
     val isLoading: Boolean,
     val episode: Episode?,
+    val isRefreshing: Boolean,
     val refreshResult: RefreshResult?
 )
 

@@ -57,6 +57,7 @@ internal fun SubscriptionsPresenter(
 ): SubscriptionsUIState {
     var isSubscriptionsLoading by remember { mutableStateOf(true) }
     var isEpisodesLoading by remember { mutableStateOf(true) }
+    var isRefreshing by remember { mutableStateOf(false) }
     val podcasts by repository.getSubscriptions().collectAsState(initial = emptyList())
     val episodes by repository.getEpisodesForPodcasts(podcasts.map { it.id }.toSet(), limit = 200).collectAsState(initial = emptyList())
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
@@ -92,6 +93,7 @@ internal fun SubscriptionsPresenter(
         events.collect { event ->
             when(event) {
                 is SubscriptionsUIEvent.Refresh -> {
+                    isRefreshing = true
                     val aggregatedRefreshResults = podcasts.map { podcast ->
                         async {
                             val result1 = repository.syncRemotePodcastWithLocal(podcast.id)
@@ -100,6 +102,7 @@ internal fun SubscriptionsPresenter(
                         }
                     }.awaitAll()
 
+                    isRefreshing = false
                     refreshResult = when {
                         aggregatedRefreshResults.all { isSuccessful -> isSuccessful } -> RefreshResult.Ok
                         !aggregatedRefreshResults.any { isSuccessful -> isSuccessful } -> RefreshResult.Error
@@ -114,6 +117,7 @@ internal fun SubscriptionsPresenter(
     return SubscriptionsUIState(
         isSubscriptionsLoading = isSubscriptionsLoading,
         isEpisodesLoading = isEpisodesLoading,
+        isRefreshing = isRefreshing,
         subscriptions = podcasts,
         episodes = episodes,
         refreshResult = refreshResult
