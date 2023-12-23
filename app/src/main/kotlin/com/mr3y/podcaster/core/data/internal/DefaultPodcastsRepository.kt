@@ -6,7 +6,9 @@ import com.github.michaelbull.result.mapBoth
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.local.dao.PodcastsDao
 import com.mr3y.podcaster.core.local.dao.RecentSearchesDao
+import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.network.PodcastIndexClient
 import com.mr3y.podcaster.core.network.utils.mapToEpisode
@@ -77,6 +79,8 @@ class DefaultPodcastsRepository @Inject constructor(
         }
     }
 
+    override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> = podcastsDao.getCurrentlyPlayingEpisode()
+
     override fun getDownloadedEpisodes(): Flow<List<Episode>> = podcastsDao.getDownloadedEpisodes()
 
     override fun downloadEpisode(episodeId: Long) {
@@ -85,6 +89,14 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun cancelDownloadingEpisode(episodeId: Long) {
         TODO("Not yet implemented")
+    }
+
+    override fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode) {
+        podcastsDao.setCurrentlyPlayingEpisode(episode)
+    }
+
+    override fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus) {
+        podcastsDao.updateCurrentlyPlayingEpisodeStatus(newStatus)
     }
 
     override fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long) {

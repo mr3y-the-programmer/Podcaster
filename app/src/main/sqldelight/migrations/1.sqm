@@ -1,0 +1,6 @@
+import com.mr3y.podcaster.core.model.PlayingStatus;
+
+CREATE TABLE IF NOT EXISTS currentlyPlayingEntity (
+    episodeId INTEGER PRIMARY KEY NOT NULL,
+    playingStatus TEXT AS PlayingStatus NOT NULL
+);

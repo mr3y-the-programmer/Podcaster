@@ -1,7 +1,9 @@
 package com.mr3y.podcaster.core.data
 
 import com.github.michaelbull.result.Result
+import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.flow.Flow
 
@@ -21,11 +23,17 @@ interface PodcastsRepository {
 
     suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode?
 
+    fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
+
     fun getDownloadedEpisodes(): Flow<List<Episode>>
 
     fun downloadEpisode(episodeId: Long)
 
     fun cancelDownloadingEpisode(episodeId: Long)
+
+    fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode)
+
+    fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 

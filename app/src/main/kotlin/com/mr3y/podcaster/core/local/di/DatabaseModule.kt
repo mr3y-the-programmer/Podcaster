@@ -1,12 +1,15 @@
 package com.mr3y.podcaster.core.local.di
 
 import android.content.Context
+import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import com.mr3y.podcaster.CurrentlyPlayingEntity
 import com.mr3y.podcaster.EpisodeEntity
 import com.mr3y.podcaster.PodcastEntity
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.GenresColumnAdapter
+import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +45,8 @@ object DatabaseModule {
                 durationInSecAdapter = IntColumnAdapter,
                 episodeNumAdapter = IntColumnAdapter,
                 progressInSecAdapter = IntColumnAdapter
-            )
+            ),
+            currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter())
         )
     }
 

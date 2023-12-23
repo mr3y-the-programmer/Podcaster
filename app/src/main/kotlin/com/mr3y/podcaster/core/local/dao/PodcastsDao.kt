@@ -3,13 +3,16 @@ package com.mr3y.podcaster.core.local.dao
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.mr3y.podcaster.CurrentlyPlayingEntity
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.di.IODispatcher
 import com.mr3y.podcaster.core.local.mapToEpisode
 import com.mr3y.podcaster.core.local.mapToPodcast
 import com.mr3y.podcaster.core.local.toEpisodeEntity
 import com.mr3y.podcaster.core.local.toPodcastEntity
+import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -42,9 +45,15 @@ interface PodcastsDao {
 
     fun getEpisode(episodeId: Long): Episode?
 
+    fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
+
     fun isEpisodeAvailable(episodeId: Long): Flow<Boolean>
 
     fun isEpisodeAvailableNonObservable(episodeId: Long): Boolean
+
+    fun setCurrentlyPlayingEpisode(currentlyPlaying: CurrentlyPlayingEpisode)
+
+    fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
 
     fun upsertEpisode(episode: Episode)
 
@@ -131,6 +140,15 @@ class DefaultPodcastsDao @Inject constructor(
             .executeAsOneOrNull()
     }
 
+    override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> {
+        return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus ->
+            val episode = getEpisode(episodeId)!!
+            CurrentlyPlayingEpisode(episode, playingStatus)
+        }
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
+    }
+
     override fun isEpisodeAvailable(episodeId: Long): Flow<Boolean> {
         return database.episodeEntityQueries.hasEpisode(episodeId)
             .asFlow()
@@ -142,6 +160,24 @@ class DefaultPodcastsDao @Inject constructor(
         return database.episodeEntityQueries.hasEpisode(episodeId)
             .executeAsOneOrNull()
             .let { it == 1L }
+    }
+
+    override fun setCurrentlyPlayingEpisode(currentlyPlaying: CurrentlyPlayingEpisode) {
+        val currentlyPlayingQueries = database.currentlyPlayingEntityQueries
+        val episode = currentlyPlaying.episode
+        if (!isEpisodeAvailableNonObservable(episode.id)) {
+            upsertEpisode(episode)
+        }
+        currentlyPlayingQueries.transaction {
+            if (currentlyPlayingQueries.hasCurrentlyPlayingEpisode().executeAsOneOrNull().let { it == 1L }) {
+                currentlyPlayingQueries.deleteCurrentlyPlayingEpisode()
+            }
+            currentlyPlayingQueries.updateCurrentlyPlayingEpisode(CurrentlyPlayingEntity(episode.id, currentlyPlaying.playingStatus))
+        }
+    }
+
+    override fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus) {
+        return database.currentlyPlayingEntityQueries.updateCurrentlyPlayingEpisodeStatus(newStatus)
     }
 
     override fun upsertEpisode(episode: Episode) {

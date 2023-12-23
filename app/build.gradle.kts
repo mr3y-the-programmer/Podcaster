@@ -82,6 +82,8 @@ sqldelight {
     databases {
         create("PodcasterDatabase") {
             packageName.set("com.mr3y.podcaster")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+            verifyMigrations.set(true)
         }
     }
 }
