@@ -9,7 +9,7 @@ core-ktx = "1.9.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
-lifecycle-runtime = "2.6.2"
+lifecycle-runtime = "2.7.0-rc02"
 activity-compose = "1.8.1"
 compose-bom = "2023.10.01"
 compose-richeditor = "1.0.0-beta05"
@@ -20,6 +20,7 @@ compose-compiler = "1.5.4"
 navigation = "2.7.5"
 navigation-typed = "0.9.0"
 molecule = "1.3.0"
+media3 = "1.2.0"
 coil = "2.5.0"
 ktor = "2.3.5"
 result = "1.1.18"
@@ -49,6 +50,8 @@ material-icons-extended = { group = "androidx.compose.material", name = "materia
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 navigation-typed = { group = "com.kiwi.navigation-compose.typed", name = "core", version.ref = "navigation-typed" }
 molecule = { group = "app.cash.molecule", name = "molecule-runtime", version.ref = "molecule" }
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }

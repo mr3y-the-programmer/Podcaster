@@ -124,6 +124,9 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
 
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.common)
+
     implementation(libs.sqldelight.driver)
     implementation(libs.sqldelight.flowext)
     implementation(libs.sqldelight.primitiveadapters)
