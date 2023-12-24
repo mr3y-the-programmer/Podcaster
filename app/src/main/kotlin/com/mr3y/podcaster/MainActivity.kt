@@ -11,12 +11,18 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.screens.HomeScreen
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var podcasterAppState: PodcasterAppState
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,6 +38,7 @@ class MainActivity : ComponentActivity() {
             }
             PodcasterTheme {
                 HomeScreen(
+                    appState = podcasterAppState,
                     modifier = Modifier.fillMaxSize()
                 )
             }

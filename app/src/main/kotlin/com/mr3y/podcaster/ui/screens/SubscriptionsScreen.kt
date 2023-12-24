@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.ArrowDownward
@@ -40,6 +43,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -71,11 +75,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.model.dateTimePublished
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
@@ -98,10 +105,14 @@ fun SubscriptionsScreen(
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
+    appState: PodcasterAppState,
+    contentPadding: PaddingValues,
+    excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
     viewModel: SubscriptionsViewModel = hiltViewModel()
 ) {
     val subscriptionsState by viewModel.state.collectAsStateWithLifecycle()
+    val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
     SubscriptionsScreen(
         state = subscriptionsState,
         onPodcastClick = onPodcastClick,
@@ -110,6 +121,12 @@ fun SubscriptionsScreen(
         onNavDrawerClick = onNavDrawerClick,
         onRefresh = viewModel::refresh,
         onRefreshResultConsumed = viewModel::consumeRefreshResult,
+        onPlayEpisode = appState::play,
+        onPause = appState::pause,
+        currentlyPlayingEpisode = currentlyPlayingEpisode,
+        onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
+        externalContentPadding = contentPadding,
+        excludedWindowInsets = excludedWindowInsets,
         modifier = modifier
     )
 }
@@ -121,13 +138,20 @@ fun SubscriptionsScreen(
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
+    onPlayEpisode: (Episode) -> Unit,
+    onPause: () -> Unit,
+    currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
+    onConsumeErrorPlayingStatus: () -> Unit,
+    externalContentPadding: PaddingValues,
+    excludedWindowInsets: WindowInsets?,
     onRefresh: () -> Unit,
     onRefreshResultConsumed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
-    LaunchedEffect(state.refreshResult) {
+    val playingStatus = currentlyPlayingEpisode?.playingStatus
+    LaunchedEffect(state.refreshResult, playingStatus) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
@@ -143,6 +167,15 @@ fun SubscriptionsScreen(
             }
             is RefreshResult.Ok, null -> {}
         }
+        when(playingStatus) {
+            PlayingStatus.Error -> {
+                snackBarHostState.showSnackbar(
+                    message = strings.generic_error_message
+                )
+                onConsumeErrorPlayingStatus()
+            }
+            else -> {}
+        }
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
@@ -157,7 +190,13 @@ fun SubscriptionsScreen(
                 )
             },
             containerColor = MaterialTheme.colorScheme.surface,
-            snackbarHost = { SnackbarHost(snackBarHostState) },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    modifier = Modifier.padding(externalContentPadding)
+                )
+            },
+            contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
             modifier = modifier
         ) { contentPadding ->
             Box(
@@ -179,7 +218,11 @@ fun SubscriptionsScreen(
                     EpisodesList(
                         isLoading = state.isEpisodesLoading,
                         episodes = state.episodes,
-                        onEpisodeClick = onEpisodeClick
+                        contentPadding = externalContentPadding,
+                        onEpisodeClick = onEpisodeClick,
+                        onPlayEpisode = onPlayEpisode,
+                        onPause = onPause,
+                        currentlyPlayingEpisode = currentlyPlayingEpisode
                     )
                 }
             }
@@ -308,7 +351,11 @@ private fun ColumnScope.SubscriptionsHeader(
 private fun ColumnScope.EpisodesList(
     isLoading: Boolean,
     episodes: List<Episode>,
-    onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit
+    contentPadding: PaddingValues,
+    onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
+    onPlayEpisode: (Episode) -> Unit,
+    onPause: () -> Unit,
+    currentlyPlayingEpisode: CurrentlyPlayingEpisode?
 ) {
     Card(
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -327,6 +374,7 @@ private fun ColumnScope.EpisodesList(
             if (episodes.isNotEmpty()) {
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize()
                 ) {
                     itemsIndexed(episodes, key = { _, episode -> episode.id }) { index, episode ->
@@ -357,7 +405,7 @@ private fun ColumnScope.EpisodesList(
                                         .clip(RoundedCornerShape(8.dp)),
                                     contentScale = ContentScale.FillBounds
                                 )
-                                val formattedEpisodeDate = remember(episode) { format(episode.dateTimePublished) }
+                                val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
                                 Text(
                                     text = formattedEpisodeDate,
                                     style = MaterialTheme.typography.bodySmall,
@@ -390,18 +438,33 @@ private fun ColumnScope.EpisodesList(
                             Column(
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
+                                val isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id
+                                val playingStatus = currentlyPlayingEpisode?.playingStatus
                                 IconButton(
-                                    onClick = { /*TODO*/ },
+                                    onClick = {
+                                        if (!isSelected || playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
+                                            onPlayEpisode(episode)
+                                        } else {
+                                            onPause()
+                                        }
+                                    },
                                     modifier = Modifier
                                         .size(48.dp)
                                         .clip(CircleShape)
                                         .padding(8.dp),
                                     colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryPrimary, contentColor = MaterialTheme.colorScheme.onTertiaryPrimary)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.PlayArrow,
-                                        contentDescription = null,
-                                    )
+                                    if (isSelected && (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading)) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Pause,
+                                            contentDescription = null,
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Filled.PlayArrow,
+                                            contentDescription = null,
+                                        )
+                                    }
                                 }
                                 OutlinedIconButton(
                                     onClick = { /*TODO*/ },
@@ -473,6 +536,12 @@ fun SubscriptionsScreenPreview(
             onNavDrawerClick = {},
             onRefresh = {},
             onRefreshResultConsumed = {},
+            onPlayEpisode = {},
+            onPause = {},
+            currentlyPlayingEpisode = null,
+            onConsumeErrorPlayingStatus = {},
+            externalContentPadding = PaddingValues(0.dp),
+            excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -502,6 +571,12 @@ fun EmptySubscriptionsScreenPreview() {
             onNavDrawerClick = {},
             onRefresh = {},
             onRefreshResultConsumed = {},
+            onPlayEpisode = {},
+            onPause = {},
+            externalContentPadding = PaddingValues(0.dp),
+            excludedWindowInsets = null,
+            currentlyPlayingEpisode = null,
+            onConsumeErrorPlayingStatus = {},
             modifier = Modifier.fillMaxSize()
         )
     }

@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,9 +26,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
@@ -43,6 +47,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -75,6 +80,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.presenter.explore.ExploreUIState
 import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
 import com.mr3y.podcaster.ui.presenter.explore.SearchResult
@@ -89,6 +95,8 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 fun ExploreScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
     onNavDrawerClick: () -> Unit,
+    contentPadding: PaddingValues,
+    excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
     viewModel: ExploreViewModel = hiltViewModel()
 ) {
@@ -102,6 +110,8 @@ fun ExploreScreen(
         onConsumeResult = viewModel::consumeResult,
         onPodcastClick = onPodcastClick,
         onNavDrawerClick = onNavDrawerClick,
+        externalContentPadding = contentPadding,
+        excludedWindowInsets = excludedWindowInsets,
         modifier = modifier
     )
 }
@@ -116,6 +126,8 @@ fun ExploreScreen(
     onConsumeResult: () -> Unit,
     onPodcastClick: (podcastId: Long) -> Unit,
     onNavDrawerClick: () -> Unit,
+    externalContentPadding: PaddingValues,
+    excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -129,7 +141,8 @@ fun ExploreScreen(
                     .padding(end = 16.dp)
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState, Modifier.padding(externalContentPadding)) },
+        contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
@@ -163,6 +176,7 @@ fun ExploreScreen(
                     focusManager.clearFocus()
                 },
                 onDeleteSearchQuery = onDeleteRecentSearchQuery,
+                contentPadding = externalContentPadding,
                 onCloseClick = {
                     focusManager.clearFocus()
                 }
@@ -178,6 +192,7 @@ fun ExploreScreen(
                     PodcastsList(
                         podcasts = state.searchResult.podcasts,
                         onPodcastClick = onPodcastClick,
+                        externalContentPadding = externalContentPadding,
                         modifier = contentModifier
                     )
                 }
@@ -308,6 +323,7 @@ private fun RecentSearches(
     onSearchQueryClick: (String) -> Unit,
     onDeleteSearchQuery: (String) -> Unit,
     onCloseClick: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -318,7 +334,10 @@ private fun RecentSearches(
         modifier = modifier
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(contentPadding)
+                .verticalScroll(rememberScrollState())
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -399,6 +418,7 @@ private fun RecentSearches(
 private fun PodcastsList(
     podcasts: List<Podcast>,
     onPodcastClick: (podcastId: Long) -> Unit,
+    externalContentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val strings = LocalStrings.current
@@ -417,7 +437,7 @@ private fun PodcastsList(
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp) + externalContentPadding,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(
@@ -499,6 +519,8 @@ fun ExploreScreenInitialPreview(
             onRetry = {},
             onDeleteRecentSearchQuery = {},
             onConsumeResult = {},
+            externalContentPadding = PaddingValues(0.dp),
+            excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -526,6 +548,8 @@ fun ExploreScreenPodcastsListPreview() {
             onRetry = {},
             onDeleteRecentSearchQuery = {},
             onConsumeResult = {},
+            externalContentPadding = PaddingValues(0.dp),
+            excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -553,6 +577,8 @@ fun ExploreScreenErrorPreview() {
             onRetry = {},
             onDeleteRecentSearchQuery = {},
             onConsumeResult = {},
+            externalContentPadding = PaddingValues(0.dp),
+            excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize()
         )
     }

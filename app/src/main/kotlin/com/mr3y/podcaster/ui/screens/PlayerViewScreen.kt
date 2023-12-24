@@ -2,22 +2,31 @@ package com.mr3y.podcaster.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forward30
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,8 +44,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +58,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
@@ -192,12 +207,18 @@ fun ExpandedPlayerViewScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CollapsedPlayerView(
+    currentlyPlayingEpisode: CurrentlyPlayingEpisode,
+    onResume: () -> Unit,
+    onPause: () -> Unit,
+    contentWindowInsets: WindowInsets,
     modifier: Modifier = Modifier
 ) {
+    val (episode, playingStatus) = currentlyPlayingEpisode
     Card(
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0), bottomEnd = CornerSize(0)),
         modifier = modifier
     ) {
         Row(
@@ -205,10 +226,11 @@ fun CollapsedPlayerView(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
+                .windowInsetsPadding(contentWindowInsets)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             AsyncImage(
-                model = EpisodeWithDetails.artworkUrl,
+                model = episode.artworkUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
@@ -227,29 +249,46 @@ fun CollapsedPlayerView(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = EpisodeWithDetails.title,
+                    text = episode.title,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Normal,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
                 )
             }
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape),
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryPrimary,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryPrimary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp)
-                )
+            if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
+                IconButton(
+                    onClick = onResume,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryPrimary,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            } else {
+                OutlinedIconButton(
+                    onClick = onPause,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(8.dp),
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Pause,
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }
@@ -274,6 +313,13 @@ fun CollapsedPlayerViewPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         CollapsedPlayerView(
+            currentlyPlayingEpisode = CurrentlyPlayingEpisode(
+                episode = EpisodeWithDetails,
+                playingStatus = PlayingStatus.Paused
+            ),
+            onResume = {},
+            onPause = {},
+            contentWindowInsets = WindowInsets.navigationBars,
             modifier = Modifier.padding(16.dp)
         )
     }
