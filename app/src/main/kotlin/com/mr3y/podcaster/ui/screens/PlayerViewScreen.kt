@@ -61,6 +61,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
@@ -258,38 +259,14 @@ fun CollapsedPlayerView(
                     modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
                 )
             }
-            if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                IconButton(
-                    onClick = onResume,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryPrimary,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryPrimary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            } else {
-                OutlinedIconButton(
-                    onClick = onPause,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(8.dp),
-                    shape = CircleShape,
-                    colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Pause,
-                        contentDescription = null,
-                    )
-                }
-            }
+            PlayPauseCompactButton(
+                isSelected = true,
+                playingStatus = playingStatus,
+                onPlay = onResume,
+                onPause = onPause,
+                contentPadding = 0.dp,
+                iconSize = 32.dp
+            )
         }
     }
 }

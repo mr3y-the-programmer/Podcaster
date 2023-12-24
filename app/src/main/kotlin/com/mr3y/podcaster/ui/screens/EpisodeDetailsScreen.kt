@@ -74,6 +74,8 @@ import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
+import com.mr3y.podcaster.ui.components.PlayPauseExpandedButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -230,7 +232,7 @@ fun EpisodeDetailsScreen(
                             onPlay = onPlayEpisode,
                             onPause = onPause,
                             isSelected = isSelected,
-                            playingStatus = playingStatus ?: PlayingStatus.Paused,
+                            playingStatus = playingStatus,
                             dominantColor = dominantColorState.color,
                             onState = { state ->
                                 when (state) {
@@ -284,7 +286,7 @@ private fun BoxScope.Header(
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
     isSelected: Boolean,
-    playingStatus: PlayingStatus,
+    playingStatus: PlayingStatus?,
     dominantColor: Color,
     onState: ((AsyncImagePainter.State) -> Unit)?
 ) {
@@ -327,78 +329,23 @@ private fun BoxScope.Header(
         horizontalArrangement = Arrangement.End
     ) {
         if (episode.durationInSec != null && episode.durationInSec > 10) {
-            ElevatedButton(
-                onClick = {
-                    if (!isSelected || playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                        onPlay(episode)
-                    } else {
-                        onPause()
-                    }
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.elevatedButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
-                ),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    top = 8.dp,
-                    end = 24.dp,
-                    bottom = 8.dp
-                )
-            ) {
-                if (isSelected && (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading)) {
-                    Icon(
-                        imageVector = Icons.Filled.Pause,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(end = 4.dp)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(end = 4.dp)
-                    )
-                }
-                Text(
-                    text = "${episode.durationInSec.toDuration(DurationUnit.SECONDS)}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            PlayPauseExpandedButton(
+                isSelected = isSelected,
+                playingStatus = playingStatus,
+                onPlay = { onPlay(episode) },
+                onPause = onPause,
+                durationInSec = episode.durationInSec,
+                progressInSec = episode.progressInSec
+            )
         } else {
-            IconButton(
-                onClick = {
-                    if (!isSelected || playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                        onPlay(episode)
-                    } else {
-                        onPause()
-                    }
-                },
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .padding(8.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
-                )
-            ) {
-                if (isSelected && (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading)) {
-                    Icon(
-                        imageVector = Icons.Filled.Pause,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                    )
-                }
-            }
+            PlayPauseCompactButton(
+                isSelected = isSelected,
+                playingStatus = playingStatus,
+                onPlay = { onPlay(episode) },
+                onPause = onPause,
+                containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
+            )
         }
         Spacer(modifier = Modifier.width(8.dp))
         OutlinedIconButton(

@@ -121,6 +121,7 @@ import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -605,34 +606,12 @@ private fun LazyItemScope.Episode(
         Column(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id
-            val playingStatus = currentlyPlayingEpisode?.playingStatus
-            IconButton(
-                onClick = {
-                    if (!isSelected || playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                        onPlay(episode)
-                    } else {
-                        onPause()
-                    }
-                },
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .padding(8.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryPrimary, contentColor = MaterialTheme.colorScheme.onTertiaryPrimary)
-            ) {
-                if (isSelected && (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading)) {
-                    Icon(
-                        imageVector = Icons.Filled.Pause,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                    )
-                }
-            }
+            PlayPauseCompactButton(
+                isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
+                playingStatus = currentlyPlayingEpisode?.playingStatus,
+                onPlay = { onPlay(episode) },
+                onPause = onPause
+            )
             OutlinedIconButton(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
