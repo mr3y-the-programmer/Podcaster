@@ -17,6 +17,7 @@ import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface PodcastsDao {
@@ -54,6 +55,8 @@ interface PodcastsDao {
     fun setCurrentlyPlayingEpisode(currentlyPlaying: CurrentlyPlayingEpisode)
 
     fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
+
+    suspend fun updateCurrentlyPlayingEpisodeSpeed(newSpeed: Float)
 
     fun upsertEpisode(episode: Episode)
 
@@ -141,9 +144,9 @@ class DefaultPodcastsDao @Inject constructor(
     }
 
     override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> {
-        return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus ->
+        return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus, playingSpeed ->
             val episode = getEpisode(episodeId)!!
-            CurrentlyPlayingEpisode(episode, playingStatus)
+            CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed)
         }
             .asFlow()
             .mapToOneOrNull(dispatcher)
@@ -172,12 +175,16 @@ class DefaultPodcastsDao @Inject constructor(
             if (currentlyPlayingQueries.hasCurrentlyPlayingEpisode().executeAsOneOrNull().let { it == 1L }) {
                 currentlyPlayingQueries.deleteCurrentlyPlayingEpisode()
             }
-            currentlyPlayingQueries.updateCurrentlyPlayingEpisode(CurrentlyPlayingEntity(episode.id, currentlyPlaying.playingStatus))
+            currentlyPlayingQueries.updateCurrentlyPlayingEpisode(CurrentlyPlayingEntity(episode.id, currentlyPlaying.playingStatus, currentlyPlaying.playingSpeed))
         }
     }
 
     override fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus) {
         return database.currentlyPlayingEntityQueries.updateCurrentlyPlayingEpisodeStatus(newStatus)
+    }
+
+    override suspend fun updateCurrentlyPlayingEpisodeSpeed(newSpeed: Float) = withContext(dispatcher) {
+        database.currentlyPlayingEntityQueries.updateCurrentlyPlayingEpisodeSpeed(newSpeed)
     }
 
     override fun upsertEpisode(episode: Episode) {

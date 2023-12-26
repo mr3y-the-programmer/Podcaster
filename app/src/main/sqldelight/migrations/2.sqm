@@ -1,0 +1,2 @@
+
+ALTER TABLE currentlyPlayingEntity ADD COLUMN playingSpeed REAL AS kotlin.Float DEFAULT 1.0 NOT NULL;

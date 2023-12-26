@@ -2,7 +2,8 @@ import com.mr3y.podcaster.core.model.PlayingStatus;
 
 CREATE TABLE IF NOT EXISTS currentlyPlayingEntity (
     episodeId INTEGER PRIMARY KEY NOT NULL,
-    playingStatus TEXT AS PlayingStatus NOT NULL
+    playingStatus TEXT AS PlayingStatus NOT NULL,
+    playingSpeed REAL AS kotlin.Float DEFAULT 1.0 NOT NULL
 );
 
 getCurrentlyPlayingEpisode:
@@ -12,10 +13,13 @@ hasCurrentlyPlayingEpisode:
 SELECT 1 FROM currentlyPlayingEntity;
 
 updateCurrentlyPlayingEpisode:
-INSERT OR REPLACE INTO currentlyPlayingEntity(episodeId, playingStatus) VALUES ?;
+INSERT OR REPLACE INTO currentlyPlayingEntity(episodeId, playingStatus, playingSpeed) VALUES ?;
 
 updateCurrentlyPlayingEpisodeStatus:
 UPDATE currentlyPlayingEntity SET playingStatus = :playingStatus;
+
+updateCurrentlyPlayingEpisodeSpeed:
+UPDATE currentlyPlayingEntity SET playingSpeed = :playingSpeed;
 
 deleteCurrentlyPlayingEpisode:
 DELETE FROM currentlyPlayingEntity;

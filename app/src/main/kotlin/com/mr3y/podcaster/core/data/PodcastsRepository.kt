@@ -35,6 +35,8 @@ interface PodcastsRepository {
 
     fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
 
+    suspend fun updateCurrentlyPlayingEpisodeSpeed(newSpeed: Float)
+
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 
     fun subscribeToPodcast(podcast: Podcast, episodes: List<Episode>)

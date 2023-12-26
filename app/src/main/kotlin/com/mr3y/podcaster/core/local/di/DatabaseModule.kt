@@ -2,6 +2,7 @@ package com.mr3y.podcaster.core.local.di
 
 import android.content.Context
 import app.cash.sqldelight.EnumColumnAdapter
+import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.mr3y.podcaster.CurrentlyPlayingEntity
@@ -46,7 +47,7 @@ object DatabaseModule {
                 episodeNumAdapter = IntColumnAdapter,
                 progressInSecAdapter = IntColumnAdapter
             ),
-            currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter())
+            currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter)
         )
     }
 
