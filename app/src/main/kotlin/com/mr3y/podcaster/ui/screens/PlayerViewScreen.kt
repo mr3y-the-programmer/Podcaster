@@ -1,9 +1,14 @@
 package com.mr3y.podcaster.ui.screens
 
-import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,12 +29,8 @@ import androidx.compose.material.icons.filled.Forward30
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Replay10
-import androidx.compose.material.icons.outlined.ArrowDownward
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -41,25 +42,23 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
-import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -67,16 +66,29 @@ import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
-import com.mr3y.podcaster.ui.theme.onTertiaryPrimary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
-import com.mr3y.podcaster.ui.theme.tertiaryPrimary
+import java.text.DecimalFormat
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+
+val twoDigitsFormatter = DecimalFormat("00")
 
 @Composable
-fun ExpandedPlayerViewScreen(
+fun ExpandedPlayerView(
+    currentlyPlayingEpisode: CurrentlyPlayingEpisode,
+    onResume: () -> Unit,
+    onPause: () -> Unit,
+    onForward: (Int) -> Unit,
+    onReplay: (Int) -> Unit,
+    onPlaybackSpeedChange: (oldSpeed: Float) -> Float,
+    progress: Int,
+    onSeeking: (Int) -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val (episode, playingStatus, playbackSpeed) = currentlyPlayingEpisode
+    BackHandler(onBack = onBack)
     Scaffold(
-        // TODO: set the color to a gradient of artwork's dominant color & transparent.
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) { contentPadding ->
@@ -90,13 +102,13 @@ fun ExpandedPlayerViewScreen(
                 .padding(horizontal = 16.dp)
         ) {
             AsyncImage(
-                model = EpisodeWithDetails.artworkUrl,
+                model = episode.artworkUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.size(360.dp)
             )
             Text(
-                text = EpisodeWithDetails.title,
+                text = episode.title,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Medium,
@@ -105,13 +117,21 @@ fun ExpandedPlayerViewScreen(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = EpisodeWithDetails.podcastTitle ?: "",
+                text = episode.podcastTitle ?: "",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium
             )
             Slider(
-                value = 0.5f,
-                onValueChange = {},
+                value = if (episode.durationInSec != null) {
+                        progress.toFloat().div(episode.durationInSec.toFloat())
+                    } else {
+                        1f
+                    },
+                onValueChange = { updatedValue ->
+                    if (episode.durationInSec != null) {
+                        onSeeking((updatedValue * episode.durationInSec).toInt())
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primaryTertiary,
@@ -119,37 +139,56 @@ fun ExpandedPlayerViewScreen(
                     activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f)
                 )
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            ) {
-                Text(
-                    text = "00:00",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                )
-                Text(
-                    text = "53:36",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                )
+            if (episode.durationInSec != null && episode.durationInSec > 30) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = progress.formatAsDuration(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    )
+                    Text(
+                        text = episode.durationInSec.formatAsDuration(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    )
+                }
             }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                TextButton(
-                    onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface)
-                ) {
-                    Text(
-                        text = "1.0x",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
+                AnimatedContent(
+                    targetState = currentSpeed,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            (slideInHorizontally { it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { -it } + fadeOut(animationSpec = tween(90)))
+                        } else {
+                            (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
+                        }
+                    },
+                    label = "Animated Playback Speed"
+                ) { targetState ->
+                    TextButton(
+                        onClick = {
+                            currentSpeed = onPlaybackSpeedChange(targetState)
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface)
+                    ) {
+                        Text(
+                            text = "${targetState}x",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
+
                 Spacer(modifier = Modifier.weight(1f))
                 OutlinedIconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onReplay(10) },
                     modifier = Modifier.size(56.dp),
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonColors(
@@ -168,7 +207,13 @@ fun ExpandedPlayerViewScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
+                            onResume()
+                        } else {
+                            onPause()
+                        }
+                    },
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape),
@@ -177,17 +222,25 @@ fun ExpandedPlayerViewScreen(
                         contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp)
-                    )
+                    if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Pause,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 OutlinedIconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onForward(30) },
                     modifier = Modifier.size(56.dp),
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonColors(
@@ -271,13 +324,38 @@ fun CollapsedPlayerView(
     }
 }
 
+private fun Int.formatAsDuration(): String {
+    return toDuration(DurationUnit.SECONDS).toComponents { hours, minutes, seconds, _ ->
+        val minutesFormatted = twoDigitsFormatter.format(minutes)
+        val secondsFormatted = twoDigitsFormatter.format(seconds)
+        when {
+            hours > 0 -> "$hours:$minutesFormatted:$secondsFormatted"
+            minutes > 0 -> "$minutesFormatted:$secondsFormatted"
+            else -> "00:$secondsFormatted"
+        }
+    }
+}
+
 @PodcasterPreview
 @Composable
-fun ExpandedPlayerViewScreenPreview(
+fun ExpandedPlayerViewPreview(
     @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
-        ExpandedPlayerViewScreen(
+        ExpandedPlayerView(
+            currentlyPlayingEpisode = CurrentlyPlayingEpisode(
+                episode = EpisodeWithDetails,
+                playingStatus = PlayingStatus.Paused,
+                playingSpeed = 1.0f
+            ),
+            onResume = {},
+            onPause = {},
+            onForward = {},
+            onReplay = {},
+            onPlaybackSpeedChange = { it },
+            progress = 1150,
+            onSeeking = {},
+            onBack = {},
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -292,7 +370,8 @@ fun CollapsedPlayerViewPreview(
         CollapsedPlayerView(
             currentlyPlayingEpisode = CurrentlyPlayingEpisode(
                 episode = EpisodeWithDetails,
-                playingStatus = PlayingStatus.Paused
+                playingStatus = PlayingStatus.Paused,
+                playingSpeed = 1.0f
             ),
             onResume = {},
             onPause = {},
