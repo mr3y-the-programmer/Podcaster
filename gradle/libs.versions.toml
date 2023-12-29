@@ -21,6 +21,7 @@ navigation = "2.7.5"
 navigation-typed = "0.9.0"
 molecule = "1.3.0"
 media3 = "1.2.0"
+coroutines = "1.7.3"
 coil = "2.5.0"
 ktor = "2.3.5"
 result = "1.1.18"
@@ -52,6 +53,8 @@ navigation-typed = { group = "com.kiwi.navigation-compose.typed", name = "core",
 molecule = { group = "app.cash.molecule", name = "molecule-runtime", version.ref = "molecule" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
+media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutines" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }

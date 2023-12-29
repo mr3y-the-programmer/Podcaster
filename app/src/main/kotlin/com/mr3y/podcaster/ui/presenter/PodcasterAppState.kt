@@ -1,19 +1,23 @@
 package com.mr3y.podcaster.ui.presenter
 
+import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.service.PlaybackService
 import com.mr3y.podcaster.ui.presenter.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -33,21 +37,31 @@ class PodcasterAppState @Inject constructor(
     @ApplicationScope private val applicationScope: CoroutineScope
 ) {
 
-    private var exoPlayer: ExoPlayer? = null
+    private var controller: MediaController? = null
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
 
     val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisode()
         .onEach {
             if (it != null) {
-                exoPlayer?.apply {
+                controller?.apply {
                     val (episode, playingStatus, playingSpeed) = it
                     val uri = Uri.Builder()
                         .encodedPath(episode.enclosureUrl)
                         .build()
+                    val mediaMetadata = MediaMetadata.Builder()
+                        .setTitle(episode.title)
+                        .setArtist(episode.podcastTitle)
+                        .setIsBrowsable(false)
+                        .setIsPlayable(true)
+                        .setArtworkUri(Uri.parse(episode.artworkUrl))
+                        .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+                        .build()
                     val mediaItem = MediaItem.fromUri(uri)
-                    val internetDataSource =
-                        ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory())
-                            .createMediaSource(mediaItem)
-                    setMediaSource(internetDataSource)
+                        .buildUpon()
+                        .setMediaId(episode.id.toString())
+                        .setMediaMetadata(mediaMetadata)
+                        .build()
+                    setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
                     _trackProgress.update { episode.progressInSec ?: 0 }
                     if (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading) {
                         prepare()
@@ -75,12 +89,9 @@ class PodcasterAppState @Inject constructor(
     init {
         applicationScope.launch {
             while (true) {
-                val progressInSec = exoPlayer?.currentPosition?.div(1000)
-                if (progressInSec != null && progressInSec != 0L) {
-                    currentlyPlayingEpisode.value?.let { (episode, _, _) ->
-                        _trackProgress.update { progressInSec.toInt() }
-                        podcastsRepository.updateEpisodePlaybackProgress(progressInSec.toInt(), episode.id)
-                    }
+                val progressInSec = controller?.currentPosition?.div(1000)
+                if (progressInSec != null && progressInSec != 0L && controller?.isPlaying == true) {
+                    _trackProgress.update { progressInSec.toInt() }
                 }
                 delay(1.seconds)
             }
@@ -88,20 +99,42 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun initializePlayer(context: Context) {
-        if (exoPlayer == null) {
-            exoPlayer = ExoPlayer.Builder(context)
-                .build()
+        val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture.addListener(
+            {
+            controller = controllerFuture.get()
                 .apply {
                     addListener(
                         object : Player.Listener {
+                            // Sync state between controller & our app UI
+                            override fun onPlayWhenReadyChanged(
+                                playWhenReady: Boolean,
+                                reason: Int
+                            ) {
+                                val playingStatus = when {
+                                    playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
+                                    playWhenReady -> PlayingStatus.Playing
+                                    else -> PlayingStatus.Paused
+                                }
+                                podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+                            }
+
                             override fun onPlayerError(error: PlaybackException) {
                                 // TODO: log the error for better investigation
                                 podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Error)
                             }
                         }
                     )
+                    val episodePlayingStatus = currentlyPlayingEpisode.value?.playingStatus
+                    if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
+                        // Trigger preparing the controller & playing the episode.
+                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+                    }
                 }
-        }
+            },
+            MoreExecutors.directExecutor()
+        )
     }
 
     fun play(episode: Episode) {
@@ -125,7 +158,7 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun pause() {
-        exoPlayer?.pause()
+        controller?.pause()
         podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Paused)
     }
 
@@ -143,30 +176,28 @@ class PodcasterAppState @Inject constructor(
                 applicationScope.launch {
                     podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(1.5f)
                 }
-                exoPlayer?.setPlaybackSpeed(1.5f)
+                controller?.setPlaybackSpeed(1.5f)
                 1.5f
-
             }
             1.5f -> {
                 applicationScope.launch {
                     podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(2.0f)
                 }
-                exoPlayer?.setPlaybackSpeed(2.0f)
+                controller?.setPlaybackSpeed(2.0f)
                 2.0f
-
             }
             2.0f -> {
                 applicationScope.launch {
                     podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(0.75f)
                 }
-                exoPlayer?.setPlaybackSpeed(0.75f)
+                controller?.setPlaybackSpeed(0.75f)
                 0.75f
             }
             0.75f -> {
                 applicationScope.launch {
                     podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(1.0f)
                 }
-                exoPlayer?.setPlaybackSpeed(1.0f)
+                controller?.setPlaybackSpeed(1.0f)
                 1.0f
             }
             else -> 1.0f
@@ -174,38 +205,37 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun replay(seconds: Int) {
-        if (exoPlayer?.isPlaying == false) {
+        if (controller?.isPlaying == false) {
             _trackProgress.update { (it - seconds).coerceAtLeast(0) }
             return
         }
-        exoPlayer?.currentPosition?.let { currPosition ->
-            val newPosition = (currPosition - (seconds * 1000)).coerceAtLeast(0)
-            _trackProgress.update { (newPosition / 1000).toInt() }
-            exoPlayer?.seekTo(newPosition)
+        _trackProgress.update { currPosition ->
+            val newPosition = (currPosition - seconds).coerceAtLeast(0)
+            controller?.seekTo(newPosition.toLong() * 1000)
+            newPosition
         }
     }
 
     fun forward(seconds: Int) {
-        if (exoPlayer?.isPlaying == false) {
+        if (controller?.isPlaying == false) {
             _trackProgress.update { (it + seconds).coerceAtMost(currentlyPlayingEpisode.value?.episode?.durationInSec ?: Int.MAX_VALUE) }
             return
         }
-        exoPlayer?.currentPosition?.let { currPosition ->
-            val newPosition = (currPosition + (seconds * 1000)).coerceAtMost(exoPlayer?.duration ?: Long.MAX_VALUE)
-            _trackProgress.update { (newPosition / 1000).toInt() }
-            exoPlayer?.seekTo(newPosition)
+        _trackProgress.update { currPosition ->
+            val newPosition = (currPosition + seconds).coerceAtMost(controller?.duration?.toInt() ?: Int.MAX_VALUE)
+            controller?.seekTo(newPosition.toLong() * 1000)
+            newPosition
         }
     }
 
     fun seekTo(seconds: Int) {
         val newPosition = seconds * 1000L
         _trackProgress.update { seconds }
-        exoPlayer?.seekTo(newPosition)
+        controller?.seekTo(newPosition)
     }
 
     fun releasePlayer() {
-        exoPlayer?.release()
-        exoPlayer = null
+        MediaController.releaseFuture(controllerFuture)
     }
 
     fun consumeErrorPlayingStatus() {
@@ -214,8 +244,8 @@ class PodcasterAppState @Inject constructor(
 
     private fun seekToAndPlay(positionInSec: Int?) {
         if (positionInSec != null && positionInSec != 0) {
-            exoPlayer?.seekTo(positionInSec * 1000L)
+            controller?.seekTo(positionInSec * 1000L)
         }
-        exoPlayer?.play()
+        controller?.play()
     }
 }

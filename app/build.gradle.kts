@@ -126,6 +126,8 @@ dependencies {
 
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.common)
+    implementation(libs.media3.session)
+    implementation(libs.coroutines.guava)
 
     implementation(libs.sqldelight.driver)
     implementation(libs.sqldelight.flowext)
