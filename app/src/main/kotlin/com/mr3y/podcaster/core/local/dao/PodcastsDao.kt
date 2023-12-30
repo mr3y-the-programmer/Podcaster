@@ -24,6 +24,8 @@ interface PodcastsDao {
 
     fun getAllPodcasts(): Flow<List<Podcast>>
 
+    suspend fun getAllPodcastsNonObservable(): List<Podcast>
+
     fun getPodcast(podcastId: Long): Podcast?
 
     fun isPodcastAvailable(podcastId: Long): Flow<Boolean>
@@ -80,6 +82,10 @@ class DefaultPodcastsDao @Inject constructor(
         return database.podcastEntityQueries.getAllPodcasts(::mapToPodcast)
             .asFlow()
             .mapToList(dispatcher)
+    }
+
+    override suspend fun getAllPodcastsNonObservable(): List<Podcast> = withContext(dispatcher) {
+        database.podcastEntityQueries.getAllPodcasts(::mapToPodcast).executeAsList()
     }
 
     override fun getPodcast(podcastId: Long): Podcast? {

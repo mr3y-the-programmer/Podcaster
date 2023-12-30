@@ -30,5 +30,9 @@ val EnStrings = PodcasterStrings(
     about_label = "About",
     episodes_label = "Episodes",
     episode_details_refresh_result_error = "Something went wrong, refreshing failed!.",
-    episode_details_refresh_result_mixed = "Something went wrong."
+    episode_details_refresh_result_mixed = "Something went wrong.",
+    sync_work_notification_title = "Podcaster is Syncing your subscriptions",
+    sync_work_notification_body = "Refreshing podcasts.",
+    sync_work_notification_channel_name = "Sync",
+    sync_work_notification_channel_description = "Background Refreshing tasks for Podcaster"
 )

@@ -11,6 +11,8 @@ interface PodcastsRepository {
 
     fun getSubscriptions(): Flow<List<Podcast>>
 
+    suspend fun getSubscriptionsNonObservable(): List<Podcast>
+
     fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<Episode>>
 
     suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast?

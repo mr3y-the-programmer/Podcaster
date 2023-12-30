@@ -122,12 +122,17 @@ dependencies {
 
     ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)
+    ksp(libs.hilt.androidx.compiler)
+    implementation(libs.hilt.common)
     implementation(libs.hilt.runtime)
+    implementation(libs.hilt.workmanager)
 
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.common)
     implementation(libs.media3.session)
     implementation(libs.coroutines.guava)
+
+    implementation(libs.workmanager.core)
 
     implementation(libs.sqldelight.driver)
     implementation(libs.sqldelight.flowext)
@@ -141,6 +146,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
+    androidTestImplementation(libs.workmanager.testing)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 }

@@ -26,6 +26,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getSubscriptions() = podcastsDao.getAllPodcasts()
 
+    override suspend fun getSubscriptionsNonObservable(): List<Podcast> = podcastsDao.getAllPodcastsNonObservable()
+
     override fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long) = podcastsDao.getEpisodesForPodcasts(podcastsIds, limit)
 
     override suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast? {

@@ -27,5 +27,9 @@ data class PodcasterStrings(
     val about_label: String,
     val episodes_label: String,
     val episode_details_refresh_result_error: String,
-    val episode_details_refresh_result_mixed: String
+    val episode_details_refresh_result_mixed: String,
+    val sync_work_notification_title: String,
+    val sync_work_notification_body: String,
+    val sync_work_notification_channel_name: String,
+    val sync_work_notification_channel_description: String,
 )

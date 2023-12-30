@@ -4,7 +4,7 @@ kotlin = "1.9.20"
 ksp = "1.9.20-1.0.14"
 kotlinx-serialization = "1.6.0"
 hilt = "2.48.1"
-hilt-navigation-compose = "1.1.0"
+hilt-androidx = "1.1.0"
 core-ktx = "1.9.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
@@ -22,6 +22,7 @@ navigation-typed = "0.9.0"
 molecule = "1.3.0"
 media3 = "1.2.0"
 coroutines = "1.7.3"
+workmanager = "2.9.0"
 coil = "2.5.0"
 ktor = "2.3.5"
 result = "1.1.18"
@@ -55,6 +56,8 @@ media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", versi
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutines" }
+workmanager-core = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
+workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
@@ -65,7 +68,10 @@ result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", ver
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-runtime = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-androidx" }
+hilt-androidx-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-androidx" }
+hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-androidx" }
+hilt-workmanager = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-androidx" }
 sqldelight-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
 sqldelight-flowext = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveadapters = { group = "app.cash.sqldelight", name = "primitive-adapters", version.ref = "sqldelight" }
