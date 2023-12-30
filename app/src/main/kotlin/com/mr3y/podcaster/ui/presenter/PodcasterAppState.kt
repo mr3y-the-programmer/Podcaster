@@ -43,8 +43,9 @@ class PodcasterAppState @Inject constructor(
     val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisode()
         .onEach {
             if (it != null) {
+                val (episode, playingStatus, playingSpeed) = it
+                _trackProgress.update { episode.progressInSec ?: 0 }
                 controller?.apply {
-                    val (episode, playingStatus, playingSpeed) = it
                     val uri = Uri.Builder()
                         .encodedPath(episode.enclosureUrl)
                         .build()
@@ -62,7 +63,6 @@ class PodcasterAppState @Inject constructor(
                         .setMediaMetadata(mediaMetadata)
                         .build()
                     setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
-                    _trackProgress.update { episode.progressInSec ?: 0 }
                     if (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading) {
                         prepare()
                         setPlaybackSpeed(playingSpeed)
