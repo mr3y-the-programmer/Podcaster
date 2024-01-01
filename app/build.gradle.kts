@@ -130,6 +130,7 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.common)
     implementation(libs.media3.session)
+    implementation(libs.media3.exoplayer.workmanager)
     implementation(libs.coroutines.guava)
 
     implementation(libs.workmanager.core)

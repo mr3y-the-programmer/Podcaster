@@ -7,6 +7,8 @@ import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.DownloadRequest
+import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
@@ -15,6 +17,7 @@ import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.service.DownloadMediaService
 import com.mr3y.podcaster.service.PlaybackService
 import com.mr3y.podcaster.ui.presenter.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +39,7 @@ class PodcasterAppState @Inject constructor(
 ) {
 
     private var controller: MediaController? = null
+    private var currentContext: Context? = null
     private lateinit var controllerFuture: ListenableFuture<MediaController>
 
     val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisode()
@@ -112,6 +116,7 @@ class PodcasterAppState @Inject constructor(
             },
             MoreExecutors.directExecutor()
         )
+        currentContext = context
     }
 
     fun play(episode: Episode) {
@@ -213,8 +218,42 @@ class PodcasterAppState @Inject constructor(
         controller?.seekTo(newPosition)
     }
 
+    fun downloadEpisode(episode: Episode) {
+        val context = currentContext
+        if (context != null) {
+            val downloadRequest = DownloadRequest.Builder(
+                episode.id.toString(),
+                Uri.Builder()
+                    .encodedPath(episode.enclosureUrl)
+                    .build()
+            ).build()
+            DownloadService.sendAddDownload(
+                context.applicationContext,
+                DownloadMediaService::class.java,
+                downloadRequest,
+                false
+            )
+        }
+    }
+
+    fun resumeDownloading() {
+        val context = currentContext
+        if (context != null) {
+            DownloadService.sendResumeDownloads(context.applicationContext, DownloadMediaService::class.java, false)
+        }
+    }
+
+    fun pauseDownloading() {
+        val context = currentContext
+        if (context != null) {
+            // Keep in mind that this doesn't persist between app process creation, so you might want to save it locally in db
+            DownloadService.sendPauseDownloads(context.applicationContext, DownloadMediaService::class.java, false)
+        }
+    }
+
     fun releasePlayer() {
         MediaController.releaseFuture(controllerFuture)
+        currentContext = null
     }
 
     fun consumeErrorPlayingStatus() {

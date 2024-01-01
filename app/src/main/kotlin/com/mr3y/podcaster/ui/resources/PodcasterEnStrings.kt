@@ -35,5 +35,6 @@ val EnStrings = PodcasterStrings(
     sync_work_notification_title = "Podcaster is Syncing your subscriptions",
     sync_work_notification_body = "Refreshing podcasts.",
     sync_work_notification_channel_name = "Sync",
-    sync_work_notification_channel_description = "Background Refreshing tasks for Podcaster"
+    sync_work_notification_channel_description = "Background Refreshing tasks for Podcaster",
+    download_work_notification_message = "Downloading episode/s currently in progress..."
 )

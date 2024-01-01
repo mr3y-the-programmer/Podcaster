@@ -55,6 +55,7 @@ molecule = { group = "app.cash.molecule", name = "molecule-runtime", version.ref
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+media3-exoplayer-workmanager = { group = "androidx.media3", name = "media3-exoplayer-workmanager", version.ref = "media3" }
 coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutines" }
 workmanager-core = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
 workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager" }

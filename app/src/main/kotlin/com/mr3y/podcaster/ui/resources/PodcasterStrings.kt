@@ -33,4 +33,5 @@ data class PodcasterStrings(
     val sync_work_notification_body: String,
     val sync_work_notification_channel_name: String,
     val sync_work_notification_channel_description: String,
+    val download_work_notification_message: String
 )

@@ -89,14 +89,6 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getDownloadedEpisodes(): Flow<List<Episode>> = podcastsDao.getDownloadedEpisodes()
 
-    override fun downloadEpisode(episodeId: Long) {
-        TODO("Not yet implemented")
-    }
-
-    override fun cancelDownloadingEpisode(episodeId: Long) {
-        TODO("Not yet implemented")
-    }
-
     override fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode) {
         podcastsDao.setCurrentlyPlayingEpisode(episode)
     }

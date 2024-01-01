@@ -29,10 +29,6 @@ interface PodcastsRepository {
 
     fun getDownloadedEpisodes(): Flow<List<Episode>>
 
-    fun downloadEpisode(episodeId: Long)
-
-    fun cancelDownloadingEpisode(episodeId: Long)
-
     fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode)
 
     fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
