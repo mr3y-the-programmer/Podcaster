@@ -3,6 +3,7 @@ package com.mr3y.podcaster.service
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -45,8 +46,13 @@ class PlaybackService : MediaSessionService() {
 
     override fun onCreate() {
         super.onCreate()
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .setUsage(C.USAGE_MEDIA)
+            .build()
         val player = ExoPlayer.Builder(this)
-//            .setAudioAttributes()
+            .setAudioAttributes(audioAttributes, true)
+            .setHandleAudioBecomingNoisy(true)
             .setPauseAtEndOfMediaItems(true)
             .setMediaSourceFactory(ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory()))
             .build()
