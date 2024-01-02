@@ -9,14 +9,17 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,6 +52,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -139,22 +144,20 @@ fun ExpandedPlayerView(
                     activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f)
                 )
             )
-            if (episode.durationInSec != null && episode.durationInSec > 30) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                ) {
-                    Text(
-                        text = progress.formatAsDuration(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                    )
-                    Text(
-                        text = episode.durationInSec.formatAsDuration(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                    )
-                }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = progress.formatAsDuration(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
+                Text(
+                    text = episode.durationInSec.takeIf { it != null && it > 30 }.formatAsDuration(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
             }
 
             Row(
@@ -267,6 +270,7 @@ fun CollapsedPlayerView(
     currentlyPlayingEpisode: CurrentlyPlayingEpisode,
     onResume: () -> Unit,
     onPause: () -> Unit,
+    progress: Int,
     contentWindowInsets: WindowInsets,
     modifier: Modifier = Modifier
 ) {
@@ -275,56 +279,84 @@ fun CollapsedPlayerView(
         shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0), bottomEnd = CornerSize(0)),
         modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(contentWindowInsets)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            AsyncImage(
-                model = episode.artworkUrl,
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .size(64.dp)
-            )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                val strings = LocalStrings.current
-                Text(
-                    text = strings.currently_playing,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Medium
+                AsyncImage(
+                    model = episode.artworkUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .size(64.dp)
                 )
-                Text(
-                    text = episode.title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Normal,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    val strings = LocalStrings.current
+                    Text(
+                        text = strings.currently_playing,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = episode.title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+                    )
+                }
+                PlayPauseCompactButton(
+                    isSelected = true,
+                    playingStatus = playingStatus,
+                    onPlay = onResume,
+                    onPause = onPause,
+                    contentPadding = 0.dp,
+                    iconSize = 32.dp
                 )
             }
-            PlayPauseCompactButton(
-                isSelected = true,
-                playingStatus = playingStatus,
-                onPlay = onResume,
-                onPause = onPause,
-                contentPadding = 0.dp,
-                iconSize = 32.dp
+            val progressPercentage = if(episode.durationInSec != null) {
+                (progress.toFloat() / episode.durationInSec.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            } else {
+                1f
+            }
+            val progressColor = MaterialTheme.colorScheme.primaryTertiary
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f))
+                    .drawWithContent {
+                        drawContent()
+                        drawRect(
+                            color = progressColor,
+                            size = size.copy(width = size.width * progressPercentage)
+                        )
+                    }
             )
         }
     }
 }
 
-private fun Int.formatAsDuration(): String {
+private fun Int?.formatAsDuration(): String {
+    if (this == null) {
+        return "--:--"
+    }
     return toDuration(DurationUnit.SECONDS).toComponents { hours, minutes, seconds, _ ->
         val minutesFormatted = twoDigitsFormatter.format(minutes)
         val secondsFormatted = twoDigitsFormatter.format(seconds)
@@ -375,6 +407,7 @@ fun CollapsedPlayerViewPreview(
             ),
             onResume = {},
             onPause = {},
+            progress = 1450,
             contentWindowInsets = WindowInsets.navigationBars,
             modifier = Modifier.padding(16.dp)
         )
