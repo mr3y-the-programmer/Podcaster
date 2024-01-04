@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -89,12 +90,13 @@ fun ExpandedPlayerView(
     progress: Int,
     onSeeking: (Int) -> Unit,
     onBack: () -> Unit,
+    containerColor: Color,
     modifier: Modifier = Modifier
 ) {
     val (episode, playingStatus, playbackSpeed) = currentlyPlayingEpisode
     BackHandler(onBack = onBack)
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = containerColor,
         modifier = modifier
     ) { contentPadding ->
         Column(
@@ -272,11 +274,13 @@ fun CollapsedPlayerView(
     onPause: () -> Unit,
     progress: Int,
     contentWindowInsets: WindowInsets,
+    containerColor: Color,
     modifier: Modifier = Modifier
 ) {
     val (episode, playingStatus) = currentlyPlayingEpisode
     Card(
         shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0), bottomEnd = CornerSize(0)),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
         modifier = modifier
     ) {
         Column(
@@ -388,6 +392,7 @@ fun ExpandedPlayerViewPreview(
             progress = 1150,
             onSeeking = {},
             onBack = {},
+            containerColor = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -409,6 +414,7 @@ fun CollapsedPlayerViewPreview(
             onPause = {},
             progress = 1450,
             contentWindowInsets = WindowInsets.navigationBars,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier.padding(16.dp)
         )
     }

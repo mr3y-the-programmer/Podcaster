@@ -2,6 +2,7 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -152,7 +153,7 @@ fun HomeScreen(
                 AnchoredDraggableState(
                     initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
                     anchors = anchors,
-                    positionalThreshold = { distance: Float -> distance * 0.4f },
+                    positionalThreshold = { distance: Float -> distance * 0.5f },
                     animationSpec = spring(),
                     velocityThreshold = { with(density) { 80.dp.toPx() } }
                 )
@@ -209,13 +210,19 @@ fun HomeScreen(
                 label = "Animated PlayerView"
             ) { targetState ->
                 if (targetState != null) {
-                    if (state.targetValue == PlayerViewState.Collapsed) {
+                    val isCollapsed = state.targetValue == PlayerViewState.Collapsed
+                    val containerColor by animateColorAsState(
+                        targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+                        label = "PlayerViewColorAnimation"
+                    )
+                    if (isCollapsed) {
                         CollapsedPlayerView(
                             currentlyPlayingEpisode = targetState,
                             onResume = appState::resume,
                             onPause = appState::pause,
                             progress = trackProgress,
-                            contentWindowInsets = playerViewBottomInsets
+                            contentWindowInsets = playerViewBottomInsets,
+                            containerColor = containerColor
                         )
                     } else {
                         ExpandedPlayerView(
@@ -227,7 +234,8 @@ fun HomeScreen(
                             onPlaybackSpeedChange = appState::changePlaybackSpeed,
                             progress = trackProgress,
                             onSeeking = appState::seekTo,
-                            onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } }
+                            onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
+                            containerColor = containerColor
                         )
                     }
                 }
