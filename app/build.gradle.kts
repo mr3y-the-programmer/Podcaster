@@ -99,7 +99,7 @@ dependencies {
     implementation(libs.activity.compose)
 
     implementation(platform(libs.compose.bom))
-    implementation(libs.compose.richeditor)
+    implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
     implementation(libs.lyricist)
     implementation(libs.ui)

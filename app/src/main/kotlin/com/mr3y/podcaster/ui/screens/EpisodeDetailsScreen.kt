@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -48,6 +49,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -69,6 +72,7 @@ import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PlayPauseExpandedButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
@@ -217,6 +221,7 @@ fun EpisodeDetailsScreen(
                         )
                     }
                     else -> {
+                        val urlHandler = LocalUriHandler.current
                         Header(
                             episode = state.episode,
                             onPlay = onPlayEpisode,
@@ -231,7 +236,11 @@ fun EpisodeDetailsScreen(
                                 }
                             }
                         )
-                        Details(episode = state.episode, externalContentPadding)
+                        Details(
+                            episode = state.episode,
+                            externalContentPadding = externalContentPadding,
+                            onUrlClick = urlHandler::openUri
+                        )
                     }
                 }
             }
@@ -346,10 +355,12 @@ private fun BoxScope.Header(
     }
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun BoxScope.Details(
     episode: Episode,
-    externalContentPadding: PaddingValues
+    externalContentPadding: PaddingValues,
+    onUrlClick: (url: String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -373,10 +384,16 @@ private fun BoxScope.Details(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium
         )
-        Text(
-            text = episode.description,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyLarge
+        val styledDescription = rememberHtmlToAnnotatedString(episode.description)
+        ClickableText(
+            text = styledDescription,
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+            onClick = { position ->
+                styledDescription
+                    .getUrlAnnotations(position, position)
+                    .firstOrNull()?.let { range -> onUrlClick(range.item.url) }
+
+            }
         )
     }
 }

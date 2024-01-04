@@ -91,6 +91,7 @@ import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIState
@@ -562,7 +563,7 @@ private fun LazyItemScope.Episode(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = episode.description,
+                text = rememberHtmlToAnnotatedString(text = episode.description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3,
