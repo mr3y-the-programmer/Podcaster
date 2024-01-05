@@ -1,13 +1,8 @@
 package com.mr3y.podcaster.ui.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -153,7 +148,7 @@ fun HomeScreen(
                 AnchoredDraggableState(
                     initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
                     anchors = anchors,
-                    positionalThreshold = { distance: Float -> distance * 0.5f },
+                    positionalThreshold = { distance: Float -> distance * 0.1f },
                     animationSpec = spring(),
                     velocityThreshold = { with(density) { 80.dp.toPx() } }
                 )
@@ -182,42 +177,32 @@ fun HomeScreen(
                 contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
                 excludedWindowInsets = if (currentlyPlayingEpisode != null) playerViewBottomInsets else null
             )
-            AnimatedContent(
-                targetState = currentlyPlayingEpisode,
-                transitionSpec = {
-                    (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                                initialOffset = { -it }))
-                        .togetherWith(
-                            fadeOut(animationSpec = tween(90)) + slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Down)
-                        )
-                },
-                contentKey = { currentlyPlayingEpisode != null },
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .height(expandedPlayerViewHeight)
-                    .offset {
-                        IntOffset(
-                            0,
-                            state
-                                .requireOffset()
-                                .toInt()
-                        )
-                    }
-                    .anchoredDraggable(state, Orientation.Vertical),
-                label = "Animated PlayerView"
-            ) { targetState ->
-                if (targetState != null) {
-                    val isCollapsed = state.targetValue == PlayerViewState.Collapsed
-                    val containerColor by animateColorAsState(
-                        targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
-                        label = "PlayerViewColorAnimation"
-                    )
-                    if (isCollapsed) {
+            currentlyPlayingEpisode?.let { activeEpisode ->
+                val isCollapsed = state.targetValue == PlayerViewState.Collapsed
+                val containerColor by animateColorAsState(
+                    targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+                    label = "PlayerViewColorAnimation"
+                )
+                Crossfade(
+                    targetState = isCollapsed,
+                    label = "Animated PlayerView",
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .height(expandedPlayerViewHeight)
+                        .offset {
+                            IntOffset(
+                                0,
+                                state
+                                    .requireOffset()
+                                    .toInt()
+                            )
+                        }
+                        .anchoredDraggable(state, Orientation.Vertical)
+                ) { collapsed ->
+                    if (collapsed) {
                         CollapsedPlayerView(
-                            currentlyPlayingEpisode = targetState,
+                            currentlyPlayingEpisode = activeEpisode,
                             onResume = appState::resume,
                             onPause = appState::pause,
                             progress = trackProgress,
@@ -226,7 +211,7 @@ fun HomeScreen(
                         )
                     } else {
                         ExpandedPlayerView(
-                            currentlyPlayingEpisode = targetState,
+                            currentlyPlayingEpisode = activeEpisode,
                             onResume = appState::resume,
                             onPause = appState::pause,
                             onForward = appState::forward,
