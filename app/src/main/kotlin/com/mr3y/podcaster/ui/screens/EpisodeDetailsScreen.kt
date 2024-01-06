@@ -2,6 +2,7 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -80,11 +81,14 @@ import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
+import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.contrastAgainst
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
+import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -132,6 +136,8 @@ fun EpisodeDetailsScreen(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
+    val isDarkTheme = isSystemInDarkTheme()
+    val context = LocalContext.current
     LaunchedEffect(state.refreshResult, playingStatus) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
@@ -172,6 +178,19 @@ fun EpisodeDetailsScreen(
         val temp = bitmap
         if (temp != null) {
             dominantColorState.updateFrom(temp)
+        }
+    }
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    LaunchedEffect(key1 = isDarkTheme, key2 = dominantColorState.onColor) {
+        if (state.isLoading || state.episode == null) {
+            context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
+        } else {
+            val contrastRatio = dominantColorState.onColor.contrastAgainst(surfaceColor)
+            if (contrastRatio >= MinContrastRatio) {
+                context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
+            } else {
+                context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
+            }
         }
     }
     PullToRefresh(
@@ -333,8 +352,7 @@ private fun BoxScope.Header(
                 playingStatus = playingStatus,
                 onPlay = { onPlay(episode) },
                 onPause = onPause,
-                durationInSec = episode.durationInSec,
-                progressInSec = episode.progressInSec
+                durationInSec = episode.durationInSec
             )
         } else {
             PlayPauseCompactButton(

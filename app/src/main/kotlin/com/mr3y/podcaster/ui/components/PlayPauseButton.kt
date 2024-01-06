@@ -89,7 +89,6 @@ fun PlayPauseExpandedButton(
     onPlay: () -> Unit,
     onPause: () -> Unit,
     durationInSec: Int,
-    progressInSec: Int?,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primaryTertiary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryTertiary
@@ -136,9 +135,8 @@ fun PlayPauseExpandedButton(
                     .size(32.dp)
                     .padding(end = 4.dp)
             )
-            val remainder = progressInSec.takeIf { it != null && it != 0 } ?: durationInSec
             Text(
-                text = "${remainder.toDuration(DurationUnit.SECONDS)}",
+                text = "${durationInSec.toDuration(DurationUnit.SECONDS)}",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -176,8 +174,7 @@ fun PlayPauseExpandedButtonPreview(
             playingStatus = PlayingStatus.Playing,
             onPlay = {},
             onPause = {},
-            durationInSec = 888,
-            progressInSec = null
+            durationInSec = 888
         )
     }
 }

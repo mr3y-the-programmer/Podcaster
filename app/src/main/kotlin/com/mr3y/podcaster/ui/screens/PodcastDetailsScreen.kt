@@ -8,9 +8,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -28,9 +32,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -101,11 +107,14 @@ import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.Episodes
 import com.mr3y.podcaster.ui.preview.PodcastWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
+import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.contrastAgainst
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
+import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 
 @Composable
 fun PodcastDetailsScreen(
@@ -159,6 +168,8 @@ fun PodcastDetailsScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
     val playingStatus = currentlyPlayingEpisode?.playingStatus
+    val isDarkTheme = isSystemInDarkTheme()
+    val context = LocalContext.current
     LaunchedEffect(state.refreshResult, playingStatus) {
         when(state.refreshResult) {
             is RefreshResult.Error -> {
@@ -199,6 +210,19 @@ fun PodcastDetailsScreen(
         val temp = bitmap
         if (temp != null) {
             dominantColorState.updateFrom(temp)
+        }
+    }
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    LaunchedEffect(key1 = isDarkTheme, key2 = dominantColorState.onColor) {
+        if (state.isPodcastLoading || state.podcast == null) {
+            context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
+        } else {
+            val contrastRatio = dominantColorState.onColor.contrastAgainst(surfaceColor)
+            if (contrastRatio >= MinContrastRatio) {
+                context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
+            } else {
+                context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
+            }
         }
     }
     PullToRefresh(
@@ -451,6 +475,7 @@ private fun BoxScope.Header(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyItemScope.Metadata(
     podcast: Podcast,
@@ -465,12 +490,16 @@ private fun LazyItemScope.Metadata(
     Spacer(modifier = Modifier.height(8.dp))
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = podcast.author,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .widthIn(max = 232.dp)
+                .basicMarquee(initialDelayMillis = 300)
         )
         IconButton(
             onClick = { onUrlClick(podcast.website) },
@@ -489,7 +518,9 @@ private fun LazyItemScope.Metadata(
     }
     Spacer(modifier = Modifier.height(8.dp))
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         podcast.genres.forEach { genre ->

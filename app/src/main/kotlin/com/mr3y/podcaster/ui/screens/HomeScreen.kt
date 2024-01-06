@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -32,8 +33,11 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,6 +58,8 @@ import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.resources.Subscriptions
+import com.mr3y.podcaster.ui.theme.isStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 
@@ -68,6 +74,8 @@ fun HomeScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val isDark = isSystemInDarkTheme()
+    var isStatusBarLightForCurrentScreen by rememberSaveable(Unit) { mutableStateOf(!isDark) }
 
     val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
     val isPlayerViewExpanded by appState.isPlayerViewExpanded.collectAsStateWithLifecycle()
@@ -102,6 +110,15 @@ fun HomeScreen(
             Destinations.Downloads
         )
     )
+    LaunchedEffect(key1 = drawerState.targetValue, key2 = isPlayerViewExpanded) {
+        if (drawerState.targetValue == DrawerValue.Open || isPlayerViewExpanded) {
+            // Save the current status bar appearance to restore it later.
+            isStatusBarLightForCurrentScreen = context.isStatusBarAppearanceLight()
+            context.setStatusBarAppearanceLight(isAppearanceLight = !isDark)
+        } else {
+            context.setStatusBarAppearanceLight(isAppearanceLight = isStatusBarLightForCurrentScreen)
+        }
+    }
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = currentDestination?.route in drawerTabs.map { it.route },

@@ -2,6 +2,7 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -89,6 +91,7 @@ import com.mr3y.podcaster.ui.preview.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
+import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -144,6 +147,8 @@ fun SubscriptionsScreen(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
+    val context = LocalContext.current
+    val isDarkTheme = isSystemInDarkTheme()
     val playingStatus = currentlyPlayingEpisode?.playingStatus
     LaunchedEffect(state.refreshResult, playingStatus) {
         when(state.refreshResult) {
@@ -170,6 +175,9 @@ fun SubscriptionsScreen(
             }
             else -> {}
         }
+    }
+    LaunchedEffect(key1 = isDarkTheme) {
+        context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
