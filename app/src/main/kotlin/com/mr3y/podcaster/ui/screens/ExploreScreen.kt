@@ -179,9 +179,9 @@ fun ExploreScreen(
                 recentSearches = recentSearches,
                 isVisible = isSearchBarFocused && recentSearches.isNotEmpty(),
                 onSearchQueryClick = { recentSearchQuery ->
+                    focusManager.clearFocus()
                     onSearchQueryChange(TextFieldValue(recentSearchQuery))
                     onCommittingSearch()
-                    focusManager.clearFocus()
                 },
                 onDeleteSearchQuery = onDeleteRecentSearchQuery,
                 contentPadding = externalContentPadding,
