@@ -66,18 +66,22 @@ class DefaultPodcastsRepository @Inject constructor(
     override fun hasSubscriptions(): Flow<Boolean> = podcastsDao.hasPodcasts()
 
     override suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode? {
-        suspend fun fetchFromNetwork(): Episode? {
+        suspend fun fetchFromNetworkAndRefresh(): Episode? {
             return networkClient.getEpisodeById(episodeId).mapBoth(
-                success = { it.mapToEpisode(null, podcastArtworkUrl) },
+                success = { networkEpisode ->
+                    networkEpisode.mapToEpisode(null, podcastArtworkUrl).also {
+                        podcastsDao.upsertEpisode(it)
+                    }
+                },
                 failure = { null }
             )
         }
 
         return if (forceRefresh) {
-            fetchFromNetwork()
+            fetchFromNetworkAndRefresh()
         } else {
             val localEpisode = podcastsDao.getEpisode(episodeId)
-            localEpisode ?: fetchFromNetwork()
+            localEpisode ?: fetchFromNetworkAndRefresh()
         }
     }
 
