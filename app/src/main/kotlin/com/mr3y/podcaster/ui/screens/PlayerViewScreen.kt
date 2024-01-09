@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -146,8 +147,12 @@ fun ExpandedPlayerView(
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
+            val strings = LocalStrings.current
             Text(
-                text = episode.podcastTitle ?: "",
+                text = if (playingStatus == PlayingStatus.Loading)
+                    strings.buffering_playback
+                else
+                    episode.podcastTitle ?: "",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -250,18 +255,27 @@ fun ExpandedPlayerView(
                         contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
                     )
                 ) {
-                    if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Pause,
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp)
-                        )
+                    when (playingStatus) {
+                        PlayingStatus.Loading -> {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimaryTertiary,
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+                        PlayingStatus.Playing -> {
+                            Icon(
+                                imageVector = Icons.Filled.Pause,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        PlayingStatus.Paused, PlayingStatus.Error -> {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
                     }
                 }
 

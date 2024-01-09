@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,11 +74,18 @@ fun PlayPauseCompactButton(
             shape = CircleShape,
             colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = containerColor)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Pause,
-                contentDescription = null,
-                modifier = Modifier.size(iconSize)
-            )
+            if (playingStatus == PlayingStatus.Playing) {
+                Icon(
+                    imageVector = Icons.Filled.Pause,
+                    contentDescription = null,
+                    modifier = Modifier.size(iconSize)
+                )
+            } else {
+                CircularProgressIndicator(
+                    color = containerColor,
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
         }
     }
 }

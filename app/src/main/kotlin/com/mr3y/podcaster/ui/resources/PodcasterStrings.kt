@@ -15,6 +15,7 @@ data class PodcasterStrings(
     val generic_error_message: String,
     val retry_label: String,
     val currently_playing: String,
+    val buffering_playback: String,
     val search_for_podcast_placeholder: String,
     val recent_searches_label: String,
     val close_label: String,

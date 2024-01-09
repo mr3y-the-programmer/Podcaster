@@ -18,6 +18,7 @@ val EnStrings = PodcasterStrings(
     generic_error_message = "Sorry, Something went wrong",
     retry_label = "Retry",
     currently_playing = "Currently Playing",
+    buffering_playback = "Buffering...",
     search_for_podcast_placeholder = "Search for a podcast or add RSS Url",
     recent_searches_label = "Recent Searches",
     close_label = "CLOSE",
