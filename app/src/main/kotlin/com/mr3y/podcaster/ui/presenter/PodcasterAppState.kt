@@ -6,8 +6,6 @@ import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -105,27 +103,6 @@ class PodcasterAppState @Inject constructor(
             {
             controller = controllerFuture.get()
                 .apply {
-                    addListener(
-                        object : Player.Listener {
-                            // Sync state between controller & our app UI
-                            override fun onPlayWhenReadyChanged(
-                                playWhenReady: Boolean,
-                                reason: Int
-                            ) {
-                                val playingStatus = when {
-                                    playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
-                                    playWhenReady -> PlayingStatus.Playing
-                                    else -> PlayingStatus.Paused
-                                }
-                                podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
-                            }
-
-                            override fun onPlayerError(error: PlaybackException) {
-                                // TODO: log the error for better investigation
-                                podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Error)
-                            }
-                        }
-                    )
                     val episodePlayingStatus = currentlyPlayingEpisode.value?.playingStatus
                     if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
                         // Trigger preparing the controller & playing the episode.

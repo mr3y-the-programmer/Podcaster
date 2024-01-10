@@ -7,6 +7,8 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -19,6 +21,7 @@ import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.ListenableFuture
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +65,7 @@ class PlaybackService : MediaSessionService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        attachPlayerListener()
         startListeningForUpdates()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -80,6 +84,32 @@ class PlaybackService : MediaSessionService() {
                     delay(1.seconds)
                 }
             }
+        }
+    }
+
+    private fun attachPlayerListener() {
+        (mediaSession?.player as ExoPlayer).apply {
+            addListener(
+                object : Player.Listener {
+                    // Sync state between session & our app UI
+                    override fun onPlayWhenReadyChanged(
+                        playWhenReady: Boolean,
+                        reason: Int
+                    ) {
+                        val playingStatus = when {
+                            playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
+                            playWhenReady -> PlayingStatus.Playing
+                            else -> PlayingStatus.Paused
+                        }
+                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+                    }
+
+                    override fun onPlayerError(error: PlaybackException) {
+                        // TODO: log the error for better investigation
+                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Error)
+                    }
+                }
+            )
         }
     }
 
