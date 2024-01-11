@@ -184,6 +184,7 @@ class PodcasterAppState @Inject constructor(
     fun replay(seconds: Int) {
         if (controller?.isPlaying == false) {
             _trackProgress.update { (it - seconds).coerceAtLeast(0) }
+            controller?.seekTo(_trackProgress.value.toLong().coerceAtLeast(0) * 1000L)
             return
         }
         _trackProgress.update { currPosition ->
@@ -196,6 +197,7 @@ class PodcasterAppState @Inject constructor(
     fun forward(seconds: Int) {
         if (controller?.isPlaying == false) {
             _trackProgress.update { (it + seconds).coerceAtMost(currentlyPlayingEpisode.value?.episode?.durationInSec ?: Int.MAX_VALUE) }
+            controller?.seekTo(_trackProgress.value.toLong().coerceAtMost(controller?.duration ?: Long.MAX_VALUE) * 1000L)
             return
         }
         _trackProgress.update { currPosition ->

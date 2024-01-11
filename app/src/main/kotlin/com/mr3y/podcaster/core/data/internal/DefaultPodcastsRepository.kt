@@ -113,6 +113,10 @@ class DefaultPodcastsRepository @Inject constructor(
         podcastsDao.updateEpisodePlaybackProgress(progressInSec, episodeId)
     }
 
+    override fun markEpisodeAsCompleted(episodeId: Long) {
+        podcastsDao.markEpisodeAsCompleted(episodeId)
+    }
+
     override fun subscribeToPodcast(podcast: Podcast, episodes: List<Episode>) {
         podcastsDao.upsertPodcast(podcast)
         episodes.forEach { episode ->

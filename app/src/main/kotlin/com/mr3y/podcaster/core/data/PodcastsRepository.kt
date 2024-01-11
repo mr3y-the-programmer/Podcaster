@@ -41,6 +41,8 @@ interface PodcastsRepository {
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 
+    fun markEpisodeAsCompleted(episodeId: Long)
+
     fun subscribeToPodcast(podcast: Podcast, episodes: List<Episode>)
 
     fun unSubscribeFromPodcast(podcastId: Long)
