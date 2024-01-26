@@ -1,6 +1,9 @@
 package com.mr3y.podcaster.ui.preview
 
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
+import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.Genre
 import com.mr3y.podcaster.core.model.Podcast
 
@@ -140,7 +143,6 @@ val Episodes = listOf(
         enclosureUrl = "https://traffic.libsyn.com/secure/adbackstage/ADB196_v1.mp3?dest-id=2710847",
         enclosureSizeInBytes = 70728192L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
     ),
@@ -159,7 +161,6 @@ val Episodes = listOf(
         enclosureUrl = "https://traffic.libsyn.com/secure/nowinandroid/NIA096_v1.mp3?dest-id=1831685",
         enclosureSizeInBytes = 3824746L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
     ),
@@ -178,7 +179,6 @@ val Episodes = listOf(
         enclosureUrl = "https://traffic.libsyn.com/secure/nowinandroid/NIA090_v2.mp3?dest-id=1831685",
         enclosureSizeInBytes = 6354391L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
     ),
@@ -197,7 +197,6 @@ val Episodes = listOf(
         enclosureUrl = "https://cdn.simplecast.com/audio/20f35050-e836-44cd-8f7f-fd13e8cb2e44/episodes/b63bf3dd-25c7-417d-9f05-be281581984c/audio/1ff2033d-a444-4941-89cc-16146bec994e/default_tc.mp3?aid=rss_feed&feed=LpAGSLnY",
         enclosureSizeInBytes = 14216363L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
     ),
@@ -216,7 +215,6 @@ val Episodes = listOf(
         enclosureUrl = "https://traffic.libsyn.com/secure/androidauthority/aapod_fin_part_deux_final.mp3?dest-id=242501",
         enclosureSizeInBytes = 84771967L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
     ),
@@ -235,9 +233,59 @@ val Episodes = listOf(
         enclosureUrl = "http://www.androidstrength.com/audio/android_strength_podcast_episode_1_ed_brown.mp3",
         enclosureSizeInBytes = 131217150L,
         podcastTitle = null,
-        isDownloaded = false,
         isCompleted = false,
         progressInSec = null
+    )
+)
+
+val EpisodesWithDownloadMetadata = listOf(
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[0],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[0].id,
+            downloadStatus = EpisodeDownloadStatus.NotDownloaded,
+            downloadProgress = 0f
+        )
+    ),
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[1],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[1].id,
+            downloadStatus = EpisodeDownloadStatus.Paused,
+            downloadProgress = 0.4f
+        )
+    ),
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[2],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[2].id,
+            downloadStatus = EpisodeDownloadStatus.Downloaded,
+            downloadProgress = 1f
+        )
+    ),
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[3],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[3].id,
+            downloadStatus = EpisodeDownloadStatus.Downloading,
+            downloadProgress = 0.7f
+        )
+    ),
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[4],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[4].id,
+            downloadStatus = EpisodeDownloadStatus.Queued,
+            downloadProgress = 0f
+        )
+    ),
+    EpisodeWithDownloadMetadata(
+        episode = Episodes[5],
+        downloadMetadata = EpisodeDownloadMetadata(
+            episodeId = Episodes[5].id,
+            downloadStatus = EpisodeDownloadStatus.NotDownloaded,
+            downloadProgress = 0f
+        )
     )
 )
 
@@ -272,7 +320,12 @@ val EpisodeWithDetails = Episode(
     enclosureUrl = "https://traffic.libsyn.com/secure/adbackstage/ADB196_v1.mp3?dest-id=2710847",
     enclosureSizeInBytes = 70728192L,
     podcastTitle = "Android Developers Backstage",
-    isDownloaded = false,
     isCompleted = false,
     progressInSec = null
+)
+
+val DownloadMetadata = EpisodeDownloadMetadata(
+    episodeId = 14319430597L,
+    downloadStatus = EpisodeDownloadStatus.Downloading,
+    downloadProgress = 0.7f
 )

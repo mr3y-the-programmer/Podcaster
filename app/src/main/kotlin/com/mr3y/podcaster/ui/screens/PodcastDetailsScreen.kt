@@ -602,17 +602,13 @@ private fun LazyItemScope.Episode(
             )
         }
         Column(
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Center
         ) {
             PlayPauseCompactButton(
                 isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
                 playingStatus = currentlyPlayingEpisode?.playingStatus,
                 onPlay = { onPlay(episode) },
                 onPause = onPause
-            )
-            DownloadButton(
-                onDownload = { /*TODO*/ },
-                onCancelDownload = { /*TODO*/ }
             )
         }
     }

@@ -66,6 +66,7 @@ import coil.size.Scale
 import com.kmpalette.rememberDominantColorState
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
@@ -78,6 +79,7 @@ import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsViewModel
+import com.mr3y.podcaster.ui.preview.DownloadMetadata
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
@@ -108,6 +110,9 @@ fun EpisodeDetailsScreen(
         onRefresh = viewModel::refresh,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
+        onDownloadingEpisode = appState::downloadEpisode,
+        onResumeDownloadingEpisode = appState::resumeDownloading,
+        onPauseDownloadingEpisode = appState::pauseDownloading,
         isSelected = state.episode?.id == currentlyPlayingEpisode?.episode?.id,
         playingStatus = currentlyPlayingEpisode?.playingStatus,
         onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
@@ -126,6 +131,9 @@ fun EpisodeDetailsScreen(
     onRefresh: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
+    onDownloadingEpisode: (Episode) -> Unit,
+    onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
+    onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
     onConsumeErrorPlayingStatus: () -> Unit,
@@ -243,8 +251,12 @@ fun EpisodeDetailsScreen(
                         val urlHandler = LocalUriHandler.current
                         Header(
                             episode = state.episode,
+                            downloadMetadata = state.downloadMetadata,
                             onPlay = onPlayEpisode,
                             onPause = onPause,
+                            onDownloadingEpisode = onDownloadingEpisode,
+                            onResumeDownloadingEpisode = onResumeDownloadingEpisode,
+                            onPauseDownloadingEpisode = onPauseDownloadingEpisode,
                             isSelected = isSelected,
                             playingStatus = playingStatus,
                             dominantColor = dominantColorState.color,
@@ -301,8 +313,12 @@ private fun EpisodeDetailsTopAppBar(
 @Composable
 private fun BoxScope.Header(
     episode: Episode,
+    downloadMetadata: EpisodeDownloadMetadata?,
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
+    onDownloadingEpisode: (Episode) -> Unit,
+    onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
+    onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
     dominantColor: Color,
@@ -366,8 +382,10 @@ private fun BoxScope.Header(
         }
         Spacer(modifier = Modifier.width(8.dp))
         DownloadButton(
-            onDownload = { /*TODO*/ },
-            onCancelDownload = { /*TODO*/ },
+            downloadMetadata = downloadMetadata,
+            onDownload = { onDownloadingEpisode(episode) },
+            onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
+            onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
             contentColor = MaterialTheme.colorScheme.primaryTertiary
         )
     }
@@ -427,13 +445,17 @@ fun EpisodeDetailsScreenPreview(
                 isLoading = false,
                 episode = EpisodeWithDetails,
                 isRefreshing = false,
-                refreshResult = null
+                refreshResult = null,
+                downloadMetadata = DownloadMetadata
             ),
             onNavigateUp = {},
             onRetry = {},
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            onDownloadingEpisode = {},
+            onResumeDownloadingEpisode = {},
+            onPauseDownloadingEpisode = {},
             isSelected = false,
             playingStatus = null,
             onConsumeErrorPlayingStatus = {},
@@ -454,13 +476,17 @@ fun EpisodeDetailsErrorPreview() {
                 isLoading = false,
                 episode = null,
                 isRefreshing = false,
-                refreshResult = null
+                refreshResult = null,
+                downloadMetadata = null
             ),
             onNavigateUp = {},
             onRetry = {},
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            onDownloadingEpisode = {},
+            onResumeDownloadingEpisode = {},
+            onPauseDownloadingEpisode = {},
             isSelected = false,
             playingStatus = null,
             onConsumeErrorPlayingStatus = {},

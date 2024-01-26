@@ -3,6 +3,7 @@ package com.mr3y.podcaster.ui.presenter.episodedetails
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +72,7 @@ internal fun EpisodeDetailsPresenter(
     var isLoading by remember { mutableStateOf(true) }
     var isRefreshing by remember { mutableStateOf(false) }
     var episode: Episode? by remember { mutableStateOf(null) }
+    val downloadMetadata by repository.getEpisodeDownloadMetadata(episodeId).collectAsState(initial = null)
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
@@ -112,5 +114,6 @@ internal fun EpisodeDetailsPresenter(
         episode = episode,
         isRefreshing = isRefreshing,
         refreshResult = refreshResult,
+        downloadMetadata = downloadMetadata
     )
 }

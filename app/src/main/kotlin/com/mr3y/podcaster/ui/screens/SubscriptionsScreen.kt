@@ -72,6 +72,7 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.model.dateTimePublished
@@ -86,6 +87,7 @@ import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.Episodes
+import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
@@ -120,6 +122,9 @@ fun SubscriptionsScreen(
         onRefreshResultConsumed = viewModel::consumeRefreshResult,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
+        onDownloadingEpisode = appState::downloadEpisode,
+        onResumeDownloadingEpisode = appState::resumeDownloading,
+        onPauseDownloadingEpisode = appState::pauseDownloading,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
         onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
@@ -137,6 +142,9 @@ fun SubscriptionsScreen(
     onNavDrawerClick: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
+    onDownloadingEpisode: (Episode) -> Unit,
+    onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
+    onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
@@ -224,6 +232,9 @@ fun SubscriptionsScreen(
                         onEpisodeClick = onEpisodeClick,
                         onPlayEpisode = onPlayEpisode,
                         onPause = onPause,
+                        onDownloadingEpisode = onDownloadingEpisode,
+                        onResumeDownloadingEpisode = onResumeDownloadingEpisode,
+                        onPauseDownloadingEpisode = onPauseDownloadingEpisode,
                         currentlyPlayingEpisode = currentlyPlayingEpisode
                     )
                 }
@@ -352,11 +363,14 @@ private fun ColumnScope.SubscriptionsHeader(
 @Composable
 private fun ColumnScope.EpisodesList(
     isLoading: Boolean,
-    episodes: List<Episode>,
+    episodes: List<EpisodeWithDownloadMetadata>,
     contentPadding: PaddingValues,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
+    onDownloadingEpisode: (Episode) -> Unit,
+    onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
+    onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?
 ) {
     Card(
@@ -379,7 +393,7 @@ private fun ColumnScope.EpisodesList(
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    itemsIndexed(episodes, key = { _, episode -> episode.id }) { index, episode ->
+                    itemsIndexed(episodes, key = { _, (episode, _) -> episode.id }) { index, (episode, downloadMetadata) ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -447,8 +461,10 @@ private fun ColumnScope.EpisodesList(
                                     onPause = onPause
                                 )
                                 DownloadButton(
-                                    onDownload = { /*TODO*/ },
-                                    onCancelDownload = { /*TODO*/ }
+                                    downloadMetadata = downloadMetadata,
+                                    onDownload = { onDownloadingEpisode(episode) },
+                                    onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
+                                    onPausingDownload = { onPauseDownloadingEpisode(episode.id) }
                                 )
                             }
                         }
@@ -494,7 +510,7 @@ fun SubscriptionsScreenPreview(
                     isRefreshing = false,
                     refreshResult = null,
                     subscriptions = Podcasts,
-                    episodes = Episodes
+                    episodes = EpisodesWithDownloadMetadata
                 )
             )
         }
@@ -508,6 +524,9 @@ fun SubscriptionsScreenPreview(
             onRefreshResultConsumed = {},
             onPlayEpisode = {},
             onPause = {},
+            onDownloadingEpisode = {},
+            onResumeDownloadingEpisode = {},
+            onPauseDownloadingEpisode = {},
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -543,6 +562,9 @@ fun EmptySubscriptionsScreenPreview() {
             onRefreshResultConsumed = {},
             onPlayEpisode = {},
             onPause = {},
+            onDownloadingEpisode = {},
+            onResumeDownloadingEpisode = {},
+            onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,
