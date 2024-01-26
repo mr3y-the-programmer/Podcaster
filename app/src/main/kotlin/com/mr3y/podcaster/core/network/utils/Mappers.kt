@@ -48,7 +48,6 @@ fun PodcastEpisodeFeed.mapToEpisode(podcastTitle: String?, podcastArtworkUrl: St
     enclosureUrl = enclosureUrl,
     enclosureSizeInBytes = enclosureSizeInBytes,
     podcastTitle = this.podcastTitle ?: podcastTitle,
-    isDownloaded = false,
     isCompleted = false,
     progressInSec = null,
 )

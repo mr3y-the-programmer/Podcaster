@@ -7,7 +7,9 @@ import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.local.dao.PodcastsDao
 import com.mr3y.podcaster.core.local.dao.RecentSearchesDao
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.network.PodcastIndexClient
@@ -29,6 +31,8 @@ class DefaultPodcastsRepository @Inject constructor(
     override suspend fun getSubscriptionsNonObservable(): List<Podcast> = podcastsDao.getAllPodcastsNonObservable()
 
     override fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long) = podcastsDao.getEpisodesForPodcasts(podcastsIds, limit)
+
+    override fun getEpisodesWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long) = podcastsDao.getEpisodeWithDownloadMetadataForPodcasts(podcastsIds, limit)
 
     override suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast? {
         suspend fun fetchFromNetwork(): Podcast? {
@@ -87,8 +91,6 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> = podcastsDao.getCurrentlyPlayingEpisode()
 
-    override fun getDownloadedEpisodes(): Flow<List<Episode>> = podcastsDao.getDownloadedEpisodes()
-
     override fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode) {
         podcastsDao.setCurrentlyPlayingEpisode(episode)
     }
@@ -103,6 +105,22 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long) {
         podcastsDao.updateEpisodePlaybackProgress(progressInSec, episodeId)
+    }
+
+    override fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus) {
+        podcastsDao.updateEpisodeDownloadStatus(episodeId, newStatus)
+    }
+
+    override fun updateEpisodeDownloadProgress(episodeId: Long, progress: Float) {
+        podcastsDao.updateEpisodeDownloadProgress(episodeId, progress)
+    }
+
+    override fun getEpisodeDownloadMetadata(episodeId: Long): Flow<EpisodeDownloadMetadata?> = podcastsDao.getEpisodeDownloadMetadataById(episodeId)
+
+    override fun addEpisodeOnDeviceIfNotExist(episode: Episode) {
+        if (!podcastsDao.isEpisodeAvailableNonObservable(episode.id)) {
+            podcastsDao.addEpisode(episode)
+        }
     }
 
     override fun markEpisodeAsCompleted(episodeId: Long) {

@@ -1,0 +1,46 @@
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus;
+
+CREATE TABLE IF NOT EXISTS temp (
+    id INTEGER PRIMARY KEY NOT NULL,
+    podcastId INTEGER NOT NULL,
+    guid TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    episodeUrl TEXT NOT NULL,
+    datePublishedTimestamp INTEGER NOT NULL,
+    datePublishedFormatted TEXT NOT NULL,
+    durationInSec INTEGER AS kotlin.Int,
+    episodeNum INTEGER AS kotlin.Int,
+    artworkUrl TEXT NOT NULL,
+    enclosureUrl TEXT NOT NULL,
+    enclosureSizeInBytes INTEGER NOT NULL,
+    podcastTitle TEXT,
+    isCompleted INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
+    progressInSec INTEGER AS kotlin.Int
+);
+
+CREATE TABLE IF NOT EXISTS downloadableEpisodeEntity (
+    episodeId INTEGER PRIMARY KEY NOT NULL,
+    downloadStatus TEXT AS EpisodeDownloadStatus DEFAULT "NotDownloaded" NOT NULL,
+    downloadProgress REAL AS kotlin.Float DEFAULT 0.0 NOT NULL
+);
+
+INSERT INTO temp (id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isCompleted, progressInSec)
+SELECT id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isCompleted, progressInSec
+FROM episodeEntity;
+
+DROP TABLE episodeEntity;
+
+ALTER TABLE temp RENAME TO episodeEntity;
+
+CREATE TRIGGER IF NOT EXISTS post_insert_new_episode
+AFTER INSERT ON episodeEntity
+BEGIN INSERT OR REPLACE INTO downloadableEpisodeEntity(episodeId) VALUES (new.id);
+END;
+
+CREATE TRIGGER IF NOT EXISTS pre_delete_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM downloadableEpisodeEntity WHERE episodeId = old.id;
+END;
+
+INSERT INTO downloadableEpisodeEntity (episodeId) SELECT id FROM episodeEntity;

@@ -2,7 +2,10 @@ package com.mr3y.podcaster.core.data
 
 import com.github.michaelbull.result.Result
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
+import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +17,8 @@ interface PodcastsRepository {
     suspend fun getSubscriptionsNonObservable(): List<Podcast>
 
     fun getEpisodesForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<Episode>>
+
+    fun getEpisodesWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<EpisodeWithDownloadMetadata>>
 
     suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast?
 
@@ -27,8 +32,6 @@ interface PodcastsRepository {
 
     fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
 
-    fun getDownloadedEpisodes(): Flow<List<Episode>>
-
     fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode)
 
     fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
@@ -36,6 +39,14 @@ interface PodcastsRepository {
     suspend fun updateCurrentlyPlayingEpisodeSpeed(newSpeed: Float)
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
+
+    fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus)
+
+    fun updateEpisodeDownloadProgress(episodeId: Long, progress: Float)
+
+    fun getEpisodeDownloadMetadata(episodeId: Long): Flow<EpisodeDownloadMetadata?>
+
+    fun addEpisodeOnDeviceIfNotExist(episode: Episode)
 
     fun markEpisodeAsCompleted(episodeId: Long)
 

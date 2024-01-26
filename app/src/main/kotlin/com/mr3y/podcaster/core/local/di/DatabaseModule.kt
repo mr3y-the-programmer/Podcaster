@@ -6,6 +6,7 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.mr3y.podcaster.CurrentlyPlayingEntity
+import com.mr3y.podcaster.DownloadableEpisodeEntity
 import com.mr3y.podcaster.EpisodeEntity
 import com.mr3y.podcaster.PodcastEntity
 import com.mr3y.podcaster.PodcasterDatabase
@@ -47,7 +48,8 @@ object DatabaseModule {
                 episodeNumAdapter = IntColumnAdapter,
                 progressInSecAdapter = IntColumnAdapter
             ),
-            currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter)
+            currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter),
+            downloadableEpisodeEntityAdapter = DownloadableEpisodeEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter)
         )
     }
 

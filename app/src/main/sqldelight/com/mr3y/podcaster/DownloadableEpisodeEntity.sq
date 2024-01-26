@@ -1,0 +1,42 @@
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus;
+
+CREATE TABLE IF NOT EXISTS downloadableEpisodeEntity (
+    episodeId INTEGER PRIMARY KEY NOT NULL,
+    downloadStatus TEXT AS EpisodeDownloadStatus DEFAULT "NotDownloaded" NOT NULL,
+    downloadProgress REAL AS kotlin.Float DEFAULT 0.0 NOT NULL
+);
+
+CREATE TRIGGER IF NOT EXISTS post_insert_new_episode
+AFTER INSERT ON episodeEntity
+BEGIN INSERT OR REPLACE INTO downloadableEpisodeEntity(episodeId) VALUES (new.id);
+END;
+
+CREATE TRIGGER IF NOT EXISTS pre_delete_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM downloadableEpisodeEntity WHERE episodeId = old.id;
+END;
+
+getDownloadableEpisodeById:
+SELECT * FROM downloadableEpisodeEntity WHERE episodeId = :id;
+
+getDownloadableEpisodesByIds:
+SELECT * FROM downloadableEpisodeEntity WHERE episodeId IN :ids;
+
+getDownloadedEpisodes:
+SELECT * FROM downloadableEpisodeEntity WHERE downloadStatus == "Downloaded";
+
+updateEpisodeDownloadStatus:
+UPDATE downloadableEpisodeEntity SET downloadStatus = :downloadStatus WHERE episodeId = :id;
+
+updateEpisodeDownloadProgress:
+UPDATE downloadableEpisodeEntity SET downloadProgress = :downloadProgress WHERE episodeId = :id;
+
+getEpisodesWithDownloadMetadataForPodcast:
+SELECT ee.*,dee.downloadStatus,dee.downloadProgress FROM episodeEntity AS ee
+INNER JOIN downloadableEpisodeEntity AS dee ON ee.id == dee.episodeId
+WHERE ee.podcastId IN :podcastsIds ORDER BY ee.datePublishedTimestamp DESC LIMIT :limit;
+
+getUntouchedEpisodesIdsForPodcast:
+SELECT ee.id FROM episodeEntity AS ee
+INNER JOIN downloadableEpisodeEntity AS dee ON ee.id == dee.episodeId
+WHERE ee.podcastId = :podcastId AND (ee.isCompleted = 0 AND ee.progressInSec < 30) AND dee.downloadStatus = "NotDownloaded";

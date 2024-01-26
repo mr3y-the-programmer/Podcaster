@@ -15,7 +15,6 @@ data class Episode(
     val enclosureUrl: String,
     val enclosureSizeInBytes: Long,
     val podcastTitle: String? = null,
-    val isDownloaded: Boolean = false,
     val isCompleted: Boolean = false,
     val progressInSec: Int? = null
 ) {
@@ -35,7 +34,6 @@ data class Episode(
             "enclosureUrl = \"$enclosureUrl\",\n" +
             "enclosureSizeInBytes = ${enclosureSizeInBytes}L,\n" +
             "podcastTitle = \"$podcastTitle\",\n" +
-            "isDownloaded = $isDownloaded,\n" +
             "isCompleted = $isCompleted,\n" +
             "progressInSec = $progressInSec\n" +
         ")"

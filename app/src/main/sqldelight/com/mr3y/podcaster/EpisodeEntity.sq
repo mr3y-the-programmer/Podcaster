@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS episodeEntity (
     enclosureUrl TEXT NOT NULL,
     enclosureSizeInBytes INTEGER NOT NULL,
     podcastTitle TEXT,
-    isDownloaded INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
     isCompleted INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
     progressInSec INTEGER AS kotlin.Int
 );
@@ -23,9 +22,6 @@ SELECT * FROM episodeEntity WHERE podcastId IN :podcastsIds ORDER BY datePublish
 
 getEpisodesForPodcast:
 SELECT * FROM episodeEntity WHERE podcastId == :podcastId ORDER BY datePublishedTimestamp DESC;
-
-getDownloadedEpisodes:
-SELECT * FROM episodeEntity WHERE isDownloaded == 1;
 
 getCompletedEpisodes:
 SELECT * FROM episodeEntity WHERE isCompleted == 1;
@@ -55,9 +51,6 @@ UPDATE episodeEntity SET
     podcastTitle = :podcastTitle
 WHERE id = :id;
 
-setEpisodeDownloaded:
-UPDATE episodeEntity SET isDownloaded = 1 WHERE id = :id;
-
 setEpisodeCompleted:
 UPDATE episodeEntity SET isCompleted = 1 WHERE id = :id;
 
@@ -70,5 +63,5 @@ UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE id = :id;
 updateEpisodePodcastTitleByPodcastId:
 UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE podcastId = :podcastId;
 
-deleteUntouchedEpisodesForPodcast:
-DELETE FROM episodeEntity WHERE podcastId == :podcastId AND (isDownloaded == 0 AND isCompleted == 0 AND progressInSec < 30);
+deleteEpisodesByIds:
+DELETE FROM episodeEntity WHERE id IN :ids;

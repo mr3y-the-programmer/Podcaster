@@ -6,12 +6,17 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.mr3y.podcaster.CurrentlyPlayingEntity
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.di.IODispatcher
+import com.mr3y.podcaster.core.local.mapToEpisodeDownloadMetadata
 import com.mr3y.podcaster.core.local.mapToEpisode
+import com.mr3y.podcaster.core.local.mapToEpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.local.mapToPodcast
 import com.mr3y.podcaster.core.local.toEpisodeEntity
 import com.mr3y.podcaster.core.local.toPodcastEntity
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
+import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,8 +47,6 @@ interface PodcastsDao {
 
     fun getEpisodesForPodcast(podcastId: Long): List<Episode>
 
-    fun getDownloadedEpisodes(): Flow<List<Episode>>
-
     fun getCompletedEpisodes(): Flow<List<Episode>>
 
     fun getEpisode(episodeId: Long): Episode?
@@ -62,7 +65,17 @@ interface PodcastsDao {
 
     fun upsertEpisode(episode: Episode)
 
-    fun markEpisodeAsDownloaded(episodeId: Long)
+    fun addEpisode(episode: Episode)
+
+    fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus)
+
+    fun updateEpisodeDownloadProgress(episodeId: Long, progress: Float)
+
+    fun getEpisodeDownloadMetadataById(episodeId: Long): Flow<EpisodeDownloadMetadata?>
+
+    fun getEpisodesDownloadMetadataByIds(episodesIds: Set<Long>): Flow<List<EpisodeDownloadMetadata>>
+
+    fun getEpisodeWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<EpisodeWithDownloadMetadata>>
 
     fun markEpisodeAsCompleted(episodeId: Long)
 
@@ -130,12 +143,6 @@ class DefaultPodcastsDao @Inject constructor(
     override fun getEpisodesForPodcast(podcastId: Long): List<Episode> {
         return database.episodeEntityQueries.getEpisodesForPodcast(podcastId, mapper = ::mapToEpisode)
             .executeAsList()
-    }
-
-    override fun getDownloadedEpisodes(): Flow<List<Episode>> {
-        return database.episodeEntityQueries.getDownloadedEpisodes(::mapToEpisode)
-            .asFlow()
-            .mapToList(dispatcher)
     }
 
     override fun getCompletedEpisodes(): Flow<List<Episode>> {
@@ -219,8 +226,37 @@ class DefaultPodcastsDao @Inject constructor(
         }
     }
 
-    override fun markEpisodeAsDownloaded(episodeId: Long) {
-        database.episodeEntityQueries.setEpisodeDownloaded(episodeId)
+    override fun addEpisode(episode: Episode) {
+        database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+    }
+
+    override fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus) {
+        database.downloadableEpisodeEntityQueries.updateEpisodeDownloadStatus(newStatus, episodeId)
+    }
+
+    override fun updateEpisodeDownloadProgress(episodeId: Long, progress: Float) {
+        database.downloadableEpisodeEntityQueries.updateEpisodeDownloadProgress(progress, episodeId)
+    }
+
+    override fun getEpisodeDownloadMetadataById(episodeId: Long): Flow<EpisodeDownloadMetadata?> {
+        return database.downloadableEpisodeEntityQueries.getDownloadableEpisodeById(episodeId, mapper = ::mapToEpisodeDownloadMetadata)
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
+    }
+
+    override fun getEpisodesDownloadMetadataByIds(episodesIds: Set<Long>): Flow<List<EpisodeDownloadMetadata>> {
+        return database.downloadableEpisodeEntityQueries.getDownloadableEpisodesByIds(episodesIds, mapper = ::mapToEpisodeDownloadMetadata)
+            .asFlow()
+            .mapToList(dispatcher)
+    }
+
+    override fun getEpisodeWithDownloadMetadataForPodcasts(
+        podcastsIds: Set<Long>,
+        limit: Long
+    ): Flow<List<EpisodeWithDownloadMetadata>> {
+        return database.downloadableEpisodeEntityQueries.getEpisodesWithDownloadMetadataForPodcast(podcastsIds, limit, mapper = ::mapToEpisodeWithDownloadMetadata)
+            .asFlow()
+            .mapToList(dispatcher)
     }
 
     override fun markEpisodeAsCompleted(episodeId: Long) {
@@ -236,6 +272,9 @@ class DefaultPodcastsDao @Inject constructor(
     }
 
     override fun deleteUntouchedEpisodes(podcastId: Long) {
-        database.episodeEntityQueries.deleteUntouchedEpisodesForPodcast(podcastId)
+        database.downloadableEpisodeEntityQueries.transaction {
+            val ids = database.downloadableEpisodeEntityQueries.getUntouchedEpisodesIdsForPodcast(podcastId).executeAsList()
+            database.episodeEntityQueries.deleteEpisodesByIds(ids)
+        }
     }
 }
