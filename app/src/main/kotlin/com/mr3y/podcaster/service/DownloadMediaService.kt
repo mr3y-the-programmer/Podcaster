@@ -1,7 +1,10 @@
 package com.mr3y.podcaster.service
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
@@ -22,6 +25,7 @@ import androidx.media3.exoplayer.workmanager.WorkManagerScheduler
 import com.mr3y.podcaster.R
 import com.mr3y.podcaster.Strings
 import com.mr3y.podcaster.core.data.PodcastsRepository
+import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.ui.resources.EnStrings
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -31,18 +35,15 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class, UnstableApi::class)
+@OptIn(UnstableApi::class)
 @AndroidEntryPoint
+@ExperimentalCoroutinesApi
 class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
 
     @Inject
@@ -50,19 +51,6 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
     private val serviceScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private var downloadManager: DownloadManager? = null
-
-    private val isDownloadManagerInitialized = MutableStateFlow(false)
-
-    init {
-        serviceScope.launch {
-            isDownloadManagerInitialized.filter { it }.collectLatest {
-                while (downloadManager!!.currentDownloads.isNotEmpty()) {
-
-                    delay(1.seconds)
-                }
-            }
-        }
-    }
 
     override fun getDownloadManager(): DownloadManager = buildDownloadManager(this)
 
@@ -74,6 +62,16 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
     ): Notification {
         val languageCode = Resources.getSystem().configuration.locales[0].language.lowercase()
         val strings = Strings[languageCode] ?: EnStrings
+        val channel = NotificationChannel(
+            DOWNLOAD_NOTIFICATION_CHANNEL_ID,
+            "Podcaster Download notification",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Podcaster Download notification description"
+        }
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.createNotificationChannel(channel)
         return DownloadNotificationHelper(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID)
             .buildProgressNotification(
                 this,
@@ -83,6 +81,15 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
                 downloads,
                 notMetRequirements
             )
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // start listening to updates because at this point download
+        // manager is guaranteed to have been initialized & podcasts repository
+        // instance is guaranteed to have been injected.
+        listenToProgressUpdates()
+        attachDownloadManagerListener()
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
@@ -97,33 +104,61 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
             val downloadExecutor = Dispatchers.IO.limitedParallelism(4).asExecutor()
             downloadManager = DownloadManager(context, databaseProvider, cache, upStreamFactory, downloadExecutor).apply {
                 maxParallelDownloads = 1
-                addListener(
-                    object : DownloadManager.Listener {
-                        override fun onDownloadsPausedChanged(
-                            downloadManager: DownloadManager,
-                            downloadsPaused: Boolean
-                        ) {
-                            super.onDownloadsPausedChanged(downloadManager, downloadsPaused)
-                        }
-
-                        override fun onDownloadChanged(
-                            downloadManager: DownloadManager,
-                            download: Download,
-                            finalException: Exception?
-                        ) {
-                            if (download.isTerminalState && download.state == Download.STATE_COMPLETED) {
-//                                podcastsRepository.
-                            }
-                        }
-                    }
-                )
-                isDownloadManagerInitialized.update { true }
             }
         }
         return downloadManager!!
     }
 
+    private fun listenToProgressUpdates() {
+        serviceScope.launch {
+            while (true) {
+                downloadManager?.currentDownloads?.forEach { download ->
+                    val episodeId = download.request.id.toLong()
+                    podcastsRepository.updateEpisodeDownloadProgress(episodeId, download.percentDownloaded.div(100.0f).coerceIn(0f, 1f))
+                }
+                delay(1.seconds)
+            }
+        }
+    }
+
+    private fun attachDownloadManagerListener() {
+        downloadManager?.apply {
+            addListener(
+                object : DownloadManager.Listener {
+                    override fun onDownloadChanged(
+                        downloadManager: DownloadManager,
+                        download: Download,
+                        finalException: Exception?
+                    ) {
+                        val episodeId = download.request.id.toLong()
+                        when (download.state) {
+                            Download.STATE_QUEUED -> {
+                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Queued)
+                            }
+                            Download.STATE_DOWNLOADING -> {
+                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloading)
+                            }
+                            Download.STATE_COMPLETED -> {
+                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloaded)
+                            }
+                            Download.STATE_STOPPED -> {
+                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Paused)
+                            }
+                            Download.STATE_FAILED -> {
+                                // TODO: log the error for better investigation.
+                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            )
+        }
+    }
+
     companion object {
+        const val DownloadResumed = Download.STOP_REASON_NONE
+        const val DownloadPaused = 35
         private const val DOWNLOAD_NOTIFICATION_ID = 20
         private const val DOWNLOAD_NOTIFICATION_CHANNEL_ID = "DownloadNotificationChannel"
         private const val DOWNLOAD_CONTENT_DIRECTORY = "downloads"

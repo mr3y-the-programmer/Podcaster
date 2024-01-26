@@ -221,6 +221,7 @@ class PodcasterAppState @Inject constructor(
     fun downloadEpisode(episode: Episode) {
         val context = currentContext
         if (context != null) {
+            podcastsRepository.addEpisodeOnDeviceIfNotExist(episode)
             val downloadRequest = DownloadRequest.Builder(
                 episode.id.toString(),
                 Uri.Builder()
@@ -236,18 +237,17 @@ class PodcasterAppState @Inject constructor(
         }
     }
 
-    fun resumeDownloading() {
+    fun resumeDownloading(episodeId: Long) {
         val context = currentContext
         if (context != null) {
-            DownloadService.sendResumeDownloads(context.applicationContext, DownloadMediaService::class.java, false)
+            DownloadService.sendSetStopReason(context.applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadResumed, false)
         }
     }
 
-    fun pauseDownloading() {
+    fun pauseDownloading(episodeId: Long) {
         val context = currentContext
         if (context != null) {
-            // Keep in mind that this doesn't persist between app process creation, so you might want to save it locally in db
-            DownloadService.sendPauseDownloads(context.applicationContext, DownloadMediaService::class.java, false)
+            DownloadService.sendSetStopReason(context.applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadPaused, false)
         }
     }
 
