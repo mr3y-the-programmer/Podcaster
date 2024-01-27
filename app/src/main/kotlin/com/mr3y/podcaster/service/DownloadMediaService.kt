@@ -100,6 +100,16 @@ class DownloadMediaService : DownloadService(
         downloadManager?.apply {
             addListener(
                 object : DownloadManager.Listener {
+
+                    override fun onDownloadRemoved(
+                        downloadManager: DownloadManager,
+                        download: Download
+                    ) {
+                        val episodeId = download.request.id.toLong()
+                        podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
+                        podcastsRepository.updateEpisodeDownloadProgress(episodeId, 0f)
+                    }
+
                     override fun onDownloadChanged(
                         downloadManager: DownloadManager,
                         download: Download,
