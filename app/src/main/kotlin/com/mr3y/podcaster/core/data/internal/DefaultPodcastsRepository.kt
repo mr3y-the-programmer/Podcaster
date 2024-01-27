@@ -34,6 +34,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getEpisodesWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long) = podcastsDao.getEpisodeWithDownloadMetadataForPodcasts(podcastsIds, limit)
 
+    override fun getDownloads() = podcastsDao.getDownloadingEpisodesWithDownloadMetadata()
+
     override suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast? {
         suspend fun fetchFromNetwork(): Podcast? {
             return networkClient.getPodcastById(podcastId).mapBoth(
@@ -68,6 +70,8 @@ class DefaultPodcastsRepository @Inject constructor(
     }
 
     override fun hasSubscriptions(): Flow<Boolean> = podcastsDao.hasPodcasts()
+
+    override fun hasDownloads(): Flow<Boolean> = podcastsDao.hasDownloads()
 
     override suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode? {
         suspend fun fetchFromNetworkAndRefresh(): Episode? {

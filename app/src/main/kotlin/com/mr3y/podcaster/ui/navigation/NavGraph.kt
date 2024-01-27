@@ -10,6 +10,7 @@ import com.kiwi.navigationcompose.typed.composable
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
+import com.mr3y.podcaster.ui.screens.DownloadsScreen
 import com.mr3y.podcaster.ui.screens.EpisodeDetailsScreen
 import com.mr3y.podcaster.ui.screens.ExploreScreen
 import com.mr3y.podcaster.ui.screens.PodcastDetailsScreen
@@ -76,7 +77,13 @@ fun PodcasterNavGraph(
             )
         }
         composable<Destinations.Downloads> {
-
+            DownloadsScreen(
+                onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, podcastArtworkUrl)) },
+                onNavDrawerClick = onNavDrawerClick,
+                appState = appState,
+                contentPadding = contentPadding,
+                excludedWindowInsets = excludedWindowInsets
+            )
         }
     }
 }

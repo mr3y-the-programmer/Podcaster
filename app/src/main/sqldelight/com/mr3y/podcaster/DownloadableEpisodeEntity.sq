@@ -22,8 +22,9 @@ SELECT * FROM downloadableEpisodeEntity WHERE episodeId = :id;
 getDownloadableEpisodesByIds:
 SELECT * FROM downloadableEpisodeEntity WHERE episodeId IN :ids;
 
-getDownloadedEpisodes:
-SELECT * FROM downloadableEpisodeEntity WHERE downloadStatus == "Downloaded";
+getDownloadingEpisodesWithDownloadMetadata:
+SELECT ee.*,dee.downloadStatus,dee.downloadProgress FROM episodeEntity AS ee
+INNER JOIN downloadableEpisodeEntity AS dee ON ee.id == dee.episodeId AND dee.downloadStatus != "NotDownloaded";
 
 updateEpisodeDownloadStatus:
 UPDATE downloadableEpisodeEntity SET downloadStatus = :downloadStatus WHERE episodeId = :id;
@@ -40,3 +41,6 @@ getUntouchedEpisodesIdsForPodcast:
 SELECT ee.id FROM episodeEntity AS ee
 INNER JOIN downloadableEpisodeEntity AS dee ON ee.id == dee.episodeId
 WHERE ee.podcastId = :podcastId AND (ee.isCompleted = 0 AND ee.progressInSec < 30) AND dee.downloadStatus = "NotDownloaded";
+
+countDownloads:
+SELECT count(*) FROM downloadableEpisodeEntity WHERE downloadStatus != "NotDownloaded";

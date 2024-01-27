@@ -20,6 +20,8 @@ interface PodcastsRepository {
 
     fun getEpisodesWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<EpisodeWithDownloadMetadata>>
 
+    fun getDownloads(): Flow<List<EpisodeWithDownloadMetadata>>
+
     suspend fun getPodcast(podcastId: Long, forceRefresh: Boolean): Podcast?
 
     suspend fun getEpisodesForPodcast(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String, forceRefresh: Boolean): List<Episode>?
@@ -27,6 +29,8 @@ interface PodcastsRepository {
     fun isPodcastFromSubscriptions(podcastId: Long): Flow<Boolean>
 
     fun hasSubscriptions(): Flow<Boolean>
+
+    fun hasDownloads(): Flow<Boolean>
 
     suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode?
 

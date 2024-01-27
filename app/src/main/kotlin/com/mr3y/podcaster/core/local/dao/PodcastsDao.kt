@@ -37,6 +37,8 @@ interface PodcastsDao {
 
     fun hasPodcasts(): Flow<Boolean>
 
+    fun hasDownloads(): Flow<Boolean>
+
     fun isPodcastAvailableNonObservable(podcastId: Long): Boolean
 
     fun upsertPodcast(podcast: Podcast)
@@ -77,6 +79,8 @@ interface PodcastsDao {
 
     fun getEpisodeWithDownloadMetadataForPodcasts(podcastsIds: Set<Long>, limit: Long): Flow<List<EpisodeWithDownloadMetadata>>
 
+    fun getDownloadingEpisodesWithDownloadMetadata(): Flow<List<EpisodeWithDownloadMetadata>>
+
     fun markEpisodeAsCompleted(episodeId: Long)
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
@@ -115,6 +119,13 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun hasPodcasts(): Flow<Boolean> {
         return database.podcastEntityQueries.countPodcasts()
+            .asFlow()
+            .mapToOneOrNull(dispatcher)
+            .map { it != null && it != 0L }
+    }
+
+    override fun hasDownloads(): Flow<Boolean> {
+        return database.downloadableEpisodeEntityQueries.countDownloads()
             .asFlow()
             .mapToOneOrNull(dispatcher)
             .map { it != null && it != 0L }
@@ -255,6 +266,12 @@ class DefaultPodcastsDao @Inject constructor(
         limit: Long
     ): Flow<List<EpisodeWithDownloadMetadata>> {
         return database.downloadableEpisodeEntityQueries.getEpisodesWithDownloadMetadataForPodcast(podcastsIds, limit, mapper = ::mapToEpisodeWithDownloadMetadata)
+            .asFlow()
+            .mapToList(dispatcher)
+    }
+
+    override fun getDownloadingEpisodesWithDownloadMetadata(): Flow<List<EpisodeWithDownloadMetadata>> {
+        return database.downloadableEpisodeEntityQueries.getDownloadingEpisodesWithDownloadMetadata(mapper = ::mapToEpisodeWithDownloadMetadata)
             .asFlow()
             .mapToList(dispatcher)
     }
