@@ -1,8 +1,6 @@
 package com.mr3y.podcaster.service
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -28,27 +26,26 @@ import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.ui.resources.EnStrings
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
 @ExperimentalCoroutinesApi
-class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
+class DownloadMediaService : DownloadService(
+    DOWNLOAD_NOTIFICATION_ID,
+    DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
+    DOWNLOAD_NOTIFICATION_CHANNEL_ID,
+    androidx.media3.exoplayer.workmanager.R.string.exo_download_notification_channel_name,
+    R.string.downloads_notification_channel_description
+) {
 
     @Inject
     lateinit var podcastsRepository: PodcastsRepository
-    private val serviceScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private var downloadManager: DownloadManager? = null
 
@@ -62,16 +59,12 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
     ): Notification {
         val languageCode = Resources.getSystem().configuration.locales[0].language.lowercase()
         val strings = Strings[languageCode] ?: EnStrings
-        val channel = NotificationChannel(
-            DOWNLOAD_NOTIFICATION_CHANNEL_ID,
-            "Podcaster Download notification",
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Podcaster Download notification description"
+        // Update our app UI.
+        downloads.forEach { download ->
+            val episodeId = download.request.id.toLong()
+            podcastsRepository.updateEpisodeDownloadProgress(episodeId, download.percentDownloaded.div(100.0f).coerceIn(0f, 1f))
         }
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        notificationManager?.createNotificationChannel(channel)
+        // Update foreground service notification.
         return DownloadNotificationHelper(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID)
             .buildProgressNotification(
                 this,
@@ -87,14 +80,8 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
         // start listening to updates because at this point download
         // manager is guaranteed to have been initialized & podcasts repository
         // instance is guaranteed to have been injected.
-        listenToProgressUpdates()
         attachDownloadManagerListener()
         return super.onStartCommand(intent, flags, startId)
-    }
-
-    override fun onDestroy() {
-        serviceScope.cancel()
-        super.onDestroy()
     }
 
     private fun buildDownloadManager(context: Context): DownloadManager {
@@ -107,18 +94,6 @@ class DownloadMediaService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
             }
         }
         return downloadManager!!
-    }
-
-    private fun listenToProgressUpdates() {
-        serviceScope.launch {
-            while (true) {
-                downloadManager?.currentDownloads?.forEach { download ->
-                    val episodeId = download.request.id.toLong()
-                    podcastsRepository.updateEpisodeDownloadProgress(episodeId, download.percentDownloaded.div(100.0f).coerceIn(0f, 1f))
-                }
-                delay(1.seconds)
-            }
-        }
     }
 
     private fun attachDownloadManagerListener() {

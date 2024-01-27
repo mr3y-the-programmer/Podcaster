@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Podcaster</string>
+    <string name="downloads_notification_channel_description">Receiving notifications about currently downloading episodes</string>
 </resources>
