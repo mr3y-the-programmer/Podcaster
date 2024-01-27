@@ -1,9 +1,11 @@
 package com.mr3y.podcaster.core.model
 
+import androidx.annotation.FloatRange
+
 data class EpisodeDownloadMetadata(
     val episodeId: Long,
     val downloadStatus: EpisodeDownloadStatus = EpisodeDownloadStatus.NotDownloaded,
-    val downloadProgress: Float = 0f
+    @FloatRange(from = 0.0, to = 1.0) val downloadProgress: Float = 0f
 )
 
 enum class EpisodeDownloadStatus {
