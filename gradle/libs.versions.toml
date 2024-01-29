@@ -7,6 +7,8 @@ hilt = "2.48.1"
 hilt-androidx = "1.1.0"
 core-ktx = "1.9.0"
 junit = "4.13.2"
+assertk = "0.28.0"
+turbine = "1.0.0"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 lifecycle-runtime = "2.7.0-rc02"
@@ -27,6 +29,7 @@ coil = "2.5.0"
 ktor = "2.3.5"
 result = "1.1.18"
 sqldelight = "2.0.0"
+sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -47,6 +50,9 @@ ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
@@ -74,8 +80,10 @@ hilt-androidx-compiler = { group = "androidx.hilt", name = "hilt-compiler", vers
 hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-androidx" }
 hilt-workmanager = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-androidx" }
 sqldelight-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
+sqldelight-sqlitedriver = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 sqldelight-flowext = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveadapters = { group = "app.cash.sqldelight", name = "primitive-adapters", version.ref = "sqldelight" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

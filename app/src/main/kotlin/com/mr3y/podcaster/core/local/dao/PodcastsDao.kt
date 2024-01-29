@@ -88,6 +88,8 @@ interface PodcastsDao {
     fun updateEpisodesPodcastTitle(title: String, podcastId: Long)
 
     fun deleteUntouchedEpisodes(podcastId: Long)
+
+    fun deleteEpisode(episodeId: Long)
 }
 
 class DefaultPodcastsDao @Inject constructor(
@@ -293,5 +295,9 @@ class DefaultPodcastsDao @Inject constructor(
             val ids = database.downloadableEpisodeEntityQueries.getUntouchedEpisodesIdsForPodcast(podcastId).executeAsList()
             database.episodeEntityQueries.deleteEpisodesByIds(ids)
         }
+    }
+
+    override fun deleteEpisode(episodeId: Long) {
+        database.episodeEntityQueries.deleteEpisodesByIds(listOf(episodeId))
     }
 }

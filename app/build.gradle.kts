@@ -141,6 +141,13 @@ dependencies {
 
     kspTest(libs.hilt.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.sqldelight.sqlitedriver)
+    testImplementation(libs.sqlite.jdbc) {
+        version { strictly(libs.versions.sqlite.jdbc.get()) }
+    }
 
     kspAndroidTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.test.ext.junit)
