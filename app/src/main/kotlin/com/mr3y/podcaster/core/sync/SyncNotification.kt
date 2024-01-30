@@ -47,7 +47,7 @@ private fun Context.syncWorkNotification(): Notification {
     notificationManager?.createNotificationChannel(channel)
 
     return NotificationCompat.Builder(this, SYNC_NOTIFICATION_CHANNEL_ID)
-        .setSmallIcon(R.drawable.core_common_ic_nia_notification) // TODO: Update this to our app's logo
+        .setSmallIcon(R.drawable.ic_notification)
         .setContentTitle(strings.sync_work_notification_title)
         .setContentText(strings.sync_work_notification_body)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)

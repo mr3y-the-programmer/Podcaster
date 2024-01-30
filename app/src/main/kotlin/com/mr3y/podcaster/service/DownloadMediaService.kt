@@ -68,7 +68,7 @@ class DownloadMediaService : DownloadService(
         return DownloadNotificationHelper(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID)
             .buildProgressNotification(
                 this,
-                R.drawable.core_common_ic_nia_notification,
+                R.drawable.ic_notification,
                 null,
                 strings.download_work_notification_message,
                 downloads,
