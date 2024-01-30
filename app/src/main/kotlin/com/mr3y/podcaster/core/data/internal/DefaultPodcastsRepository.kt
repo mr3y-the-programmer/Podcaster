@@ -77,9 +77,11 @@ class DefaultPodcastsRepository @Inject constructor(
         suspend fun fetchFromNetworkAndRefresh(): Episode? {
             return networkClient.getEpisodeById(episodeId).mapBoth(
                 success = { networkEpisode ->
-                    networkEpisode.mapToEpisode(null, podcastArtworkUrl).also {
-                        podcastsDao.upsertEpisode(it)
+                    val episode = networkEpisode.mapToEpisode(null, podcastArtworkUrl)
+                    if (podcastsDao.isEpisodeAvailableNonObservable(episodeId)) {
+                        podcastsDao.upsertEpisode(episode)
                     }
+                    episode
                 },
                 failure = { null }
             )
@@ -171,10 +173,11 @@ class DefaultPodcastsRepository @Inject constructor(
             )
     }
 
-    override suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean {
+    override suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, fallbackPodcastTitle: String, fallbackPodcastArtworkUrl: String): Boolean {
         return networkClient.getEpisodesByPodcastId(podcastId)
             .map {
-                val episodes = it.mapToEpisodes(podcastTitle, podcastArtworkUrl)
+                val (title, artworkUrl) = podcastsDao.getPodcast(podcastId).let { podcast -> podcast?.title to podcast?.artworkUrl }
+                val episodes = it.mapToEpisodes(title ?: fallbackPodcastTitle, artworkUrl ?: fallbackPodcastArtworkUrl)
                 if (podcastsDao.isPodcastAvailableNonObservable(podcastId)) {
                     episodes.forEach { episode -> podcastsDao.upsertEpisode(episode) }
                     return@map
@@ -184,16 +187,6 @@ class DefaultPodcastsRepository @Inject constructor(
                         podcastsDao.upsertEpisode(episode)
                     }
                 }
-            }.mapBoth(
-                success = { true },
-                failure = { false }
-            )
-    }
-
-    override suspend fun syncRemoteEpisodeWithLocal(episodeId: Long, podcastArtworkUrl: String): Boolean {
-        return networkClient.getEpisodeById(episodeId)
-            .map {
-                podcastsDao.upsertEpisode(it.mapToEpisode(null, podcastArtworkUrl))
             }.mapBoth(
                 success = { true },
                 failure = { false }

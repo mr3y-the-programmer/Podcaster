@@ -114,7 +114,6 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.ktor.core)
     implementation(libs.ktor.okhttp)
-    implementation(libs.ktor.client.mock)
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.result)
@@ -148,6 +147,7 @@ dependencies {
     testImplementation(libs.sqlite.jdbc) {
         version { strictly(libs.versions.sqlite.jdbc.get()) }
     }
+    testImplementation(libs.ktor.client.mock)
 
     kspAndroidTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.test.ext.junit)

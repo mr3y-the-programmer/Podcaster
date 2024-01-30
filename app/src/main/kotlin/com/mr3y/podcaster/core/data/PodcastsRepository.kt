@@ -70,7 +70,5 @@ interface PodcastsRepository {
 
     suspend fun syncRemotePodcastWithLocal(podcastId: Long): Boolean
 
-    suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, podcastTitle: String, podcastArtworkUrl: String): Boolean
-
-    suspend fun syncRemoteEpisodeWithLocal(episodeId: Long, podcastArtworkUrl: String): Boolean
+    suspend fun syncRemoteEpisodesForPodcastWithLocal(podcastId: Long, fallbackPodcastTitle: String, fallbackPodcastArtworkUrl: String): Boolean
 }
