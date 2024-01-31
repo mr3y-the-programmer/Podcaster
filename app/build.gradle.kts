@@ -178,4 +178,5 @@ dependencies {
     androidTestImplementation(libs.workmanager.testing)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    debugImplementation(libs.leakcanary)
 }
