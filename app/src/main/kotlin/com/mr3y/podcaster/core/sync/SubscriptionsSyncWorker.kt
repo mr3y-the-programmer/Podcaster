@@ -20,23 +20,23 @@ import java.util.concurrent.TimeUnit
 class SubscriptionsSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted params: WorkerParameters,
-    private val podcastsRepository: PodcastsRepository
+    private val podcastsRepository: PodcastsRepository,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         setSafeForeground(getForegroundInfo())
         return coroutineScope {
             val aggregatedSyncResults = podcastsRepository.getSubscriptionsNonObservable().map { podcast ->
-                    async {
-                        val result1 = podcastsRepository.syncRemotePodcastWithLocal(podcast.id)
-                        val result2 = podcastsRepository.syncRemoteEpisodesForPodcastWithLocal(
-                            podcast.id,
-                            podcast.title,
-                            podcast.artworkUrl
-                        )
-                        result1 && result2
-                    }
-                }.awaitAll()
+                async {
+                    val result1 = podcastsRepository.syncRemotePodcastWithLocal(podcast.id)
+                    val result2 = podcastsRepository.syncRemoteEpisodesForPodcastWithLocal(
+                        podcast.id,
+                        podcast.title,
+                        podcast.artworkUrl,
+                    )
+                    result1 && result2
+                }
+            }.awaitAll()
 
             when {
                 aggregatedSyncResults.all { isSuccessful -> isSuccessful } -> Result.success()

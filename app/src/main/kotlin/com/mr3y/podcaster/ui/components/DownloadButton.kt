@@ -2,7 +2,6 @@ package com.mr3y.podcaster.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -10,13 +9,11 @@ import androidx.compose.material.icons.filled.DownloadDone
 import androidx.compose.material.icons.filled.Square
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -40,7 +37,7 @@ fun DownloadButton(
     contentColor: Color = MaterialTheme.colorScheme.tertiaryPrimary,
     inactiveOutlineColor: Color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
 ) {
-    when(val status = downloadMetadata?.downloadStatus) {
+    when (val status = downloadMetadata?.downloadStatus) {
         EpisodeDownloadStatus.NotDownloaded, EpisodeDownloadStatus.Downloaded, null -> {
             val isDownloaded = status == EpisodeDownloadStatus.Downloaded
             val borderColor = if (isDownloaded) contentColor.copy(alpha = 0.38f) else contentColor
@@ -54,11 +51,11 @@ fun DownloadButton(
                 enabled = !isDownloaded,
                 shape = CircleShape,
                 colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = contentColor),
-                border = BorderStroke(1.dp, borderColor)
+                border = BorderStroke(1.dp, borderColor),
             ) {
                 Icon(
                     imageVector = if (isDownloaded) Icons.Filled.DownloadDone else Icons.Outlined.ArrowDownward,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         }
@@ -72,7 +69,7 @@ fun DownloadButton(
                 modifier = modifier,
                 shape = CircleShape,
                 colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = contentColor),
-                border = null
+                border = null,
             ) {
                 Icon(
                     imageVector = if (isPaused) Icons.Filled.ArrowDownward else Icons.Filled.Square,
@@ -81,17 +78,17 @@ fun DownloadButton(
                         .drawBehind {
                             drawCircle(
                                 color = inactiveOutlineColor,
-                                style = outlineStroke
+                                style = outlineStroke,
                             )
                             drawArc(
                                 color = contentColor,
                                 startAngle = 270f,
                                 sweepAngle = downloadMetadata.downloadProgress * 360f,
                                 useCenter = false,
-                                style = outlineStroke
+                                style = outlineStroke,
                             )
                         }
-                        .padding(8.dp)
+                        .padding(8.dp),
                 )
             }
         }
@@ -106,11 +103,11 @@ fun DownloadButtonNotDownloadedPreview() {
             downloadMetadata = EpisodeDownloadMetadata(
                 episodeId = 17870829L,
                 downloadStatus = EpisodeDownloadStatus.NotDownloaded,
-                downloadProgress = 0f
+                downloadProgress = 0f,
             ),
             onDownload = { },
             onResumingDownload = {},
-            onPausingDownload = {}
+            onPausingDownload = {},
         )
     }
 }
@@ -123,11 +120,11 @@ fun DownloadButtonPausedPreview() {
             downloadMetadata = EpisodeDownloadMetadata(
                 episodeId = 17870829L,
                 downloadStatus = EpisodeDownloadStatus.Paused,
-                downloadProgress = 0.5f
+                downloadProgress = 0.5f,
             ),
             onDownload = { },
             onResumingDownload = {},
-            onPausingDownload = {}
+            onPausingDownload = {},
         )
     }
 }
@@ -140,11 +137,11 @@ fun DownloadButtonQueuedResumedPreview() {
             downloadMetadata = EpisodeDownloadMetadata(
                 episodeId = 17870829L,
                 downloadStatus = EpisodeDownloadStatus.Downloading,
-                downloadProgress = 0.5f
+                downloadProgress = 0.5f,
             ),
             onDownload = { },
             onResumingDownload = {},
-            onPausingDownload = {}
+            onPausingDownload = {},
         )
     }
 }
@@ -157,11 +154,11 @@ fun DownloadButtonDownloadedPreview() {
             downloadMetadata = EpisodeDownloadMetadata(
                 episodeId = 17870829L,
                 downloadStatus = EpisodeDownloadStatus.Downloaded,
-                downloadProgress = 0f
+                downloadProgress = 0f,
             ),
             onDownload = { },
             onResumingDownload = {},
-            onPausingDownload = {}
+            onPausingDownload = {},
         )
     }
 }

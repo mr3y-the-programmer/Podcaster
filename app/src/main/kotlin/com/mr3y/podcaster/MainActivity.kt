@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
             PodcasterTheme {
                 HomeScreen(
                     appState = podcasterAppState,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -48,19 +48,19 @@ class MainActivity : ComponentActivity() {
     private fun goEdgeToEdge(
         isDarkTheme: (Resources) -> Boolean = { resources ->
             (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        }
+        },
     ) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(
                 lightScrim = android.graphics.Color.TRANSPARENT,
                 darkScrim = android.graphics.Color.TRANSPARENT,
-                detectDarkMode = isDarkTheme
+                detectDarkMode = isDarkTheme,
             ),
             navigationBarStyle = SystemBarStyle.auto(
                 lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF),
                 darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b),
-                detectDarkMode = isDarkTheme
-            )
+                detectDarkMode = isDarkTheme,
+            ),
         )
     }
 }

@@ -6,15 +6,15 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.mr3y.podcaster.CurrentlyPlayingEntity
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.di.IODispatcher
-import com.mr3y.podcaster.core.local.mapToEpisodeDownloadMetadata
 import com.mr3y.podcaster.core.local.mapToEpisode
+import com.mr3y.podcaster.core.local.mapToEpisodeDownloadMetadata
 import com.mr3y.podcaster.core.local.mapToEpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.local.mapToPodcast
 import com.mr3y.podcaster.core.local.toEpisodeEntity
 import com.mr3y.podcaster.core.local.toPodcastEntity
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
-import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
@@ -94,7 +94,7 @@ interface PodcastsDao {
 
 class DefaultPodcastsDao @Inject constructor(
     private val database: PodcasterDatabase,
-    @IODispatcher private val dispatcher: CoroutineDispatcher
+    @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : PodcastsDao {
 
     override fun getAllPodcasts(): Flow<List<Podcast>> {
@@ -231,7 +231,7 @@ class DefaultPodcastsDao @Inject constructor(
                     artworkUrl = episode.artworkUrl,
                     enclosureUrl = episode.enclosureUrl,
                     enclosureSizeInBytes = episode.enclosureSizeInBytes,
-                    podcastTitle = episode.podcastTitle
+                    podcastTitle = episode.podcastTitle,
                 )
             } else {
                 database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
@@ -265,7 +265,7 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun getEpisodeWithDownloadMetadataForPodcasts(
         podcastsIds: Set<Long>,
-        limit: Long
+        limit: Long,
     ): Flow<List<EpisodeWithDownloadMetadata>> {
         return database.downloadableEpisodeEntityQueries.getEpisodesWithDownloadMetadataForPodcast(podcastsIds, limit, mapper = ::mapToEpisodeWithDownloadMetadata)
             .asFlow()

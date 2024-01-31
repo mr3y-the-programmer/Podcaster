@@ -5,7 +5,7 @@ import androidx.annotation.FloatRange
 data class EpisodeDownloadMetadata(
     val episodeId: Long,
     val downloadStatus: EpisodeDownloadStatus = EpisodeDownloadStatus.NotDownloaded,
-    @FloatRange(from = 0.0, to = 1.0) val downloadProgress: Float = 0f
+    @FloatRange(from = 0.0, to = 1.0) val downloadProgress: Float = 0f,
 )
 
 enum class EpisodeDownloadStatus {
@@ -13,5 +13,5 @@ enum class EpisodeDownloadStatus {
     Queued,
     Downloading,
     Paused,
-    Downloaded
+    Downloaded,
 }

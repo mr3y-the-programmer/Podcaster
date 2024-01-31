@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PodcastDetailsViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val events = MutableSharedFlow<PodcastDetailsUIEvent>(extraBufferCapacity = 20)
@@ -45,7 +45,7 @@ class PodcastDetailsViewModel @Inject constructor(
         PodcastDetailsPresenter(
             podcastId = navArguments.podcastId,
             repository = podcastsRepository,
-            events = events
+            events = events,
         )
     }
 
@@ -75,7 +75,7 @@ class PodcastDetailsViewModel @Inject constructor(
 internal fun PodcastDetailsPresenter(
     podcastId: Long,
     repository: PodcastsRepository,
-    events: Flow<PodcastDetailsUIEvent>
+    events: Flow<PodcastDetailsUIEvent>,
 ): PodcastDetailsUIState {
     var isPodcastLoading by remember { mutableStateOf(true) }
     var isEpisodesLoading by remember { mutableStateOf(true) }
@@ -108,7 +108,7 @@ internal fun PodcastDetailsPresenter(
 
     LaunchedEffect(Unit) {
         events.collect { event ->
-            when(event) {
+            when (event) {
                 is PodcastDetailsUIEvent.Subscribe -> {
                     // Assigned to temp local variables, so kotlin can smart cast to type automatically.
                     val temp1 = podcast
@@ -162,7 +162,7 @@ internal fun PodcastDetailsPresenter(
                                 temp1.id,
                                 temp1.title,
                                 temp1.artworkUrl,
-                                false
+                                false,
                             )
                             isEpisodesLoading = false
                         }
@@ -172,7 +172,7 @@ internal fun PodcastDetailsPresenter(
                             temp1.id,
                             temp1.title,
                             temp1.artworkUrl,
-                            false
+                            false,
                         )
                         isEpisodesLoading = false
                     }
@@ -189,6 +189,6 @@ internal fun PodcastDetailsPresenter(
         isSubscriptionStateInEditMode = isSubscriptionStateInEditMode,
         episodes = episodes,
         isRefreshing = isRefreshing,
-        refreshResult = refreshResult
+        refreshResult = refreshResult,
     )
 }

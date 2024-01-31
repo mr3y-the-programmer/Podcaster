@@ -10,7 +10,7 @@ data class SubscriptionsUIState(
     val isRefreshing: Boolean,
     val refreshResult: RefreshResult?,
     val subscriptions: List<Podcast>,
-    val episodes: List<EpisodeWithDownloadMetadata>
+    val episodes: List<EpisodeWithDownloadMetadata>,
 )
 
 sealed interface SubscriptionsUIEvent {

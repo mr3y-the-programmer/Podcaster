@@ -86,7 +86,6 @@ import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.ui.preview.Episodes
 import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
@@ -108,7 +107,7 @@ fun SubscriptionsScreen(
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
-    viewModel: SubscriptionsViewModel = hiltViewModel()
+    viewModel: SubscriptionsViewModel = hiltViewModel(),
 ) {
     val subscriptionsState by viewModel.state.collectAsStateWithLifecycle()
     val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
@@ -129,7 +128,7 @@ fun SubscriptionsScreen(
         onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -151,7 +150,7 @@ fun SubscriptionsScreen(
     excludedWindowInsets: WindowInsets?,
     onRefresh: () -> Unit,
     onRefreshResultConsumed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
@@ -159,25 +158,25 @@ fun SubscriptionsScreen(
     val isDarkTheme = isSystemInDarkTheme()
     val playingStatus = currentlyPlayingEpisode?.playingStatus
     LaunchedEffect(state.refreshResult, playingStatus) {
-        when(state.refreshResult) {
+        when (state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.subscriptions_refresh_result_error
+                    message = strings.subscriptions_refresh_result_error,
                 )
                 onRefreshResultConsumed()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.subscriptions_refresh_result_mixed
+                    message = strings.subscriptions_refresh_result_mixed,
                 )
                 onRefreshResultConsumed()
             }
             is RefreshResult.Ok, null -> {}
         }
-        when(playingStatus) {
+        when (playingStatus) {
             PlayingStatus.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.generic_error_message
+                    message = strings.generic_error_message,
                 )
                 onConsumeErrorPlayingStatus()
             }
@@ -189,41 +188,41 @@ fun SubscriptionsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh
+        onRefresh = onRefresh,
     ) {
         Scaffold(
             topBar = {
                 SubscriptionsTopAppBar(
                     onSettingsClick = onSettingsClick,
                     onNavDrawerClick = onNavDrawerClick,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             },
             containerColor = MaterialTheme.colorScheme.surface,
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackBarHostState,
-                    modifier = Modifier.padding(externalContentPadding)
+                    modifier = Modifier.padding(externalContentPadding),
                 )
             },
             contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
-            modifier = modifier
+            modifier = modifier,
         ) { contentPadding ->
             Box(
                 modifier = Modifier
                     .padding(contentPadding)
-                    .fillMaxSize()
+                    .fillMaxSize(),
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.primaryTertiary),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     SubscriptionsHeader(
                         isLoading = state.isSubscriptionsLoading,
                         podcasts = state.subscriptions,
-                        onPodcastClick = onPodcastClick
+                        onPodcastClick = onPodcastClick,
                     )
                     EpisodesList(
                         isLoading = state.isEpisodesLoading,
@@ -235,7 +234,7 @@ fun SubscriptionsScreen(
                         onDownloadingEpisode = onDownloadingEpisode,
                         onResumeDownloadingEpisode = onResumeDownloadingEpisode,
                         onPauseDownloadingEpisode = onPauseDownloadingEpisode,
-                        currentlyPlayingEpisode = currentlyPlayingEpisode
+                        currentlyPlayingEpisode = currentlyPlayingEpisode,
                     )
                 }
             }
@@ -248,37 +247,37 @@ fun SubscriptionsScreen(
 private fun SubscriptionsTopAppBar(
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
-                onClick = onNavDrawerClick
+                onClick = onNavDrawerClick,
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description
+                    contentDescription = strings.icon_menu_content_description,
                 )
             }
         },
         title = { },
         actions = {
             IconButton(
-                onClick = onSettingsClick
+                onClick = onSettingsClick,
             ) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = strings.icon_settings_content_description
+                    contentDescription = strings.icon_settings_content_description,
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryTertiary,
             navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
         ),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -286,19 +285,19 @@ private fun SubscriptionsTopAppBar(
 private fun ColumnScope.SubscriptionsHeader(
     isLoading: Boolean,
     podcasts: List<Podcast>,
-    onPodcastClick: (podcastId: Long) -> Unit
+    onPodcastClick: (podcastId: Long) -> Unit,
 ) {
     val strings = LocalStrings.current
     Text(
         text = strings.subscriptions_label,
         color = MaterialTheme.colorScheme.onPrimaryTertiary,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
     )
     if (isLoading) {
         Spacer(modifier = Modifier.height(40.dp))
         LoadingIndicator(
             color = MaterialTheme.colorScheme.onPrimaryTertiary,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     } else {
         if (podcasts.isNotEmpty()) {
@@ -312,9 +311,9 @@ private fun ColumnScope.SubscriptionsHeader(
                     brush = Brush.horizontalGradient(
                         colors = listOf(Color.Transparent, color),
                         startX = if (leftEdge) 0f else size.width,
-                        endX = if (leftEdge) edgeWidthPx else size.width - edgeWidthPx
+                        endX = if (leftEdge) edgeWidthPx else size.width - edgeWidthPx,
                     ),
-                    blendMode = BlendMode.DstIn
+                    blendMode = BlendMode.DstIn,
                 )
             }
             LazyRow(
@@ -329,7 +328,7 @@ private fun ColumnScope.SubscriptionsHeader(
                         drawFadedEdge(leftEdge = true)
                         drawFadedEdge(leftEdge = false)
                     }
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
             ) {
                 items(podcasts, key = { it.id }) { podcast ->
                     AsyncImage(
@@ -340,7 +339,7 @@ private fun ColumnScope.SubscriptionsHeader(
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(8.dp))
                             .clickable(onClick = { onPodcastClick(podcast.id) }),
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.FillBounds,
                     )
                 }
             }
@@ -354,7 +353,7 @@ private fun ColumnScope.SubscriptionsHeader(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .height(120.dp)
+                    .height(120.dp),
             )
         }
     }
@@ -371,27 +370,27 @@ private fun ColumnScope.EpisodesList(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
-    currentlyPlayingEpisode: CurrentlyPlayingEpisode?
+    currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
 ) {
     Card(
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier
             .fillMaxWidth()
-            .weight(1f)
+            .weight(1f),
     ) {
         if (isLoading) {
             Spacer(modifier = Modifier.height(80.dp))
             LoadingIndicator(
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         } else {
             if (episodes.isNotEmpty()) {
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = contentPadding,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     itemsIndexed(episodes, key = { _, (episode, _) -> episode.id }) { index, (episode, downloadMetadata) ->
                         Row(
@@ -402,15 +401,15 @@ private fun ColumnScope.EpisodesList(
                                 .clickable(onClick = {
                                     onEpisodeClick(
                                         episode.id,
-                                        episode.artworkUrl
+                                        episode.artworkUrl,
                                     )
                                 })
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                         ) {
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.width(72.dp)
+                                modifier = Modifier.width(72.dp),
                             ) {
                                 AsyncImage(
                                     model = episode.artworkUrl,
@@ -419,7 +418,7 @@ private fun ColumnScope.EpisodesList(
                                         .size(64.dp)
                                         .aspectRatio(1f)
                                         .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.FillBounds
+                                    contentScale = ContentScale.FillBounds,
                                 )
                                 val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
                                 Text(
@@ -428,43 +427,43 @@ private fun ColumnScope.EpisodesList(
                                     color = MaterialTheme.colorScheme.inverseSurface,
                                     textAlign = TextAlign.Center,
                                     maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
 
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
                             ) {
                                 Text(
                                     text = episode.title,
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
                                     text = rememberHtmlToAnnotatedString(text = episode.description),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 3,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                             Column(
-                                verticalArrangement = Arrangement.SpaceBetween
+                                verticalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 PlayPauseCompactButton(
                                     isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
                                     playingStatus = currentlyPlayingEpisode?.playingStatus,
                                     onPlay = { onPlayEpisode(episode) },
-                                    onPause = onPause
+                                    onPause = onPause,
                                 )
                                 DownloadButton(
                                     downloadMetadata = downloadMetadata,
                                     onDownload = { onDownloadingEpisode(episode) },
                                     onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
-                                    onPausingDownload = { onPauseDownloadingEpisode(episode.id) }
+                                    onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
                                 )
                             }
                         }
@@ -484,7 +483,7 @@ private fun ColumnScope.EpisodesList(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxSize()
-                        .align(Alignment.CenterHorizontally)
+                        .align(Alignment.CenterHorizontally),
                 )
             }
         }
@@ -499,7 +498,7 @@ private fun format(dateTime: ZonedDateTime): String {
 @PodcasterPreview
 @Composable
 fun SubscriptionsScreenPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         val state by remember {
@@ -510,8 +509,8 @@ fun SubscriptionsScreenPreview(
                     isRefreshing = false,
                     refreshResult = null,
                     subscriptions = Podcasts,
-                    episodes = EpisodesWithDownloadMetadata
-                )
+                    episodes = EpisodesWithDownloadMetadata,
+                ),
             )
         }
         SubscriptionsScreen(
@@ -531,7 +530,7 @@ fun SubscriptionsScreenPreview(
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -548,8 +547,8 @@ fun EmptySubscriptionsScreenPreview() {
                     isRefreshing = false,
                     refreshResult = null,
                     subscriptions = emptyList(),
-                    episodes = emptyList()
-                )
+                    episodes = emptyList(),
+                ),
             )
         }
         SubscriptionsScreen(
@@ -569,7 +568,7 @@ fun EmptySubscriptionsScreenPreview() {
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

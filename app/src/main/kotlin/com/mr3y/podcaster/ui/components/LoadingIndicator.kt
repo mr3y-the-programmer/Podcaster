@@ -13,15 +13,15 @@ import com.mr3y.podcaster.ui.theme.primaryTertiary
 @Composable
 fun LoadingIndicator(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.primaryTertiary
+    color: Color = MaterialTheme.colorScheme.primaryTertiary,
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifier,
     ) {
         CircularProgressIndicator(
             color = color,
-            strokeCap = StrokeCap.Round
+            strokeCap = StrokeCap.Round,
         )
     }
 }

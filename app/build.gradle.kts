@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.sqldelight)
 }
 
@@ -40,7 +41,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -72,7 +73,7 @@ androidComponents {
     onVariants(selector().all()) { variant ->
         // TODO: find a way to get rid of the obscure `afterEvaluate` here
         afterEvaluate {
-            val sqlDelightTask = this.project.tasks.named ("generate${variant.name.capitalize()}PodcasterDatabaseInterface").get() as SqlDelightTask
+            val sqlDelightTask = this.project.tasks.named("generate${variant.name.capitalize()}PodcasterDatabaseInterface").get() as SqlDelightTask
 
             project.tasks.getByName("ksp" + variant.name.capitalize() + "Kotlin") {
                 (this as org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>).setSource(sqlDelightTask.outputDirectory)
@@ -88,6 +89,13 @@ sqldelight {
             schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
             verifyMigrations.set(true)
         }
+    }
+}
+
+ktlint {
+    filter {
+        exclude("**/generated/**")
+        exclude("**/build/**")
     }
 }
 

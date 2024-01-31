@@ -19,7 +19,7 @@ interface RecentSearchesDao {
 
 class DefaultRecentSearchesDao @Inject constructor(
     private val database: PodcasterDatabase,
-    @IODispatcher private val dispatcher: CoroutineDispatcher
+    @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : RecentSearchesDao {
 
     override fun recentSearchQueries(): Flow<List<String>> {

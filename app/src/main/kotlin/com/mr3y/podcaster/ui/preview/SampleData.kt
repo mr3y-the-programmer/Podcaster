@@ -20,7 +20,7 @@ val Podcasts = listOf(
         owner = "Donn Felker & Kaushik Gopal",
         languageCode = "en-us",
         episodeCount = 250,
-        genres = listOf(Genre(id=102, label="Technology"))
+        genres = listOf(Genre(id = 102, label = "Technology")),
     ),
     Podcast(
         id = 1033257L,
@@ -34,7 +34,7 @@ val Podcasts = listOf(
         owner = "AndroidPolice.com staff",
         languageCode = "en",
         episodeCount = 45,
-        genres = listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News"))
+        genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")),
     ),
     Podcast(
         id = 320527L,
@@ -42,7 +42,8 @@ val Podcasts = listOf(
         title = "Android Authority Podcast",
         description = """The Android Authority Podcast – discussing topics in Android every week.
                 The Android Authority Podcast brings you all the top stories and features based on your favorite mobile operating system: Android. We help make Android more accessible to all, and dive deeper into the details when we can, there's something in here for everyone.
-                Check out androidauthority.com for all the best news and reviews for your favorite phones and tablets, then join our community forums to join in on the discussion. Don't forget to hit our YouTube channel for even more.""".trimIndent(),
+                Check out androidauthority.com for all the best news and reviews for your favorite phones and tablets, then join our community forums to join in on the discussion. Don't forget to hit our YouTube channel for even more.
+        """.trimIndent(),
         podcastUrl = "https://androidauthority.libsyn.com/rss",
         website = "http://www.androidauthority.com/podcast",
         artworkUrl = "https://static.libsyn.com/p/assets/3/a/e/a/3aea54f506f92979/1400px_-_Margin_FullBG.png",
@@ -50,7 +51,7 @@ val Podcasts = listOf(
         owner = "AndroidAuthority.com",
         languageCode = "en",
         episodeCount = 270,
-        genres = listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News"))
+        genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")),
     ),
     Podcast(
         id = 573341L,
@@ -64,7 +65,7 @@ val Podcasts = listOf(
         owner = "Marc Mulzer",
         languageCode = "en-us",
         episodeCount = 4,
-        genres = listOf(Genre(id=29, label="Health"), Genre(id=30, label="Fitness"))
+        genres = listOf(Genre(id = 29, label = "Health"), Genre(id = 30, label = "Fitness")),
     ),
     Podcast(
         id = 1004348L,
@@ -78,7 +79,7 @@ val Podcasts = listOf(
         owner = "Timur Taepov",
         languageCode = "en",
         episodeCount = 1,
-        genres = listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News"))
+        genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")),
     ),
     Podcast(
         id = 85131L,
@@ -92,7 +93,7 @@ val Podcasts = listOf(
         owner = "Android's Amazing Comics",
         languageCode = "en",
         episodeCount = 231,
-        genres = listOf(Genre(id=42, label="Leisure"), Genre(id=49, label="Hobbies"))
+        genres = listOf(Genre(id = 42, label = "Leisure"), Genre(id = 49, label = "Hobbies")),
     ),
     Podcast(
         id = 456857L,
@@ -100,7 +101,8 @@ val Podcasts = listOf(
         title = "Now in Android",
         description = """This show gives listeners a quick run-down on things that the Android team has done recently that developers may want to check out. It covers library and platform releases, articles, videos, podcasts, samples, codelabs - whatever seems relevant and interesting for Android developers.
                 Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs
-                Android’s a big platform and there are many things being released all the time; listen to this podcast to stay up to date on what those things are.""".trimIndent(),
+                Android’s a big platform and there are many things being released all the time; listen to this podcast to stay up to date on what those things are.
+        """.trimIndent(),
         podcastUrl = "https://nowinandroid.libsyn.com/rss",
         website = "http://d.android.com",
         artworkUrl = "https://static.libsyn.com/p/assets/b/9/1/c/b91cd7167d326f8a/2020-01-30.png",
@@ -108,14 +110,15 @@ val Podcasts = listOf(
         owner = "Google Developer Studio",
         languageCode = "en",
         episodeCount = 87,
-        genres = listOf(Genre(id=102, label="Technology"), Genre(id=67, label="Science"))
+        genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 67, label = "Science")),
     ),
     Podcast(
         id = 170143L,
         guid = "5865f850-e68b-56b3-9599-b2aaf51f8b03",
         title = "Android Developers Backstage",
         description = """Android Backstage, a podcast by and for Android developers. Hosted by developers from the Android engineering team, this show covers topics of interest to Android programmers, with in-depth discussions and interviews with engineers on the Android team at Google.
-                        Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs""".trimIndent(),
+                        Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs
+        """.trimIndent(),
         podcastUrl = "https://adbackstage.libsyn.com/rss",
         website = "http://androidbackstage.blogspot.com/",
         artworkUrl = "https://static.libsyn.com/p/assets/c/9/e/0/c9e07a90cf263f3b40be95ea3302a6a1/Android_Devs_Backstage_Thumb_v2.png",
@@ -123,8 +126,8 @@ val Podcasts = listOf(
         owner = "Android Developers",
         languageCode = "en",
         episodeCount = 202,
-        genres = listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News"))
-    )
+        genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")),
+    ),
 )
 
 val Episodes = listOf(
@@ -144,7 +147,7 @@ val Episodes = listOf(
         enclosureSizeInBytes = 70728192L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
+        progressInSec = null,
     ),
     Episode(
         id = 16899052117L,
@@ -162,7 +165,7 @@ val Episodes = listOf(
         enclosureSizeInBytes = 3824746L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
+        progressInSec = null,
     ),
     Episode(
         id = 15576747231L,
@@ -180,7 +183,7 @@ val Episodes = listOf(
         enclosureSizeInBytes = 6354391L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
+        progressInSec = null,
     ),
     Episode(
         id = 2396578917L,
@@ -198,7 +201,7 @@ val Episodes = listOf(
         enclosureSizeInBytes = 14216363L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
+        progressInSec = null,
     ),
     Episode(
         id = 17536508L,
@@ -216,7 +219,7 @@ val Episodes = listOf(
         enclosureSizeInBytes = 84771967L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
+        progressInSec = null,
     ),
     Episode(
         id = 17870829L,
@@ -234,8 +237,8 @@ val Episodes = listOf(
         enclosureSizeInBytes = 131217150L,
         podcastTitle = null,
         isCompleted = false,
-        progressInSec = null
-    )
+        progressInSec = null,
+    ),
 )
 
 val EpisodesWithDownloadMetadata = listOf(
@@ -244,49 +247,49 @@ val EpisodesWithDownloadMetadata = listOf(
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[0].id,
             downloadStatus = EpisodeDownloadStatus.NotDownloaded,
-            downloadProgress = 0f
-        )
+            downloadProgress = 0f,
+        ),
     ),
     EpisodeWithDownloadMetadata(
         episode = Episodes[1],
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[1].id,
             downloadStatus = EpisodeDownloadStatus.Paused,
-            downloadProgress = 0.4f
-        )
+            downloadProgress = 0.4f,
+        ),
     ),
     EpisodeWithDownloadMetadata(
         episode = Episodes[2],
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[2].id,
             downloadStatus = EpisodeDownloadStatus.Downloaded,
-            downloadProgress = 1f
-        )
+            downloadProgress = 1f,
+        ),
     ),
     EpisodeWithDownloadMetadata(
         episode = Episodes[3],
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[3].id,
             downloadStatus = EpisodeDownloadStatus.Downloading,
-            downloadProgress = 0.7f
-        )
+            downloadProgress = 0.7f,
+        ),
     ),
     EpisodeWithDownloadMetadata(
         episode = Episodes[4],
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[4].id,
             downloadStatus = EpisodeDownloadStatus.Queued,
-            downloadProgress = 0f
-        )
+            downloadProgress = 0f,
+        ),
     ),
     EpisodeWithDownloadMetadata(
         episode = Episodes[5],
         downloadMetadata = EpisodeDownloadMetadata(
             episodeId = Episodes[5].id,
             downloadStatus = EpisodeDownloadStatus.NotDownloaded,
-            downloadProgress = 0f
-        )
-    )
+            downloadProgress = 0f,
+        ),
+    ),
 )
 
 val PodcastWithDetails = Podcast(
@@ -294,7 +297,8 @@ val PodcastWithDetails = Podcast(
     guid = "5865f850-e68b-56b3-9599-b2aaf51f8b03",
     title = "Android Developers Backstage",
     description = """Android Backstage, a podcast by and for Android developers. Hosted by developers from the Android engineering team, this show covers topics of interest to Android programmers, with in-depth discussions and interviews with engineers on the Android team at Google.
-                        Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs""".trimIndent(),
+                        Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs
+    """.trimIndent(),
     podcastUrl = "https://adbackstage.libsyn.com/rss",
     website = "http://androidbackstage.blogspot.com/",
     artworkUrl = "https://static.libsyn.com/p/assets/c/9/e/0/c9e07a90cf263f3b40be95ea3302a6a1/Android_Devs_Backstage_Thumb_v2.png",
@@ -302,7 +306,7 @@ val PodcastWithDetails = Podcast(
     owner = "Android Developers",
     languageCode = "en",
     episodeCount = 202,
-    genres = listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News"))
+    genres = listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")),
 )
 
 val EpisodeWithDetails = Episode(
@@ -321,11 +325,11 @@ val EpisodeWithDetails = Episode(
     enclosureSizeInBytes = 70728192L,
     podcastTitle = "Android Developers Backstage",
     isCompleted = false,
-    progressInSec = null
+    progressInSec = null,
 )
 
 val DownloadMetadata = EpisodeDownloadMetadata(
     episodeId = 14319430597L,
     downloadStatus = EpisodeDownloadStatus.Downloading,
-    downloadProgress = 0.7f
+    downloadProgress = 0.7f,
 )

@@ -2,8 +2,8 @@ package com.mr3y.podcaster.core.local
 
 import com.mr3y.podcaster.EpisodeEntity
 import com.mr3y.podcaster.PodcastEntity
-import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.Genre
@@ -21,7 +21,7 @@ fun mapToPodcast(
     owner: String,
     languageCode: String,
     episodeCount: Int,
-    genres: List<Genre>
+    genres: List<Genre>,
 ): Podcast {
     return Podcast(
         id,
@@ -35,7 +35,7 @@ fun mapToPodcast(
         owner,
         languageCode,
         episodeCount,
-        genres
+        genres,
     )
 }
 
@@ -55,7 +55,7 @@ fun mapToEpisode(
     enclosureSizeInBytes: Long,
     podcastTitle: String?,
     isCompleted: Boolean,
-    progressInSec: Int?
+    progressInSec: Int?,
 ): Episode {
     return Episode(
         id,
@@ -73,14 +73,14 @@ fun mapToEpisode(
         enclosureSizeInBytes,
         podcastTitle,
         isCompleted,
-        progressInSec
+        progressInSec,
     )
 }
 
 fun mapToEpisodeDownloadMetadata(
     episodeId: Long,
     downloadStatus: EpisodeDownloadStatus,
-    downloadProgress: Float
+    downloadProgress: Float,
 ): EpisodeDownloadMetadata {
     return EpisodeDownloadMetadata(episodeId, downloadStatus, downloadProgress)
 }
@@ -103,11 +103,11 @@ fun mapToEpisodeWithDownloadMetadata(
     isCompleted: Boolean,
     progressInSec: Int?,
     downloadStatus: EpisodeDownloadStatus,
-    downloadProgress: Float
+    downloadProgress: Float,
 ): EpisodeWithDownloadMetadata {
     return EpisodeWithDownloadMetadata(
         episode = mapToEpisode(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isCompleted, progressInSec),
-        downloadMetadata = mapToEpisodeDownloadMetadata(id, downloadStatus, downloadProgress)
+        downloadMetadata = mapToEpisodeDownloadMetadata(id, downloadStatus, downloadProgress),
     )
 }
 
@@ -124,7 +124,7 @@ fun Podcast.toPodcastEntity(): PodcastEntity {
         owner,
         languageCode,
         episodeCount,
-        genres
+        genres,
     )
 }
 
@@ -145,6 +145,6 @@ fun Episode.toEpisodeEntity(): EpisodeEntity {
         enclosureSizeInBytes,
         podcastTitle,
         isCompleted,
-        progressInSec
+        progressInSec,
     )
 }

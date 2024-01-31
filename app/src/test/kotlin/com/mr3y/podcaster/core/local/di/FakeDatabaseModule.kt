@@ -23,12 +23,12 @@ object FakeDatabaseModule {
             episodeEntityAdapter = EpisodeEntity.Adapter(
                 durationInSecAdapter = IntColumnAdapter,
                 episodeNumAdapter = IntColumnAdapter,
-                progressInSecAdapter = IntColumnAdapter
+                progressInSecAdapter = IntColumnAdapter,
             ),
             podcastEntityAdapter = PodcastEntity.Adapter(
                 episodeCountAdapter = IntColumnAdapter,
-                genresAdapter = GenresColumnAdapter
-            )
+                genresAdapter = GenresColumnAdapter,
+            ),
         )
     }
 }

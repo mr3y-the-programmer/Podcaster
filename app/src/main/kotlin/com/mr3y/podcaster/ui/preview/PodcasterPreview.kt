@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Wallpapers.GREEN_DOMINATED_EXAMPLE
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.ANNOTATION_CLASS,
-    AnnotationTarget.FUNCTION
+    AnnotationTarget.FUNCTION,
 )
 @Preview(device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_NO, wallpaper = GREEN_DOMINATED_EXAMPLE)
 @Preview(device = "spec:width=411dp,height=891dp", uiMode = Configuration.UI_MODE_NIGHT_YES or UI_MODE_TYPE_NORMAL, wallpaper = GREEN_DOMINATED_EXAMPLE)

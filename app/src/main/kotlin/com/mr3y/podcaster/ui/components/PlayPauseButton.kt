@@ -45,7 +45,7 @@ fun PlayPauseCompactButton(
     containerColor: Color = MaterialTheme.colorScheme.tertiaryPrimary,
     contentColor: Color = MaterialTheme.colorScheme.onTertiaryPrimary,
     contentPadding: Dp = 8.dp,
-    iconSize: Dp = 24.dp
+    iconSize: Dp = 24.dp,
 ) {
     if (!isSelected || playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
         IconButton(
@@ -56,13 +56,13 @@ fun PlayPauseCompactButton(
                 .padding(contentPadding),
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = containerColor,
-                contentColor = contentColor
-            )
+                contentColor = contentColor,
+            ),
         ) {
             Icon(
                 imageVector = Icons.Filled.PlayArrow,
                 contentDescription = null,
-                modifier = Modifier.size(iconSize)
+                modifier = Modifier.size(iconSize),
             )
         }
     } else {
@@ -72,18 +72,18 @@ fun PlayPauseCompactButton(
                 .size(48.dp)
                 .padding(contentPadding),
             shape = CircleShape,
-            colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = containerColor)
+            colors = IconButtonDefaults.outlinedIconButtonColors(containerColor = Color.Transparent, contentColor = containerColor),
         ) {
             if (playingStatus == PlayingStatus.Playing) {
                 Icon(
                     imageVector = Icons.Filled.Pause,
                     contentDescription = null,
-                    modifier = Modifier.size(iconSize)
+                    modifier = Modifier.size(iconSize),
                 )
             } else {
                 CircularProgressIndicator(
                     color = containerColor,
-                    modifier = Modifier.padding(4.dp)
+                    modifier = Modifier.padding(4.dp),
                 )
             }
         }
@@ -99,7 +99,7 @@ fun PlayPauseExpandedButton(
     durationInSec: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primaryTertiary,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimaryTertiary
+    contentColor: Color = MaterialTheme.colorScheme.onPrimaryTertiary,
 ) {
     ElevatedButton(
         onClick = {
@@ -112,15 +112,15 @@ fun PlayPauseExpandedButton(
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.elevatedButtonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         ),
         contentPadding = PaddingValues(
             start = 16.dp,
             top = 8.dp,
             end = 24.dp,
-            bottom = 8.dp
+            bottom = 8.dp,
         ),
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (isSelected && (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading)) {
             Icon(
@@ -128,12 +128,12 @@ fun PlayPauseExpandedButton(
                 contentDescription = null,
                 modifier = Modifier
                     .size(32.dp)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
             )
             val label = if (playingStatus == PlayingStatus.Loading) "Loading" else "Playing"
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         } else {
             Icon(
@@ -141,11 +141,11 @@ fun PlayPauseExpandedButton(
                 contentDescription = null,
                 modifier = Modifier
                     .size(32.dp)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
             )
             Text(
                 text = "${durationInSec.toDuration(DurationUnit.SECONDS)}",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
@@ -159,14 +159,14 @@ class IsSelectedParameterProvider : PreviewParameterProvider<Boolean> {
 @PodcasterPreview
 @Composable
 fun PlayPauseCompactButtonPreview(
-    @PreviewParameter(IsSelectedParameterProvider::class) isSelected: Boolean
+    @PreviewParameter(IsSelectedParameterProvider::class) isSelected: Boolean,
 ) {
     PodcasterTheme(dynamicColor = false) {
         PlayPauseCompactButton(
             isSelected = isSelected,
             playingStatus = PlayingStatus.Playing,
             onPlay = {},
-            onPause = {}
+            onPause = {},
         )
     }
 }
@@ -174,7 +174,7 @@ fun PlayPauseCompactButtonPreview(
 @PodcasterPreview
 @Composable
 fun PlayPauseExpandedButtonPreview(
-    @PreviewParameter(IsSelectedParameterProvider::class) isSelected: Boolean
+    @PreviewParameter(IsSelectedParameterProvider::class) isSelected: Boolean,
 ) {
     PodcasterTheme(dynamicColor = false) {
         PlayPauseExpandedButton(
@@ -182,7 +182,7 @@ fun PlayPauseExpandedButtonPreview(
             playingStatus = PlayingStatus.Playing,
             onPlay = {},
             onPause = {},
-            durationInSec = 888
+            durationInSec = 888,
         )
     }
 }

@@ -4,5 +4,5 @@ import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 
 data class DownloadsUIState(
     val isLoading: Boolean,
-    val downloads: List<EpisodeWithDownloadMetadata>
+    val downloads: List<EpisodeWithDownloadMetadata>,
 )

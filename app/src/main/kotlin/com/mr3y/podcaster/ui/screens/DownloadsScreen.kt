@@ -71,7 +71,7 @@ fun DownloadsScreen(
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
-    viewModel: DownloadsViewModel = hiltViewModel()
+    viewModel: DownloadsViewModel = hiltViewModel(),
 ) {
     val downloadsState by viewModel.state.collectAsStateWithLifecycle()
     DownloadsScreen(
@@ -82,7 +82,7 @@ fun DownloadsScreen(
         onPauseDownloadingEpisode = appState::pauseDownloading,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -95,7 +95,7 @@ fun DownloadsScreen(
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
@@ -109,12 +109,12 @@ fun DownloadsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .padding(end = 16.dp)
+                    .padding(end = 16.dp),
             )
         },
         contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier
+        modifier = modifier,
     ) { contentPadding ->
         val contentModifier = Modifier
             .padding(contentPadding)
@@ -130,7 +130,7 @@ fun DownloadsScreen(
                 onResumeDownloadingEpisode = onResumeDownloadingEpisode,
                 onPauseDownloadingEpisode = onPauseDownloadingEpisode,
                 externalContentPadding = externalContentPadding,
-                modifier = contentModifier
+                modifier = contentModifier,
             )
         }
     }
@@ -140,26 +140,26 @@ fun DownloadsScreen(
 @Composable
 private fun DownloadsTopAppBar(
     onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
-                onClick = onNavDrawerClick
+                onClick = onNavDrawerClick,
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description
+                    contentDescription = strings.icon_menu_content_description,
                 )
             }
         },
         title = {},
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent
+            scrolledContainerColor = Color.Transparent,
         ),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -170,18 +170,18 @@ private fun DownloadsList(
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     externalContentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (downloads.isEmpty()) {
         EmptyDownloads(modifier)
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = externalContentPadding
+            contentPadding = externalContentPadding,
         ) {
             itemsIndexed(
                 downloads,
-                key = { _, (episode, _) -> episode.id }
+                key = { _, (episode, _) -> episode.id },
             ) { index, (episode, downloadMetadata) ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -189,12 +189,12 @@ private fun DownloadsList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(onClick = { onEpisodeClick(episode.id, episode.artworkUrl) })
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(72.dp)
+                        modifier = Modifier.width(72.dp),
                     ) {
                         AsyncImage(
                             model = episode.artworkUrl,
@@ -203,37 +203,37 @@ private fun DownloadsList(
                                 .size(64.dp)
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.FillBounds
+                            contentScale = ContentScale.FillBounds,
                         )
                     }
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(
                             text = episode.title,
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = rememberHtmlToAnnotatedString(text = episode.description),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                     Column(
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.SpaceBetween,
                     ) {
                         DownloadButton(
                             downloadMetadata = downloadMetadata,
                             onDownload = { },
                             onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
-                            onPausingDownload = { onPauseDownloadingEpisode(episode.id) }
+                            onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
                         )
                     }
                 }
@@ -247,18 +247,18 @@ private fun DownloadsList(
 
 @Composable
 private fun EmptyDownloads(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(
             text = strings.downloads_empty_list,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -271,8 +271,8 @@ fun DownloadsScreenLoadingPreview() {
             mutableStateOf(
                 DownloadsUIState(
                     isLoading = true,
-                    downloads = emptyList()
-                )
+                    downloads = emptyList(),
+                ),
             )
         }
         DownloadsScreen(
@@ -283,7 +283,7 @@ fun DownloadsScreenLoadingPreview() {
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -291,15 +291,15 @@ fun DownloadsScreenLoadingPreview() {
 @PodcasterPreview
 @Composable
 fun DownloadsScreenPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         val state by remember {
             mutableStateOf(
                 DownloadsUIState(
                     isLoading = false,
-                    downloads = EpisodesWithDownloadMetadata.filterNot { it.downloadMetadata.downloadStatus == EpisodeDownloadStatus.NotDownloaded }
-                )
+                    downloads = EpisodesWithDownloadMetadata.filterNot { it.downloadMetadata.downloadStatus == EpisodeDownloadStatus.NotDownloaded },
+                ),
             )
         }
         DownloadsScreen(
@@ -310,7 +310,7 @@ fun DownloadsScreenPreview(
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -323,8 +323,8 @@ fun DownloadsScreenEmptyDownloadsPreview() {
             mutableStateOf(
                 DownloadsUIState(
                     isLoading = false,
-                    downloads = emptyList()
-                )
+                    downloads = emptyList(),
+                ),
             )
         }
         DownloadsScreen(
@@ -335,7 +335,7 @@ fun DownloadsScreenEmptyDownloadsPreview() {
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

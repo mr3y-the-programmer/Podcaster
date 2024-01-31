@@ -12,7 +12,7 @@ import io.ktor.client.request.parameter
 import javax.inject.Inject
 
 class DefaultPodcastIndexClient @Inject constructor(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : PodcastIndexClient {
 
     override suspend fun searchForPodcastsByTerm(term: String): ApiResponse<NetworkPodcasts> {

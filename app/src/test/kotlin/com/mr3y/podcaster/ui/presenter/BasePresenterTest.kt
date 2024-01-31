@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 @OptIn(ExperimentalCoroutinesApi::class)
-open class BasePresenterTest<Event: Any> {
+open class BasePresenterTest<Event : Any> {
 
     protected val testDispatcher = UnconfinedTestDispatcher()
     private val database = FakeDatabaseModule.provideInMemoryDatabaseInstance()
@@ -19,8 +19,7 @@ open class BasePresenterTest<Event: Any> {
     protected val repository = DefaultPodcastsRepository(
         podcastsDao = DefaultPodcastsDao(database, testDispatcher),
         recentSearchesDao = DefaultRecentSearchesDao(database, testDispatcher),
-        networkClient = DefaultPodcastIndexClient(httpClient)
+        networkClient = DefaultPodcastIndexClient(httpClient),
     )
     protected val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
-
 }

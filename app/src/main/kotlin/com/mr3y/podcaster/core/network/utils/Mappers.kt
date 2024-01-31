@@ -30,7 +30,7 @@ fun PodcastFeed.mapToPodcast() = Podcast(
     owner = owner,
     languageCode = languageCode,
     episodeCount = episodeCount,
-    genres = genres.map { (id, label) -> Genre(id, label) }
+    genres = genres.map { (id, label) -> Genre(id, label) },
 )
 
 fun PodcastEpisodeFeed.mapToEpisode(podcastTitle: String?, podcastArtworkUrl: String?) = Episode(

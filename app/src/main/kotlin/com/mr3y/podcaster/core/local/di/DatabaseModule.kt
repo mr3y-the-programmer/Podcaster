@@ -11,7 +11,6 @@ import com.mr3y.podcaster.EpisodeEntity
 import com.mr3y.podcaster.PodcastEntity
 import com.mr3y.podcaster.PodcasterDatabase
 import com.mr3y.podcaster.core.local.GenresColumnAdapter
-import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,19 +36,19 @@ object DatabaseModule {
             driver = AndroidSqliteDriver(
                 schema = PodcasterDatabase.Schema,
                 context = context,
-                name = "podcaster_database.db"
+                name = "podcaster_database.db",
             ),
             podcastEntityAdapter = PodcastEntity.Adapter(
                 episodeCountAdapter = IntColumnAdapter,
-                genresAdapter = GenresColumnAdapter
+                genresAdapter = GenresColumnAdapter,
             ),
             episodeEntityAdapter = EpisodeEntity.Adapter(
                 durationInSecAdapter = IntColumnAdapter,
                 episodeNumAdapter = IntColumnAdapter,
-                progressInSecAdapter = IntColumnAdapter
+                progressInSecAdapter = IntColumnAdapter,
             ),
             currentlyPlayingEntityAdapter = CurrentlyPlayingEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter),
-            downloadableEpisodeEntityAdapter = DownloadableEpisodeEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter)
+            downloadableEpisodeEntityAdapter = DownloadableEpisodeEntity.Adapter(EnumColumnAdapter(), FloatColumnAdapter),
         )
     }
 

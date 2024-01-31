@@ -26,12 +26,12 @@ fun PodcasterNavGraph(
     appState: PodcasterAppState,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
         startDestination = createRoutePattern<Destinations.Subscriptions>(),
-        modifier = modifier
+        modifier = modifier,
     ) {
         composable<Destinations.Subscriptions> {
             SubscriptionsScreen(
@@ -41,7 +41,7 @@ fun PodcasterNavGraph(
                 onSettingsClick = { navController.navigate(Destinations.Settings) },
                 appState = appState,
                 contentPadding = contentPadding,
-                excludedWindowInsets = excludedWindowInsets
+                excludedWindowInsets = excludedWindowInsets,
             )
         }
         composable<Destinations.Explore> {
@@ -49,7 +49,7 @@ fun PodcasterNavGraph(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
                 onNavDrawerClick = onNavDrawerClick,
                 contentPadding = contentPadding,
-                excludedWindowInsets = excludedWindowInsets
+                excludedWindowInsets = excludedWindowInsets,
             )
         }
         composable<Destinations.PodcastDetails> {
@@ -58,7 +58,7 @@ fun PodcasterNavGraph(
                 onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, podcastArtworkUrl)) },
                 appState = appState,
                 contentPadding = contentPadding,
-                excludedWindowInsets = excludedWindowInsets
+                excludedWindowInsets = excludedWindowInsets,
             )
         }
         composable<Destinations.EpisodeDetails> {
@@ -66,14 +66,14 @@ fun PodcasterNavGraph(
                 onNavigateUp = navController::navigateUp,
                 appState = appState,
                 contentPadding = contentPadding,
-                excludedWindowInsets = excludedWindowInsets
+                excludedWindowInsets = excludedWindowInsets,
             )
         }
         composable<Destinations.Settings> {
             SettingsScreen(
                 onNavigateUp = navController::navigateUp,
                 onDownloadsClick = { /*TODO*/ },
-                onFeedbackClick = { /*TODO*/ }
+                onFeedbackClick = { /*TODO*/ },
             )
         }
         composable<Destinations.Downloads> {
@@ -82,7 +82,7 @@ fun PodcasterNavGraph(
                 onNavDrawerClick = onNavDrawerClick,
                 appState = appState,
                 contentPadding = contentPadding,
-                excludedWindowInsets = excludedWindowInsets
+                excludedWindowInsets = excludedWindowInsets,
             )
         }
     }

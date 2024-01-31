@@ -29,8 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubscriptionsViewModel @Inject constructor(
-    private val podcastsRepository: PodcastsRepository
-): ViewModel() {
+    private val podcastsRepository: PodcastsRepository,
+) : ViewModel() {
 
     private val events = MutableSharedFlow<SubscriptionsUIEvent>(extraBufferCapacity = 20)
 
@@ -53,7 +53,7 @@ class SubscriptionsViewModel @Inject constructor(
 @Composable
 internal fun SubscriptionsPresenter(
     repository: PodcastsRepository,
-    events: Flow<SubscriptionsUIEvent>
+    events: Flow<SubscriptionsUIEvent>,
 ): SubscriptionsUIState {
     var isSubscriptionsLoading by remember { mutableStateOf(true) }
     var isEpisodesLoading by remember { mutableStateOf(true) }
@@ -91,7 +91,7 @@ internal fun SubscriptionsPresenter(
 
     LaunchedEffect(Unit) {
         events.collect { event ->
-            when(event) {
+            when (event) {
                 is SubscriptionsUIEvent.Refresh -> {
                     isRefreshing = true
                     val aggregatedRefreshResults = podcasts.map { podcast ->
@@ -120,6 +120,6 @@ internal fun SubscriptionsPresenter(
         isRefreshing = isRefreshing,
         subscriptions = podcasts,
         episodes = episodes,
-        refreshResult = refreshResult
+        refreshResult = refreshResult,
     )
 }

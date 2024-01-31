@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DownloadsViewModel @Inject constructor(
-    private val podcastsRepository: PodcastsRepository
+    private val podcastsRepository: PodcastsRepository,
 ) : ViewModel() {
 
     private val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
@@ -37,7 +37,7 @@ class DownloadsViewModel @Inject constructor(
 @SuppressLint("ComposableNaming")
 @Composable
 internal fun DownloadsPresenter(
-    repository: PodcastsRepository
+    repository: PodcastsRepository,
 ): DownloadsUIState {
     var isLoading by remember { mutableStateOf(true) }
     val downloads by repository.getDownloads().collectAsState(initial = emptyList())
@@ -62,6 +62,6 @@ internal fun DownloadsPresenter(
 
     return DownloadsUIState(
         isLoading = isLoading,
-        downloads = downloads
+        downloads = downloads,
     )
 }

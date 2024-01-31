@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.core.view.WindowInsetsControllerCompat
 
 fun Context.setStatusBarAppearanceLight(
-    isAppearanceLight: Boolean
+    isAppearanceLight: Boolean,
 ) {
     if (this !is ComponentActivity) return
 

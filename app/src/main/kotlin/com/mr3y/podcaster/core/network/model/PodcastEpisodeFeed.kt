@@ -26,14 +26,14 @@ data class PodcastEpisodeFeed(
     @SerialName("feedId")
     val podcastId: Long,
     @SerialName("feedTitle")
-    val podcastTitle: String? = null // will exist if we are fetching the feed for a single network episode
+    val podcastTitle: String? = null, // will exist if we are fetching the feed for a single network episode
 )
 
 @Serializable
 data class NetworkEpisode(
     val status: Boolean,
     @SerialName("episode")
-    val episodeFeed: PodcastEpisodeFeed
+    val episodeFeed: PodcastEpisodeFeed,
 )
 
 @Serializable
@@ -41,5 +41,5 @@ data class NetworkEpisodes(
     val status: Boolean,
     @SerialName("items")
     val episodesFeed: List<PodcastEpisodeFeed>,
-    val count: Long
+    val count: Long,
 )

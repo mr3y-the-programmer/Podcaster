@@ -10,7 +10,6 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
@@ -96,7 +95,7 @@ class PlaybackService : MediaSessionService() {
                     // Sync state between session & our app UI
                     override fun onPlayWhenReadyChanged(
                         playWhenReady: Boolean,
-                        reason: Int
+                        reason: Int,
                     ) {
                         val playingStatus = when {
                             playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
@@ -125,7 +124,7 @@ class PlaybackService : MediaSessionService() {
                         // TODO: log the error for better investigation
                         podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Error)
                     }
-                }
+                },
             )
         }
     }
@@ -152,7 +151,7 @@ class PlaybackService : MediaSessionService() {
     private inner class PlaybackMediaSessionCallback : MediaSession.Callback {
         override fun onConnect(
             session: MediaSession,
-            controller: MediaSession.ControllerInfo
+            controller: MediaSession.ControllerInfo,
         ): MediaSession.ConnectionResult {
             return AcceptedResultBuilder(session)
                 .setAvailableSessionCommands(ConnectionResult.DEFAULT_SESSION_COMMANDS)
@@ -162,7 +161,7 @@ class PlaybackService : MediaSessionService() {
 
         override fun onPlaybackResumption(
             mediaSession: MediaSession,
-            controller: MediaSession.ControllerInfo
+            controller: MediaSession.ControllerInfo,
         ): ListenableFuture<MediaItemsWithStartPosition> {
             return serviceScope.future {
                 val currentEpisode = currentlyPlayingEpisode.value
@@ -184,10 +183,10 @@ class PlaybackService : MediaSessionService() {
                                 .setMediaId(episode.id.toString())
                                 .setMediaMetadata(mediaMetadata)
                                 .setUri(Uri.Builder().encodedPath(episode.enclosureUrl).build())
-                                .build()
+                                .build(),
                         ),
                         C.INDEX_UNSET,
-                        startingPosition
+                        startingPosition,
                     )
                 } else {
                     throw UnsupportedOperationException()

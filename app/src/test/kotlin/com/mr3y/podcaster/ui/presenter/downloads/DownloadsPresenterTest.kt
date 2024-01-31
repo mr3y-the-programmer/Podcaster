@@ -42,14 +42,14 @@ class DownloadsPresenterTest : BasePresenterTest<Nothing>() {
             currentState = awaitItem()
             assertThat(currentState.downloads).hasSize(1)
             assertThat(currentState.downloads.first().downloadMetadata).isEqualTo(
-                EpisodeDownloadMetadata(Episodes[0].id, EpisodeDownloadStatus.Downloading)
+                EpisodeDownloadMetadata(Episodes[0].id, EpisodeDownloadStatus.Downloading),
             )
 
             repository.updateEpisodeDownloadProgress(Episodes[0].id, 0.2f)
 
             currentState = awaitItem()
             assertThat(currentState.downloads.single().downloadMetadata).isEqualTo(
-                EpisodeDownloadMetadata(Episodes[0].id, EpisodeDownloadStatus.Downloading, 0.2f)
+                EpisodeDownloadMetadata(Episodes[0].id, EpisodeDownloadStatus.Downloading, 0.2f),
             )
 
             expectNoEvents()

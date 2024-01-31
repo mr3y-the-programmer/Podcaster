@@ -1,6 +1,5 @@
 package com.mr3y.podcaster.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -35,7 +33,7 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit,
     onDownloadsClick: () -> Unit,
     onFeedbackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
@@ -43,7 +41,7 @@ fun SettingsScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = onNavigateUp,
-                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface)
+                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
@@ -55,29 +53,29 @@ fun SettingsScreen(
                     Text(
                         text = "Settings",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
                     )
                 },
                 actions = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier
+        modifier = modifier,
     ) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             SettingsEntryButton(
                 label = "Appearance",
                 onClick = {
-                      // TODO: Open a dialog to customize theme & enable/disable dynamic color
+                    // TODO: Open a dialog to customize theme & enable/disable dynamic color
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             )
             Divider()
             SettingsEntryButton(
@@ -85,7 +83,7 @@ fun SettingsScreen(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             )
             Divider()
             SettingsEntryButton(
@@ -93,20 +91,20 @@ fun SettingsScreen(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             )
             Divider()
             Text(
                 text = "Version Info",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             )
             Text(
                 text = "<Placeholder>",
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             )
             Divider()
             SettingsEntryButton(
@@ -114,7 +112,7 @@ fun SettingsScreen(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             )
         }
     }
@@ -124,18 +122,18 @@ fun SettingsScreen(
 private fun SettingsEntryButton(
     label: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .clickable(
-                onClick = onClick
-            )
+                onClick = onClick,
+            ),
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -143,14 +141,14 @@ private fun SettingsEntryButton(
 @PodcasterPreview
 @Composable
 fun SettingsScreenPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         SettingsScreen(
             {},
             {},
             {},
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

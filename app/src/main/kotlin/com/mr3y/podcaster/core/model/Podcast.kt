@@ -12,7 +12,7 @@ data class Podcast(
     val owner: String,
     val languageCode: String,
     val episodeCount: Int,
-    val genres: List<Genre>
+    val genres: List<Genre>,
 ) {
     override fun toString(): String {
         return "\nPodcast(\n" +
@@ -28,11 +28,11 @@ data class Podcast(
             "languageCode = \"$languageCode\",\n" +
             "episodeCount = $episodeCount,\n" +
             "genres = $genres\n" +
-        ")"
+            ")"
     }
 }
 
 data class Genre(
     val id: Int,
-    val label: String
+    val label: String,
 )

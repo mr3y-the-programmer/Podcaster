@@ -20,7 +20,7 @@ fun PullToRefresh(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primaryTertiary,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val state = rememberPullToRefreshState()
     LaunchedEffect(state.isRefreshing) {
@@ -37,11 +37,11 @@ fun PullToRefresh(
 
     Box(modifier = modifier.nestedScroll(state.nestedScrollConnection)) {
         content()
-        
+
         PullToRefreshContainer(
             state = state,
             contentColor = contentColor,
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.TopCenter),
         )
     }
 }

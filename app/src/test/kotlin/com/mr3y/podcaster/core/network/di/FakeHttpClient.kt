@@ -45,7 +45,7 @@ fun HttpClient.enqueueMockResponse(response: String, status: HttpStatusCode, hea
                     headers.forEach { (name, value) ->
                         append(name, value)
                     }
-                }
+                },
             )
         }
     }

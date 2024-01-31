@@ -92,7 +92,6 @@ import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
-import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
@@ -124,7 +123,7 @@ fun PodcastDetailsScreen(
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
-    viewModel: PodcastDetailsViewModel = hiltViewModel()
+    viewModel: PodcastDetailsViewModel = hiltViewModel(),
 ) {
     val podcastDetailsState by viewModel.state.collectAsStateWithLifecycle()
     val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
@@ -143,7 +142,7 @@ fun PodcastDetailsScreen(
         onConsumeResult = viewModel::consumeRefreshResult,
         onRetry = viewModel::retry,
         onEpisodeClick = onEpisodeClick,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -163,7 +162,7 @@ fun PodcastDetailsScreen(
     onConsumeResult: () -> Unit,
     onRetry: () -> Unit,
     onEpisodeClick: (episodeId: Long, podcastArtworkUrl: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
@@ -171,25 +170,25 @@ fun PodcastDetailsScreen(
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     LaunchedEffect(state.refreshResult, playingStatus) {
-        when(state.refreshResult) {
+        when (state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.podcast_details_refresh_result_error
+                    message = strings.podcast_details_refresh_result_error,
                 )
                 onConsumeResult()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.podcast_details_refresh_result_mixed
+                    message = strings.podcast_details_refresh_result_mixed,
                 )
                 onConsumeResult()
             }
             is RefreshResult.Ok, null -> {}
         }
-        when(playingStatus) {
+        when (playingStatus) {
             PlayingStatus.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.generic_error_message
+                    message = strings.generic_error_message,
                 )
                 onConsumeErrorPlayingStatus()
             }
@@ -203,7 +202,7 @@ fun PodcastDetailsScreen(
         builder = {
             clearFilters()
                 .maximumColorCount(8)
-        }
+        },
     )
     var bitmap: ImageBitmap? by remember { mutableStateOf(null) }
     LaunchedEffect(bitmap) {
@@ -227,32 +226,34 @@ fun PodcastDetailsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh
+        onRefresh = onRefresh,
     ) {
         Scaffold(
             topBar = {
                 PodcastDetailsTopBar(
-                    containerColor = if (state.isPodcastLoading || state.podcast == null)
+                    containerColor = if (state.isPodcastLoading || state.podcast == null) {
                         MaterialTheme.colorScheme.surface
-                    else
-                        dominantColorState.color,
-                    navigationIconContentColor = if (state.isPodcastLoading || state.podcast == null)
+                    } else {
+                        dominantColorState.color
+                    },
+                    navigationIconContentColor = if (state.isPodcastLoading || state.podcast == null) {
                         MaterialTheme.colorScheme.onSurface
-                    else
-                        dominantColorState.onColor,
+                    } else {
+                        dominantColorState.onColor
+                    },
                     onNavigateUp = onNavigateUp,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             },
             containerColor = MaterialTheme.colorScheme.surface,
             snackbarHost = { SnackbarHost(snackBarHostState, Modifier.padding(externalContentPadding)) },
             contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
-            modifier = modifier
+            modifier = modifier,
         ) { contentPadding ->
             Box(
                 modifier = Modifier
                     .padding(contentPadding)
-                    .fillMaxSize()
+                    .fillMaxSize(),
             ) {
                 when {
                     state.isPodcastLoading -> {
@@ -274,7 +275,7 @@ fun PodcastDetailsScreen(
                             subscriptionState = state.subscriptionState,
                             isSubscriptionInEditMode = state.isSubscriptionStateInEditMode,
                             onSubscribe = onSubscribe,
-                            onUnsubscribe = onUnsubscribe
+                            onUnsubscribe = onUnsubscribe,
                         )
                         LazyColumn(
                             modifier = Modifier
@@ -285,13 +286,13 @@ fun PodcastDetailsScreen(
                                 .padding(top = 64.dp)
                                 .zIndex(1f),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = externalContentPadding
+                            contentPadding = externalContentPadding,
                         ) {
                             item {
                                 val urlHandler = LocalUriHandler.current
                                 Metadata(
                                     podcast = state.podcast,
-                                    onUrlClick = { url -> urlHandler.openUri(url) }
+                                    onUrlClick = { url -> urlHandler.openUri(url) },
                                 )
                             }
 
@@ -301,7 +302,7 @@ fun PodcastDetailsScreen(
                                         LoadingIndicator(
                                             modifier = Modifier
                                                 .fillParentMaxWidth()
-                                                .height(144.dp)
+                                                .height(144.dp),
                                         )
                                     }
                                 }
@@ -311,21 +312,21 @@ fun PodcastDetailsScreen(
                                             onRetry = onRetry,
                                             modifier = Modifier
                                                 .fillParentMaxWidth()
-                                                .height(144.dp)
+                                                .height(144.dp),
                                         )
                                     }
                                 }
                                 else -> {
                                     itemsIndexed(
                                         state.episodes,
-                                        key = { _, episode -> episode.id }
+                                        key = { _, episode -> episode.id },
                                     ) { index, episode ->
                                         Episode(
                                             episode = episode,
                                             onEpisodeClick = { episodeId -> onEpisodeClick(episodeId, state.podcast.artworkUrl) },
                                             currentlyPlayingEpisode = currentlyPlayingEpisode,
                                             onPlay = onPlayEpisode,
-                                            onPause = onPause
+                                            onPause = onPause,
                                         )
                                         if (index != state.episodes.lastIndex) {
                                             HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
@@ -347,14 +348,14 @@ private fun PodcastDetailsTopBar(
     containerColor: Color,
     navigationIconContentColor: Color,
     onNavigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
                 onClick = onNavigateUp,
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = navigationIconContentColor)
+                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = navigationIconContentColor),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -364,11 +365,11 @@ private fun PodcastDetailsTopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
-            navigationIconContentColor = navigationIconContentColor
+            navigationIconContentColor = navigationIconContentColor,
         ),
         title = { },
         actions = {},
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -380,14 +381,14 @@ private fun BoxScope.Header(
     subscriptionState: SubscriptionState,
     isSubscriptionInEditMode: Boolean,
     onSubscribe: () -> Unit,
-    onUnsubscribe: () -> Unit
+    onUnsubscribe: () -> Unit,
 ) {
     val context = LocalContext.current
     Box(
         Modifier
             .height(96.dp)
             .background(dominantColor)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     )
 
     AsyncImage(
@@ -406,7 +407,7 @@ private fun BoxScope.Header(
             .padding(top = 32.dp)
             .size(128.dp)
             .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-            .zIndex(3f)
+            .zIndex(3f),
     )
 
     Row(
@@ -418,30 +419,32 @@ private fun BoxScope.Header(
             .background(MaterialTheme.colorScheme.surface)
             .padding(top = 8.dp)
             .zIndex(2f),
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         val strings = LocalStrings.current
         AnimatedContent(
             targetState = subscriptionState,
             transitionSpec = {
-                (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                        scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90)))
+                (
+                    fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                        scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                    )
                     .togetherWith(fadeOut(animationSpec = tween(90)))
-                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _,_ -> tween(600) }))
+                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(600) }))
             },
             label = "Toggle Subscription state",
-            modifier = Modifier.padding(vertical = 4.dp)
+            modifier = Modifier.padding(vertical = 4.dp),
         ) { targetState ->
-            when(targetState) {
+            when (targetState) {
                 SubscriptionState.Subscribed -> {
                     OutlinedButton(
                         onClick = onUnsubscribe,
                         enabled = !isSubscriptionInEditMode,
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primaryTertiary
+                            contentColor = MaterialTheme.colorScheme.primaryTertiary,
                         ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryTertiary)
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryTertiary),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
@@ -450,7 +453,7 @@ private fun BoxScope.Header(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = strings.unsubscribe_label,
-                            style = MaterialTheme.typography.labelLarge
+                            style = MaterialTheme.typography.labelLarge,
                         )
                     }
                 }
@@ -461,12 +464,12 @@ private fun BoxScope.Header(
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.elevatedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
-                        )
+                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                        ),
                     ) {
                         Text(
                             text = strings.subscribe_label,
-                            style = MaterialTheme.typography.labelLarge
+                            style = MaterialTheme.typography.labelLarge,
                         )
                     }
                 }
@@ -479,19 +482,19 @@ private fun BoxScope.Header(
 @Composable
 private fun LazyItemScope.Metadata(
     podcast: Podcast,
-    onUrlClick: (url: String) -> Unit
+    onUrlClick: (url: String) -> Unit,
 ) {
     Text(
         text = podcast.title,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
     )
     Spacer(modifier = Modifier.height(8.dp))
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = podcast.author,
@@ -499,20 +502,20 @@ private fun LazyItemScope.Metadata(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .widthIn(max = 232.dp)
-                .basicMarquee(initialDelayMillis = 300)
+                .basicMarquee(initialDelayMillis = 300),
         )
         IconButton(
             onClick = { onUrlClick(podcast.website) },
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.inverseSurface
+                contentColor = MaterialTheme.colorScheme.inverseSurface,
             ),
-            modifier = Modifier.requiredSize(48.dp)
+            modifier = Modifier.requiredSize(48.dp),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.world_wide_web),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.inverseSurface
+                tint = MaterialTheme.colorScheme.inverseSurface,
             )
         }
     }
@@ -521,14 +524,14 @@ private fun LazyItemScope.Metadata(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         podcast.genres.forEach { genre ->
             SuggestionChip(
                 onClick = { },
                 label = {
                     Text(text = genre.label)
-                }
+                },
             )
         }
     }
@@ -538,31 +541,31 @@ private fun LazyItemScope.Metadata(
         text = strings.about_label,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.SemiBold,
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         text = podcast.description,
         color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     )
     Spacer(modifier = Modifier.height(24.dp))
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = strings.episodes_label,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
         Text(
             text = podcast.episodeCount.toString(),
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -573,42 +576,42 @@ private fun LazyItemScope.Episode(
     onEpisodeClick: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     onPlay: (Episode) -> Unit,
-    onPause: () -> Unit
+    onPause: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onEpisodeClick(episode.id) })
+            .clickable(onClick = { onEpisodeClick(episode.id) }),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             Text(
                 text = episode.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = rememberHtmlToAnnotatedString(text = episode.description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
         Column(
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             PlayPauseCompactButton(
                 isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
                 playingStatus = currentlyPlayingEpisode?.playingStatus,
                 onPlay = { onPlay(episode) },
-                onPause = onPause
+                onPause = onPause,
             )
         }
     }
@@ -617,7 +620,7 @@ private fun LazyItemScope.Episode(
 @PodcasterPreview
 @Composable
 fun PodcastDetailsScreenPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         PodcastDetailsScreen(
@@ -629,7 +632,7 @@ fun PodcastDetailsScreenPreview(
                 isSubscriptionStateInEditMode = false,
                 episodes = Episodes.take(4),
                 isRefreshing = false,
-                refreshResult = null
+                refreshResult = null,
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -644,7 +647,7 @@ fun PodcastDetailsScreenPreview(
             onConsumeResult = {},
             onRetry = {},
             onEpisodeClick = { _, _ -> },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -662,7 +665,7 @@ fun PodcastDetailsScreenErrorPreview() {
                 isSubscriptionStateInEditMode = false,
                 episodes = null,
                 isRefreshing = false,
-                refreshResult = null
+                refreshResult = null,
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -677,7 +680,7 @@ fun PodcastDetailsScreenErrorPreview() {
             onConsumeResult = {},
             onRetry = {},
             onEpisodeClick = { _, _ -> },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -695,7 +698,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 isSubscriptionStateInEditMode = false,
                 episodes = null,
                 isRefreshing = false,
-                refreshResult = null
+                refreshResult = null,
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -710,7 +713,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
             onConsumeResult = {},
             onRetry = {},
             onEpisodeClick = { _, _ -> },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

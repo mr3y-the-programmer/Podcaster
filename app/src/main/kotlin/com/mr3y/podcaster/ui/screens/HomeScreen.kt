@@ -67,7 +67,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 @Composable
 fun HomeScreen(
     appState: PodcasterAppState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -95,20 +95,20 @@ fun HomeScreen(
             strings.tab_subscriptions_label,
             Icons.Outlined.Subscriptions,
             createRoutePattern<Destinations.Subscriptions>(),
-            Destinations.Subscriptions
+            Destinations.Subscriptions,
         ),
         DrawerTab(
             strings.tab_explore_label,
             Icons.Outlined.Search,
             createRoutePattern<Destinations.Explore>(),
-            Destinations.Explore
+            Destinations.Explore,
         ),
         DrawerTab(
             strings.tab_downloads_label,
             Icons.Outlined.FileDownload,
             createRoutePattern<Destinations.Downloads>(),
-            Destinations.Downloads
-        )
+            Destinations.Downloads,
+        ),
     )
     LaunchedEffect(key1 = drawerState.targetValue, key2 = isPlayerViewExpanded) {
         if (drawerState.targetValue == DrawerValue.Open || isPlayerViewExpanded) {
@@ -142,15 +142,15 @@ fun HomeScreen(
                                     restoreState = true
                                 }
                             }
-                        }
+                        },
                     )
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             val density = LocalDensity.current
             val expandedPlayerViewHeight = maxHeight
@@ -167,11 +167,11 @@ fun HomeScreen(
                     anchors = anchors,
                     positionalThreshold = { distance: Float -> distance * 0.1f },
                     animationSpec = spring(),
-                    velocityThreshold = { with(density) { 80.dp.toPx() } }
+                    velocityThreshold = { with(density) { 80.dp.toPx() } },
                 )
             }
             LaunchedEffect(state.currentValue) {
-                when(state.currentValue) {
+                when (state.currentValue) {
                     PlayerViewState.Collapsed -> {
                         if (isPlayerViewExpanded) {
                             appState.collapsePlayerView()
@@ -192,13 +192,13 @@ fun HomeScreen(
                 },
                 appState = appState,
                 contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
-                excludedWindowInsets = if (currentlyPlayingEpisode != null) playerViewBottomInsets else null
+                excludedWindowInsets = if (currentlyPlayingEpisode != null) playerViewBottomInsets else null,
             )
             currentlyPlayingEpisode?.let { activeEpisode ->
                 val isCollapsed = state.targetValue == PlayerViewState.Collapsed
                 val containerColor by animateColorAsState(
                     targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
-                    label = "PlayerViewColorAnimation"
+                    label = "PlayerViewColorAnimation",
                 )
                 Crossfade(
                     targetState = isCollapsed,
@@ -212,10 +212,10 @@ fun HomeScreen(
                                 0,
                                 state
                                     .requireOffset()
-                                    .toInt()
+                                    .toInt(),
                             )
                         }
-                        .anchoredDraggable(state, Orientation.Vertical)
+                        .anchoredDraggable(state, Orientation.Vertical),
                 ) { collapsed ->
                     if (collapsed) {
                         CollapsedPlayerView(
@@ -224,7 +224,7 @@ fun HomeScreen(
                             onPause = appState::pause,
                             progress = trackProgress,
                             contentWindowInsets = playerViewBottomInsets,
-                            containerColor = containerColor
+                            containerColor = containerColor,
                         )
                     } else {
                         ExpandedPlayerView(
@@ -237,7 +237,7 @@ fun HomeScreen(
                             progress = trackProgress,
                             onSeeking = appState::seekTo,
                             onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
-                            containerColor = containerColor
+                            containerColor = containerColor,
                         )
                     }
                 }
@@ -250,10 +250,10 @@ data class DrawerTab(
     val label: String,
     val icon: ImageVector,
     val route: String,
-    val destination: Destinations
+    val destination: Destinations,
 )
 
 private enum class PlayerViewState {
     Expanded,
-    Collapsed
+    Collapsed,
 }

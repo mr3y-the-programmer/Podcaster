@@ -38,7 +38,6 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideKtorClientInstance(@ApplicationContext applicationContext: Context, jsonInstance: Json): HttpClient {
-
         fun byteToHex(binary: ByteArray): String {
             Formatter().use { formatter ->
                 for (b in binary) {

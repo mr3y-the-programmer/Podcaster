@@ -29,7 +29,7 @@ class DefaultPodcastsDaoTest {
     fun setUp() {
         sut = DefaultPodcastsDao(
             database = FakeDatabaseModule.provideInMemoryDatabaseInstance(),
-            dispatcher = testDispatcher
+            dispatcher = testDispatcher,
         )
     }
 

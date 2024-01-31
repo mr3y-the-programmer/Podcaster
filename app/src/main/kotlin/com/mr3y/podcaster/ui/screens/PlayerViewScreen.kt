@@ -56,7 +56,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -96,13 +95,13 @@ fun ExpandedPlayerView(
     onSeeking: (Int) -> Unit,
     onBack: () -> Unit,
     containerColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val (episode, playingStatus, playbackSpeed) = currentlyPlayingEpisode
     BackHandler(onBack = onBack)
     Scaffold(
         containerColor = containerColor,
-        modifier = modifier
+        modifier = modifier,
     ) { contentPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -111,7 +110,7 @@ fun ExpandedPlayerView(
                 .padding(contentPadding)
                 .padding(top = 48.dp)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             AsyncImage(
                 model = episode.artworkUrl,
@@ -124,19 +123,19 @@ fun ExpandedPlayerView(
                         brush = Brush.horizontalGradient(
                             0.0f to Color.Transparent,
                             0.5f to MaterialTheme.colorScheme.tertiaryPrimary,
-                            0.6f to Color.Transparent
+                            0.6f to Color.Transparent,
                         ),
-                        shape = RectangleShape
+                        shape = RectangleShape,
                     )
                     .border(
                         width = 1.dp,
                         brush = Brush.horizontalGradient(
                             0.0f to MaterialTheme.colorScheme.tertiaryPrimary,
                             0.5f to Color.Transparent,
-                            0.6f to MaterialTheme.colorScheme.primaryTertiary
+                            0.6f to MaterialTheme.colorScheme.primaryTertiary,
                         ),
-                        shape = RectangleShape
-                    )
+                        shape = RectangleShape,
+                    ),
             )
             Text(
                 text = episode.title,
@@ -145,23 +144,24 @@ fun ExpandedPlayerView(
                 fontWeight = FontWeight.Medium,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             val strings = LocalStrings.current
             Text(
-                text = if (playingStatus == PlayingStatus.Loading)
+                text = if (playingStatus == PlayingStatus.Loading) {
                     strings.buffering_playback
-                else
-                    episode.podcastTitle ?: "",
+                } else {
+                    episode.podcastTitle ?: ""
+                },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
             Slider(
                 value = if (episode.durationInSec != null) {
-                        progress.toFloat().div(episode.durationInSec.toFloat())
-                    } else {
-                        1f
-                    },
+                    progress.toFloat().div(episode.durationInSec.toFloat())
+                } else {
+                    1f
+                },
                 onValueChange = { updatedValue ->
                     if (episode.durationInSec != null) {
                         onSeeking((updatedValue * episode.durationInSec).toInt())
@@ -171,28 +171,28 @@ fun ExpandedPlayerView(
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primaryTertiary,
                     activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
-                    activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f)
-                )
+                    activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
+                ),
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
             ) {
                 Text(
                     text = progress.formatAsDuration(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 )
                 Text(
                     text = episode.durationInSec.takeIf { it != null && it > 30 }.formatAsDuration(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
                 AnimatedContent(
@@ -204,17 +204,17 @@ fun ExpandedPlayerView(
                             (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
                         }
                     },
-                    label = "Animated Playback Speed"
+                    label = "Animated Playback Speed",
                 ) { targetState ->
                     TextButton(
                         onClick = {
                             currentSpeed = onPlaybackSpeedChange(targetState)
                         },
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface)
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface),
                     ) {
                         Text(
                             text = "${targetState}x",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }
@@ -226,14 +226,14 @@ fun ExpandedPlayerView(
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.inverseSurface
+                        contentColor = MaterialTheme.colorScheme.inverseSurface,
                     ),
-                    border = null
+                    border = null,
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Replay10,
                         contentDescription = null,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(40.dp),
                     )
                 }
 
@@ -252,28 +252,28 @@ fun ExpandedPlayerView(
                         .clip(CircleShape),
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
-                    )
+                        contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                    ),
                 ) {
                     when (playingStatus) {
                         PlayingStatus.Loading -> {
                             CircularProgressIndicator(
                                 color = MaterialTheme.colorScheme.onPrimaryTertiary,
-                                modifier = Modifier.padding(4.dp)
+                                modifier = Modifier.padding(4.dp),
                             )
                         }
                         PlayingStatus.Playing -> {
                             Icon(
                                 imageVector = Icons.Filled.Pause,
                                 contentDescription = null,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(40.dp),
                             )
                         }
                         PlayingStatus.Paused, PlayingStatus.Error -> {
                             Icon(
                                 imageVector = Icons.Filled.PlayArrow,
                                 contentDescription = null,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(40.dp),
                             )
                         }
                     }
@@ -287,14 +287,14 @@ fun ExpandedPlayerView(
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.inverseSurface
+                        contentColor = MaterialTheme.colorScheme.inverseSurface,
                     ),
-                    border = null
+                    border = null,
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Forward30,
                         contentDescription = null,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(40.dp),
                     )
                 }
                 Spacer(modifier = Modifier.weight(2f))
@@ -312,25 +312,25 @@ fun CollapsedPlayerView(
     progress: Int,
     contentWindowInsets: WindowInsets,
     containerColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val (episode, playingStatus) = currentlyPlayingEpisode
     Card(
         shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0), bottomEnd = CornerSize(0)),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(contentWindowInsets)
+                .windowInsetsPadding(contentWindowInsets),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 AsyncImage(
                     model = episode.artworkUrl,
@@ -338,18 +338,18 @@ fun CollapsedPlayerView(
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.small)
-                        .size(64.dp)
+                        .size(64.dp),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     val strings = LocalStrings.current
                     Text(
                         text = strings.currently_playing,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                     Text(
                         text = episode.title,
@@ -358,7 +358,7 @@ fun CollapsedPlayerView(
                         fontWeight = FontWeight.Normal,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                     )
                 }
                 PlayPauseCompactButton(
@@ -367,10 +367,10 @@ fun CollapsedPlayerView(
                     onPlay = onResume,
                     onPause = onPause,
                     contentPadding = 0.dp,
-                    iconSize = 32.dp
+                    iconSize = 32.dp,
                 )
             }
-            val progressPercentage = if(episode.durationInSec != null) {
+            val progressPercentage = if (episode.durationInSec != null) {
                 (progress.toFloat() / episode.durationInSec.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
             } else {
                 1f
@@ -386,9 +386,9 @@ fun CollapsedPlayerView(
                         drawContent()
                         drawRect(
                             color = progressColor,
-                            size = size.copy(width = size.width * progressPercentage)
+                            size = size.copy(width = size.width * progressPercentage),
                         )
-                    }
+                    },
             )
         }
     }
@@ -412,14 +412,14 @@ private fun Int?.formatAsDuration(): String {
 @PodcasterPreview
 @Composable
 fun ExpandedPlayerViewPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         ExpandedPlayerView(
             currentlyPlayingEpisode = CurrentlyPlayingEpisode(
                 episode = EpisodeWithDetails,
                 playingStatus = PlayingStatus.Paused,
-                playingSpeed = 1.0f
+                playingSpeed = 1.0f,
             ),
             onResume = {},
             onPause = {},
@@ -430,7 +430,7 @@ fun ExpandedPlayerViewPreview(
             onSeeking = {},
             onBack = {},
             containerColor = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -438,21 +438,21 @@ fun ExpandedPlayerViewPreview(
 @PodcasterPreview
 @Composable
 fun CollapsedPlayerViewPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         CollapsedPlayerView(
             currentlyPlayingEpisode = CurrentlyPlayingEpisode(
                 episode = EpisodeWithDetails,
                 playingStatus = PlayingStatus.Paused,
-                playingSpeed = 1.0f
+                playingSpeed = 1.0f,
             ),
             onResume = {},
             onPause = {},
             progress = 1450,
             contentWindowInsets = WindowInsets.navigationBars,
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

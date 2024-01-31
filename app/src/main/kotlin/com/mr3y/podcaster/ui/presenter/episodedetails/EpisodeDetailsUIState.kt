@@ -9,7 +9,7 @@ data class EpisodeDetailsUIState(
     val episode: Episode?,
     val isRefreshing: Boolean,
     val refreshResult: RefreshResult?,
-    val downloadMetadata: EpisodeDownloadMetadata?
+    val downloadMetadata: EpisodeDownloadMetadata?,
 )
 
 sealed interface EpisodeDetailsUIEvent {

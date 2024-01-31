@@ -12,12 +12,12 @@ data class PodcastDetailsUIState(
     val isSubscriptionStateInEditMode: Boolean,
     val episodes: List<Episode>?,
     val isRefreshing: Boolean,
-    val refreshResult: RefreshResult?
+    val refreshResult: RefreshResult?,
 )
 
 enum class SubscriptionState {
     Subscribed,
-    NotSubscribed
+    NotSubscribed,
 }
 
 sealed interface PodcastDetailsUIEvent {

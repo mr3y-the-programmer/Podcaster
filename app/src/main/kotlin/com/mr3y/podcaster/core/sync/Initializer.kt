@@ -9,7 +9,7 @@ fun initializeWorkManagerInstance(appContext: Context): WorkManager {
         enqueueUniquePeriodicWork(
             SubscriptionsSyncWorker.PeriodicWorkRequestID,
             ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            SubscriptionsSyncWorker.subscriptionsPeriodicSyncWorker()
+            SubscriptionsSyncWorker.subscriptionsPeriodicSyncWorker(),
         )
     }
 }

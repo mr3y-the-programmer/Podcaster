@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val podcastsRepository: PodcastsRepository
+    private val podcastsRepository: PodcastsRepository,
 ) : ViewModel() {
 
     private val events = MutableSharedFlow<ExploreUIEvent>(extraBufferCapacity = 20)
@@ -62,7 +62,7 @@ internal val FeedUrlRegex = """https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a
 @Composable
 internal fun ExplorePresenter(
     repository: PodcastsRepository,
-    events: Flow<ExploreUIEvent>
+    events: Flow<ExploreUIEvent>,
 ): ExploreUIState {
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
     val recentSearchQueries by repository.getRecentSearchQueries().collectAsState(initial = emptyList())
@@ -77,7 +77,7 @@ internal fun ExplorePresenter(
                 },
                 failure = { errorResponse ->
                     searchResult = SearchResult.Error(isFeedUrl = true, errorResponse)
-                }
+                },
             )
     }
 
@@ -91,13 +91,13 @@ internal fun ExplorePresenter(
                 },
                 failure = { errorResponse ->
                     searchResult = SearchResult.Error(isFeedUrl = false, errorResponse)
-                }
+                },
             )
     }
 
     LaunchedEffect(Unit) {
         events.collect { event ->
-            when(event) {
+            when (event) {
                 is ExploreUIEvent.Search -> {
                     val searchText = searchQuery.text
                     when {
@@ -130,14 +130,16 @@ internal fun ExplorePresenter(
                         }
                     }
                 }
-                is ExploreUIEvent.ResultConsumed -> { searchResult = null }
+                is ExploreUIEvent.ResultConsumed -> {
+                    searchResult = null
+                }
             }
         }
     }
-    
+
     return ExploreUIState(
         searchQuery = searchQuery,
         searchResult = searchResult,
-        previousSearchQueries = recentSearchQueries
+        previousSearchQueries = recentSearchQueries,
     )
 }

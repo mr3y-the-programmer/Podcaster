@@ -16,7 +16,7 @@ data class Episode(
     val enclosureSizeInBytes: Long,
     val podcastTitle: String? = null,
     val isCompleted: Boolean = false,
-    val progressInSec: Int? = null
+    val progressInSec: Int? = null,
 ) {
     override fun toString(): String {
         return "\nEpisode(\n" +
@@ -28,14 +28,14 @@ data class Episode(
             "episodeUrl = \"$episodeUrl\",\n" +
             "datePublishedTimestamp = ${datePublishedTimestamp}L,\n" +
             "datePublishedFormatted = \"$datePublishedFormatted\",\n" +
-            "durationInSec = ${durationInSec},\n" +
-            "episodeNum = ${episodeNum},\n" +
+            "durationInSec = $durationInSec,\n" +
+            "episodeNum = $episodeNum,\n" +
             "artworkUrl = \"$artworkUrl\",\n" +
             "enclosureUrl = \"$enclosureUrl\",\n" +
             "enclosureSizeInBytes = ${enclosureSizeInBytes}L,\n" +
             "podcastTitle = \"$podcastTitle\",\n" +
             "isCompleted = $isCompleted,\n" +
             "progressInSec = $progressInSec\n" +
-        ")"
+            ")"
     }
 }

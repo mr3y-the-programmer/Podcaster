@@ -101,7 +101,7 @@ fun ExploreScreen(
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
-    viewModel: ExploreViewModel = hiltViewModel()
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val exploreState by viewModel.state.collectAsStateWithLifecycle()
     ExploreScreen(
@@ -115,7 +115,7 @@ fun ExploreScreen(
         onNavDrawerClick = onNavDrawerClick,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -131,7 +131,7 @@ fun ExploreScreen(
     onNavDrawerClick: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val isDarkTheme = isSystemInDarkTheme()
@@ -146,13 +146,13 @@ fun ExploreScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .padding(end = 16.dp)
+                    .padding(end = 16.dp),
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState, Modifier.padding(externalContentPadding)) },
         contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier
+        modifier = modifier,
     ) { contentPadding ->
         val focusManager = LocalFocusManager.current
         val searchBarInteractionSource = remember { MutableInteractionSource() }
@@ -161,7 +161,7 @@ fun ExploreScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .padding(contentPadding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             ExploreSearchBar(
                 searchQuery = state.searchQuery,
@@ -172,7 +172,7 @@ fun ExploreScreen(
                     onCommittingSearch()
                     focusManager.clearFocus()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             val recentSearches = state.previousSearchQueries
             RecentSearches(
@@ -187,7 +187,7 @@ fun ExploreScreen(
                 contentPadding = externalContentPadding,
                 onCloseClick = {
                     focusManager.clearFocus()
-                }
+                },
             )
             if (!isSearchBarFocused) {
                 val contentModifier = Modifier
@@ -201,7 +201,7 @@ fun ExploreScreen(
                         podcasts = state.searchResult.podcasts,
                         onPodcastClick = onPodcastClick,
                         externalContentPadding = externalContentPadding,
-                        modifier = contentModifier
+                        modifier = contentModifier,
                     )
                 }
                 if (state.searchResult is SearchResult.Error && !state.searchResult.isFeedUrl) {
@@ -227,26 +227,26 @@ fun ExploreScreen(
 @Composable
 private fun ExploreTopAppBar(
     onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
-                onClick = onNavDrawerClick
+                onClick = onNavDrawerClick,
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description
+                    contentDescription = strings.icon_menu_content_description,
                 )
             }
         },
         title = {},
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent
+            scrolledContainerColor = Color.Transparent,
         ),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -257,7 +257,7 @@ private fun ExploreSearchBar(
     interactionSource: MutableInteractionSource,
     showConfirmButton: Boolean,
     onConfirmButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     OutlinedTextField(
@@ -266,12 +266,12 @@ private fun ExploreSearchBar(
         leadingIcon = {
             IconButton(
                 onClick = { },
-                modifier = Modifier.clearAndSetSemantics { }
+                modifier = Modifier.clearAndSetSemantics { },
             ) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier.fillMaxHeight(),
                 )
             }
         },
@@ -281,19 +281,19 @@ private fun ExploreSearchBar(
         trailingIcon = {
             if (showConfirmButton) {
                 Row(
-                    modifier = Modifier.height(IntrinsicSize.Min)
+                    modifier = Modifier.height(IntrinsicSize.Min),
                 ) {
                     VerticalDivider(
-                        color = MaterialTheme.colorScheme.primaryTertiary
+                        color = MaterialTheme.colorScheme.primaryTertiary,
                     )
                     IconButton(
                         onClick = onConfirmButtonClick,
-                        modifier = Modifier.clearAndSetSemantics { }
+                        modifier = Modifier.clearAndSetSemantics { },
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            modifier = Modifier.fillMaxHeight()
+                            modifier = Modifier.fillMaxHeight(),
                         )
                     }
                 }
@@ -304,7 +304,7 @@ private fun ExploreSearchBar(
         keyboardActions = KeyboardActions(
             onSearch = {
                 onConfirmButtonClick()
-            }
+            },
         ),
         colors = OutlinedTextFieldDefaults.colors(
             focusedPlaceholderColor = MaterialTheme.colorScheme.primaryTertiary,
@@ -320,7 +320,7 @@ private fun ExploreSearchBar(
         ),
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -332,45 +332,45 @@ private fun RecentSearches(
     onDeleteSearchQuery: (String) -> Unit,
     onCloseClick: () -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn() + slideInVertically(),
         exit = slideOutVertically() + fadeOut(),
         label = "Animated Recent Searches",
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(contentPadding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min),
             ) {
                 val strings = LocalStrings.current
                 Text(
                     text = strings.recent_searches_label,
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.alignByBaseline()
+                    modifier = Modifier.alignByBaseline(),
                 )
                 TextButton(
                     onClick = onCloseClick,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.inverseSurface
+                        contentColor = MaterialTheme.colorScheme.inverseSurface,
                     ),
-                    modifier = Modifier.alignByBaseline()
+                    modifier = Modifier.alignByBaseline(),
                 ) {
                     Text(
                         text = strings.close_label,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -384,14 +384,14 @@ private fun RecentSearches(
                         .heightIn(min = 48.dp)
                         .clickable(
                             role = Role.Button,
-                            onClick = { onSearchQueryClick(recentSearches[index]) }
-                        )
+                            onClick = { onSearchQueryClick(recentSearches[index]) },
+                        ),
                 ) {
                     Icon(
                         imageVector = Icons.Filled.SavedSearch,
                         contentDescription = null,
                         modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         text = recentSearches[index],
@@ -399,14 +399,14 @@ private fun RecentSearches(
                         maxLines = 1,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 8.dp),
                     )
                     IconButton(
                         onClick = { onDeleteSearchQuery(recentSearches[index]) },
                         modifier = Modifier
                             .size(48.dp)
                             .padding(8.dp),
-                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary)
+                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.tertiaryPrimary),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -427,63 +427,63 @@ private fun PodcastsList(
     podcasts: List<Podcast>,
     onPodcastClick: (podcastId: Long) -> Unit,
     externalContentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     if (podcasts.isEmpty()) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = modifier
+            modifier = modifier,
         ) {
             Text(
                 text = strings.search_podcasts_empty_list,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     } else {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(vertical = 16.dp) + externalContentPadding,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             itemsIndexed(
                 podcasts,
-                key = { _, podcast -> podcast.id }
+                key = { _, podcast -> podcast.id },
             ) { index, podcast ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillParentMaxWidth()
-                        .clickable(onClick = { onPodcastClick(podcast.id) })
+                        .clickable(onClick = { onPodcastClick(podcast.id) }),
                 ) {
                     AsyncImage(
                         model = podcast.artworkUrl,
                         contentDescription = null,
                         modifier = Modifier
                             .size(120.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp)),
                     )
                     Column(
                         verticalArrangement = Arrangement.spacedBy(32.dp),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     ) {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Text(
                                 text = podcast.title,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodyLarge,
                                 maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                             Text(
                                 text = podcast.author,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
                             )
                         }
                         Text(
@@ -491,7 +491,7 @@ private fun PodcastsList(
                             color = MaterialTheme.colorScheme.inverseSurface,
                             style = MaterialTheme.typography.bodyMedium,
                             maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -506,7 +506,7 @@ private fun PodcastsList(
 @PodcasterPreview
 @Composable
 fun ExploreScreenInitialPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         val state by remember {
@@ -514,8 +514,8 @@ fun ExploreScreenInitialPreview(
                 ExploreUIState(
                     searchQuery = TextFieldValue(""),
                     searchResult = null,
-                    previousSearchQueries = listOf("android", "podcast", "culture", "tech")
-                )
+                    previousSearchQueries = listOf("android", "podcast", "culture", "tech"),
+                ),
             )
         }
         ExploreScreen(
@@ -529,7 +529,7 @@ fun ExploreScreenInitialPreview(
             onConsumeResult = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -543,8 +543,8 @@ fun ExploreScreenPodcastsListPreview() {
                 ExploreUIState(
                     searchQuery = TextFieldValue("podc"),
                     searchResult = SearchResult.SearchByTermSuccess(Podcasts),
-                    previousSearchQueries = listOf("android", "podcast", "culture", "tech")
-                )
+                    previousSearchQueries = listOf("android", "podcast", "culture", "tech"),
+                ),
             )
         }
         ExploreScreen(
@@ -558,7 +558,7 @@ fun ExploreScreenPodcastsListPreview() {
             onConsumeResult = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -572,8 +572,8 @@ fun ExploreScreenErrorPreview() {
                 ExploreUIState(
                     searchQuery = TextFieldValue("podc"),
                     searchResult = SearchResult.Error(errorResponse = Unit, isFeedUrl = false),
-                    previousSearchQueries = listOf("android", "podcast", "culture", "tech")
-                )
+                    previousSearchQueries = listOf("android", "podcast", "culture", "tech"),
+                ),
             )
         }
         ExploreScreen(
@@ -587,7 +587,7 @@ fun ExploreScreenErrorPreview() {
             onConsumeResult = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

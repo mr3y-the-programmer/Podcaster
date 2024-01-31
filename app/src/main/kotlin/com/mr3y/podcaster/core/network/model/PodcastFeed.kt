@@ -23,18 +23,18 @@ data class PodcastFeed(
     val languageCode: String,
     val episodeCount: Int,
     @SerialName("categories")
-    val genres: Map<Int, String>
+    val genres: Map<Int, String>,
 )
 
 @Serializable
 data class NetworkPodcast(
     val status: Boolean,
-    val feed: PodcastFeed
+    val feed: PodcastFeed,
 )
 
 @Serializable
 data class NetworkPodcasts(
     val status: Boolean,
     val feeds: List<PodcastFeed>,
-    val count: Long
+    val count: Long,
 )

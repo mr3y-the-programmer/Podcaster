@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodeDetailsViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val events = MutableSharedFlow<EpisodeDetailsUIEvent>(extraBufferCapacity = 20)
@@ -44,7 +44,7 @@ class EpisodeDetailsViewModel @Inject constructor(
             episodeId = navArguments.episodeId,
             podcastArtworkUrl = navArguments.podcastArtworkUrl,
             repository = podcastsRepository,
-            events = events
+            events = events,
         )
     }
 
@@ -67,7 +67,7 @@ internal fun EpisodeDetailsPresenter(
     episodeId: Long,
     podcastArtworkUrl: String,
     repository: PodcastsRepository,
-    events: Flow<EpisodeDetailsUIEvent>
+    events: Flow<EpisodeDetailsUIEvent>,
 ): EpisodeDetailsUIState {
     var isLoading by remember { mutableStateOf(true) }
     var isRefreshing by remember { mutableStateOf(false) }
@@ -82,7 +82,7 @@ internal fun EpisodeDetailsPresenter(
 
     LaunchedEffect(Unit) {
         events.collect { event ->
-            when(event) {
+            when (event) {
                 EpisodeDetailsUIEvent.Retry -> {
                     val temp = episode
                     if (temp == null) {
@@ -114,6 +114,6 @@ internal fun EpisodeDetailsPresenter(
         episode = episode,
         isRefreshing = isRefreshing,
         refreshResult = refreshResult,
-        downloadMetadata = downloadMetadata
+        downloadMetadata = downloadMetadata,
     )
 }

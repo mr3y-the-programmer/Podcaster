@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
@@ -99,7 +99,7 @@ fun EpisodeDetailsScreen(
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
-    viewModel: EpisodeDetailsViewModel = hiltViewModel()
+    viewModel: EpisodeDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
@@ -119,7 +119,7 @@ fun EpisodeDetailsScreen(
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
         onConsumeResult = viewModel::consumeRefreshResult,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -140,32 +140,32 @@ fun EpisodeDetailsScreen(
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     onConsumeResult: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     LaunchedEffect(state.refreshResult, playingStatus) {
-        when(state.refreshResult) {
+        when (state.refreshResult) {
             is RefreshResult.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.episode_details_refresh_result_error
+                    message = strings.episode_details_refresh_result_error,
                 )
                 onConsumeResult()
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.episode_details_refresh_result_mixed
+                    message = strings.episode_details_refresh_result_mixed,
                 )
                 onConsumeResult()
             }
             is RefreshResult.Ok, null -> {}
         }
-        when(playingStatus) {
+        when (playingStatus) {
             PlayingStatus.Error -> {
                 snackBarHostState.showSnackbar(
-                    message = strings.generic_error_message
+                    message = strings.generic_error_message,
                 )
                 onConsumeErrorPlayingStatus()
             }
@@ -179,7 +179,7 @@ fun EpisodeDetailsScreen(
         builder = {
             clearFilters()
                 .maximumColorCount(8)
-        }
+        },
     )
     var bitmap: ImageBitmap? by remember { mutableStateOf(null) }
     LaunchedEffect(bitmap) {
@@ -203,40 +203,42 @@ fun EpisodeDetailsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh
+        onRefresh = onRefresh,
     ) {
         Scaffold(
             topBar = {
                 EpisodeDetailsTopAppBar(
                     onNavigateUp = onNavigateUp,
-                    containerColor = if (state.isLoading || state.episode == null)
+                    containerColor = if (state.isLoading || state.episode == null) {
                         MaterialTheme.colorScheme.surface
-                    else
-                        dominantColorState.color,
-                    contentColor = if (state.isLoading || state.episode == null)
+                    } else {
+                        dominantColorState.color
+                    },
+                    contentColor = if (state.isLoading || state.episode == null) {
                         MaterialTheme.colorScheme.onSurface
-                    else
-                        dominantColorState.onColor,
-                    modifier = Modifier.fillMaxWidth()
+                    } else {
+                        dominantColorState.onColor
+                    },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             },
             snackbarHost = { SnackbarHost(snackBarHostState, Modifier.padding(externalContentPadding)) },
             contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
             containerColor = MaterialTheme.colorScheme.surface,
-            modifier = modifier
+            modifier = modifier,
         ) { contentPadding ->
             Box(
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
             ) {
                 when {
                     state.isLoading -> {
                         LoadingIndicator(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .align(Alignment.Center)
+                                .align(Alignment.Center),
                         )
                     }
                     state.episode == null -> {
@@ -244,7 +246,7 @@ fun EpisodeDetailsScreen(
                             onRetry = onRetry,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .align(Alignment.Center)
+                                .align(Alignment.Center),
                         )
                     }
                     else -> {
@@ -265,12 +267,12 @@ fun EpisodeDetailsScreen(
                                     is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
                                     else -> {}
                                 }
-                            }
+                            },
                         )
                         Details(
                             episode = state.episode,
                             externalContentPadding = externalContentPadding,
-                            onUrlClick = urlHandler::openUri
+                            onUrlClick = urlHandler::openUri,
                         )
                     }
                 }
@@ -285,14 +287,14 @@ private fun EpisodeDetailsTopAppBar(
     onNavigateUp: () -> Unit,
     containerColor: Color,
     contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     TopAppBar(
         navigationIcon = {
             IconButton(
                 onClick = onNavigateUp,
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = contentColor)
+                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = contentColor),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -306,7 +308,7 @@ private fun EpisodeDetailsTopAppBar(
         ),
         title = { },
         actions = {},
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -322,14 +324,14 @@ private fun BoxScope.Header(
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
     dominantColor: Color,
-    onState: ((AsyncImagePainter.State) -> Unit)?
+    onState: ((AsyncImagePainter.State) -> Unit)?,
 ) {
     val context = LocalContext.current
     Box(
         Modifier
             .height(96.dp)
             .background(dominantColor)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     )
 
     AsyncImage(
@@ -348,7 +350,7 @@ private fun BoxScope.Header(
             .padding(top = 32.dp)
             .size(128.dp)
             .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-            .zIndex(3f)
+            .zIndex(3f),
     )
 
     Row(
@@ -360,7 +362,7 @@ private fun BoxScope.Header(
             .background(MaterialTheme.colorScheme.surface)
             .padding(top = 8.dp)
             .zIndex(2f),
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         if (episode.durationInSec != null && episode.durationInSec > 10) {
             PlayPauseExpandedButton(
@@ -368,7 +370,7 @@ private fun BoxScope.Header(
                 playingStatus = playingStatus,
                 onPlay = { onPlay(episode) },
                 onPause = onPause,
-                durationInSec = episode.durationInSec
+                durationInSec = episode.durationInSec,
             )
         } else {
             PlayPauseCompactButton(
@@ -377,7 +379,7 @@ private fun BoxScope.Header(
                 onPlay = { onPlay(episode) },
                 onPause = onPause,
                 containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
+                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -386,7 +388,7 @@ private fun BoxScope.Header(
             onDownload = { onDownloadingEpisode(episode) },
             onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
             onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
-            contentColor = MaterialTheme.colorScheme.primaryTertiary
+            contentColor = MaterialTheme.colorScheme.primaryTertiary,
         )
     }
 }
@@ -396,7 +398,7 @@ private fun BoxScope.Header(
 private fun BoxScope.Details(
     episode: Episode,
     externalContentPadding: PaddingValues,
-    onUrlClick: (url: String) -> Unit
+    onUrlClick: (url: String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -407,18 +409,18 @@ private fun BoxScope.Details(
             .padding(top = 64.dp)
             .padding(externalContentPadding)
             .zIndex(1f),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = episode.title,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
         Text(
             text = episode.datePublishedFormatted,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
         val styledDescription = rememberHtmlToAnnotatedString(episode.description)
         ClickableText(
@@ -428,8 +430,7 @@ private fun BoxScope.Details(
                 styledDescription
                     .getUrlAnnotations(position, position)
                     .firstOrNull()?.let { range -> onUrlClick(range.item.url) }
-
-            }
+            },
         )
     }
 }
@@ -437,7 +438,7 @@ private fun BoxScope.Details(
 @PodcasterPreview
 @Composable
 fun EpisodeDetailsScreenPreview(
-    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean
+    @PreviewParameter(DynamicColorsParameterProvider::class) isDynamicColorsOn: Boolean,
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         EpisodeDetailsScreen(
@@ -446,7 +447,7 @@ fun EpisodeDetailsScreenPreview(
                 episode = EpisodeWithDetails,
                 isRefreshing = false,
                 refreshResult = null,
-                downloadMetadata = DownloadMetadata
+                downloadMetadata = DownloadMetadata,
             ),
             onNavigateUp = {},
             onRetry = {},
@@ -462,7 +463,7 @@ fun EpisodeDetailsScreenPreview(
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             onConsumeResult = {},
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -477,7 +478,7 @@ fun EpisodeDetailsErrorPreview() {
                 episode = null,
                 isRefreshing = false,
                 refreshResult = null,
-                downloadMetadata = null
+                downloadMetadata = null,
             ),
             onNavigateUp = {},
             onRetry = {},
@@ -493,7 +494,7 @@ fun EpisodeDetailsErrorPreview() {
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             onConsumeResult = {},
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

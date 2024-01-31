@@ -21,19 +21,19 @@ import com.mr3y.podcaster.ui.theme.primaryTertiary
 @Composable
 fun Error(
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(
             text = strings.generic_error_message,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
         ElevatedButton(
@@ -41,12 +41,12 @@ fun Error(
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.elevatedButtonColors(
                 containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary
+                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
             ),
         ) {
             Text(
                 text = strings.retry_label,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }

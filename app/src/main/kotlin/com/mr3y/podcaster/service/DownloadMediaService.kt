@@ -41,7 +41,7 @@ class DownloadMediaService : DownloadService(
     DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
     DOWNLOAD_NOTIFICATION_CHANNEL_ID,
     androidx.media3.exoplayer.workmanager.R.string.exo_download_notification_channel_name,
-    R.string.downloads_notification_channel_description
+    R.string.downloads_notification_channel_description,
 ) {
 
     @Inject
@@ -55,7 +55,7 @@ class DownloadMediaService : DownloadService(
 
     override fun getForegroundNotification(
         downloads: MutableList<Download>,
-        notMetRequirements: Int
+        notMetRequirements: Int,
     ): Notification {
         val languageCode = Resources.getSystem().configuration.locales[0].language.lowercase()
         val strings = Strings[languageCode] ?: EnStrings
@@ -72,7 +72,7 @@ class DownloadMediaService : DownloadService(
                 null,
                 strings.download_work_notification_message,
                 downloads,
-                notMetRequirements
+                notMetRequirements,
             )
     }
 
@@ -103,7 +103,7 @@ class DownloadMediaService : DownloadService(
 
                     override fun onDownloadRemoved(
                         downloadManager: DownloadManager,
-                        download: Download
+                        download: Download,
                     ) {
                         val episodeId = download.request.id.toLong()
                         podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
@@ -113,7 +113,7 @@ class DownloadMediaService : DownloadService(
                     override fun onDownloadChanged(
                         downloadManager: DownloadManager,
                         download: Download,
-                        finalException: Exception?
+                        finalException: Exception?,
                     ) {
                         val episodeId = download.request.id.toLong()
                         when (download.state) {
@@ -136,7 +136,7 @@ class DownloadMediaService : DownloadService(
                             else -> {}
                         }
                     }
-                }
+                },
             )
         }
     }

@@ -2,8 +2,8 @@ package com.mr3y.podcaster.core.data
 
 import com.github.michaelbull.result.Result
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
-import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus

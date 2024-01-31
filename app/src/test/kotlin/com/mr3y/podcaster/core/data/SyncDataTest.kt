@@ -38,7 +38,7 @@ class SyncDataTest {
         sut = DefaultPodcastsRepository(
             podcastsDao = podcastsDao,
             recentSearchesDao = DefaultRecentSearchesDao(database, testDispatcher),
-            networkClient = DefaultPodcastIndexClient(httpClient)
+            networkClient = DefaultPodcastIndexClient(httpClient),
         )
     }
 

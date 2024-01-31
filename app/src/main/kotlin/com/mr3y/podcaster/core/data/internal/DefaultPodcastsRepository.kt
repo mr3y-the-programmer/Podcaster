@@ -7,8 +7,8 @@ import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.local.dao.PodcastsDao
 import com.mr3y.podcaster.core.local.dao.RecentSearchesDao
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
-import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.Episode
+import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class DefaultPodcastsRepository @Inject constructor(
     private val podcastsDao: PodcastsDao,
     private val recentSearchesDao: RecentSearchesDao,
-    private val networkClient: PodcastIndexClient
+    private val networkClient: PodcastIndexClient,
 ) : PodcastsRepository {
 
     override fun getSubscriptions() = podcastsDao.getAllPodcasts()
@@ -40,7 +40,7 @@ class DefaultPodcastsRepository @Inject constructor(
         suspend fun fetchFromNetwork(): Podcast? {
             return networkClient.getPodcastById(podcastId).mapBoth(
                 success = { it.mapToPodcast() },
-                failure = { null }
+                failure = { null },
             )
         }
 
@@ -58,7 +58,7 @@ class DefaultPodcastsRepository @Inject constructor(
             networkClient.getEpisodesByPodcastId(podcastId)
                 .mapBoth(
                     success = { it.mapToEpisodes(podcastTitle, podcastArtworkUrl) },
-                    failure = { null }
+                    failure = { null },
                 )
         } else {
             podcastsDao.getEpisodesForPodcast(podcastId)
@@ -83,7 +83,7 @@ class DefaultPodcastsRepository @Inject constructor(
                     }
                     episode
                 },
-                failure = { null }
+                failure = { null },
             )
         }
 
@@ -169,7 +169,7 @@ class DefaultPodcastsRepository @Inject constructor(
                 }
             }.mapBoth(
                 success = { true },
-                failure = { false }
+                failure = { false },
             )
     }
 
@@ -189,7 +189,7 @@ class DefaultPodcastsRepository @Inject constructor(
                 }
             }.mapBoth(
                 success = { true },
-                failure = { false }
+                failure = { false },
             )
     }
 }

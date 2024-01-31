@@ -14,11 +14,11 @@ class TestAdapters {
         assertThat(encodedEmptyValue).isEqualTo("[]")
 
         // One
-        val encodedOneValue = GenresColumnAdapter.encode(listOf(Genre(id=42, label="Leisure")))
+        val encodedOneValue = GenresColumnAdapter.encode(listOf(Genre(id = 42, label = "Leisure")))
         assertThat(encodedOneValue).isEqualTo("[(42, \"Leisure\")]")
 
         // Many
-        val encodedValue = GenresColumnAdapter.encode(listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News")))
+        val encodedValue = GenresColumnAdapter.encode(listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")))
         assertThat(encodedValue).isEqualTo("[(102, \"Technology\"), (55, \"News\")]")
     }
 
@@ -30,10 +30,10 @@ class TestAdapters {
 
         // One
         val decodedOneValue = GenresColumnAdapter.decode("[(42, \"Leisure\")]")
-        assertThat(decodedOneValue).isEqualTo(listOf(Genre(id=42, label="Leisure")))
+        assertThat(decodedOneValue).isEqualTo(listOf(Genre(id = 42, label = "Leisure")))
 
         // Many
         val decodedValue = GenresColumnAdapter.decode("[(102, \"Technology\"), (55, \"News\")]")
-        assertThat(decodedValue).isEqualTo(listOf(Genre(id=102, label="Technology"), Genre(id=55, label="News")))
+        assertThat(decodedValue).isEqualTo(listOf(Genre(id = 102, label = "Technology"), Genre(id = 55, label = "News")))
     }
 }

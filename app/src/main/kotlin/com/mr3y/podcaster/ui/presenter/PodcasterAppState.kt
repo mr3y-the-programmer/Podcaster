@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(UnstableApi::class)
 class PodcasterAppState @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
-    @ApplicationScope private val applicationScope: CoroutineScope
+    @ApplicationScope private val applicationScope: CoroutineScope,
 ) {
 
     private var controller: MediaController? = null
@@ -79,7 +79,7 @@ class PodcasterAppState @Inject constructor(
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = null
+            initialValue = null,
         )
 
     private val _isPlayerViewExpanded = MutableStateFlow(false)
@@ -105,16 +105,16 @@ class PodcasterAppState @Inject constructor(
         controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
         controllerFuture.addListener(
             {
-            controller = controllerFuture.get()
-                .apply {
-                    val episodePlayingStatus = currentlyPlayingEpisode.value?.playingStatus
-                    if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
-                        // Trigger preparing the controller & playing the episode.
-                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+                controller = controllerFuture.get()
+                    .apply {
+                        val episodePlayingStatus = currentlyPlayingEpisode.value?.playingStatus
+                        if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
+                            // Trigger preparing the controller & playing the episode.
+                            podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+                        }
                     }
-                }
             },
-            MoreExecutors.directExecutor()
+            MoreExecutors.directExecutor(),
         )
         currentContext = context
     }
@@ -153,7 +153,7 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun changePlaybackSpeed(currentSpeed: Float): Float {
-        return when(currentSpeed) {
+        return when (currentSpeed) {
             1.0f -> {
                 applicationScope.launch {
                     podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(1.5f)
@@ -226,13 +226,13 @@ class PodcasterAppState @Inject constructor(
                 episode.id.toString(),
                 Uri.Builder()
                     .encodedPath(episode.enclosureUrl)
-                    .build()
+                    .build(),
             ).build()
             DownloadService.sendAddDownload(
                 context.applicationContext,
                 DownloadMediaService::class.java,
                 downloadRequest,
-                false
+                false,
             )
         }
     }
