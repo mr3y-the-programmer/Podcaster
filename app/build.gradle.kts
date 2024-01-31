@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -38,7 +40,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -129,7 +133,12 @@ dependencies {
     implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.result)
     implementation(libs.kermit)
+    implementation(libs.kermit.crashlytics)
     implementation(libs.kotlinx.serialization)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "187732499072",
+    "project_id": "podcaster-9501e",
+    "storage_bucket": "podcaster-9501e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187732499072:android:48e52b48694be7429b2465",
+        "android_client_info": {
+          "package_name": "com.mr3y.podcaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC1_Eb6AaCz4qBQ_mTd3lR0lrc0MrgQBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

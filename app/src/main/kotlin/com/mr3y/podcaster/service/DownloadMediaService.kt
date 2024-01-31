@@ -23,6 +23,7 @@ import androidx.media3.exoplayer.workmanager.WorkManagerScheduler
 import com.mr3y.podcaster.R
 import com.mr3y.podcaster.Strings
 import com.mr3y.podcaster.core.data.PodcastsRepository
+import com.mr3y.podcaster.core.logger.Logger
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.ui.resources.EnStrings
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +47,9 @@ class DownloadMediaService : DownloadService(
 
     @Inject
     lateinit var podcastsRepository: PodcastsRepository
+
+    @Inject
+    lateinit var logger: Logger
 
     private var downloadManager: DownloadManager? = null
 
@@ -130,7 +134,9 @@ class DownloadMediaService : DownloadService(
                                 podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Paused)
                             }
                             Download.STATE_FAILED -> {
-                                // TODO: log the error for better investigation.
+                                logger.e(finalException, "DownloadMediaService") {
+                                    "Downloading episode with id: $episodeId failed!"
+                                }
                                 podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
                             }
                             else -> {}

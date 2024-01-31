@@ -32,6 +32,9 @@ result = "1.1.18"
 kermit = "2.0.2"
 sqldelight = "2.0.0"
 sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
+google-services = "4.4.0"
+firebase-bom = "32.7.1"
+crashlytics = "2.9.9"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -75,6 +78,7 @@ ktor-content-negotation = { group = "io.ktor", name = "ktor-client-content-negot
 ktor-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version.ref = "result" }
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
+kermit-crashlytics = { group = "co.touchlab", name = "kermit-crashlytics", version.ref = "kermit" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-runtime = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -87,6 +91,9 @@ sqldelight-sqlitedriver = { group = "app.cash.sqldelight", name = "sqlite-driver
 sqldelight-flowext = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitiveadapters = { group = "app.cash.sqldelight", name = "primitive-adapters", version.ref = "sqldelight" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -96,6 +103,8 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 
 [bundles]
 
