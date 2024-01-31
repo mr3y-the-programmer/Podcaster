@@ -128,6 +128,7 @@ dependencies {
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.result)
+    implementation(libs.kermit)
     implementation(libs.kotlinx.serialization)
 
     ksp(libs.lyricist.processor)

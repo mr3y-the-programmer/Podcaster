@@ -29,6 +29,7 @@ workmanager = "2.9.0"
 coil = "2.5.0"
 ktor = "2.3.5"
 result = "1.1.18"
+kermit = "2.0.2"
 sqldelight = "2.0.0"
 sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
 
@@ -73,6 +74,7 @@ ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref =
 ktor-content-negotation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version.ref = "result" }
+kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-runtime = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
