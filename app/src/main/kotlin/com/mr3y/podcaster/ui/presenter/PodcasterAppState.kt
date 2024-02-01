@@ -45,35 +45,7 @@ class PodcasterAppState @Inject constructor(
     val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisode()
         .onEach {
             if (it != null) {
-                val (episode, playingStatus, playingSpeed) = it
-                _trackProgress.update { episode.progressInSec ?: 0 }
-                controller?.apply {
-                    val uri = Uri.Builder()
-                        .encodedPath(episode.enclosureUrl)
-                        .build()
-                    val mediaMetadata = MediaMetadata.Builder()
-                        .setTitle(episode.title)
-                        .setArtist(episode.podcastTitle)
-                        .setIsBrowsable(false)
-                        .setIsPlayable(true)
-                        .setArtworkUri(Uri.parse(episode.artworkUrl))
-                        .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
-                        .build()
-                    val mediaItem = MediaItem.fromUri(uri)
-                        .buildUpon()
-                        .setMediaId(episode.id.toString())
-                        .setMediaMetadata(mediaMetadata)
-                        .build()
-                    setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
-                    if (playingStatus == PlayingStatus.Playing || playingStatus == PlayingStatus.Loading) {
-                        prepare()
-                        setPlaybackSpeed(playingSpeed)
-                        seekToAndPlay(episode.progressInSec)
-                        if (playingStatus == PlayingStatus.Loading) {
-                            podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
-                        }
-                    }
-                }
+                _trackProgress.update { _ -> it.episode.progressInSec ?: 0 }
             }
         }
         .stateIn(
@@ -107,10 +79,16 @@ class PodcasterAppState @Inject constructor(
             {
                 controller = controllerFuture.get()
                     .apply {
-                        val episodePlayingStatus = currentlyPlayingEpisode.value?.playingStatus
-                        if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
-                            // Trigger preparing the controller & playing the episode.
-                            podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+                        currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
+                            setMediaItemForEpisode(episode)
+                            setPlaybackSpeed(playingSpeed)
+
+                            if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
+                                seekToAndPlay(episode.progressInSec)
+                                if (episodePlayingStatus == PlayingStatus.Loading) {
+                                    podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+                                }
+                            }
                         }
                     }
             },
@@ -129,6 +107,10 @@ class PodcasterAppState @Inject constructor(
         val playbackSpeed = currentlyPlayingEpisode.value?.playingSpeed ?: 1.0f
         _trackProgress.update { episode.progressInSec ?: 0 }
         podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, PlayingStatus.Loading, playbackSpeed))
+        controller?.setMediaItemForEpisode(episode)
+        controller?.setPlaybackSpeed(playbackSpeed)
+        seekToAndPlay(_trackProgress.value)
+        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
     }
 
     fun resume() {
@@ -260,7 +242,28 @@ class PodcasterAppState @Inject constructor(
         podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Paused)
     }
 
+    private fun MediaController.setMediaItemForEpisode(episode: Episode) {
+        val uri = Uri.Builder()
+            .encodedPath(episode.enclosureUrl)
+            .build()
+        val mediaMetadata = MediaMetadata.Builder()
+            .setTitle(episode.title)
+            .setArtist(episode.podcastTitle)
+            .setIsBrowsable(false)
+            .setIsPlayable(true)
+            .setArtworkUri(Uri.parse(episode.artworkUrl))
+            .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+            .build()
+        val mediaItem = MediaItem.fromUri(uri)
+            .buildUpon()
+            .setMediaId(episode.id.toString())
+            .setMediaMetadata(mediaMetadata)
+            .build()
+        setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+    }
+
     private fun seekToAndPlay(positionInSec: Int?) {
+        controller?.prepare()
         if (positionInSec != null && positionInSec != 0) {
             controller?.seekTo(positionInSec * 1000L)
         }

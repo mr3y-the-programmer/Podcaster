@@ -98,8 +98,8 @@ class PlaybackService : MediaSessionService() {
                         reason: Int,
                     ) {
                         val playingStatus = when {
-                            playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
                             playWhenReady -> PlayingStatus.Playing
+                            playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
                             else -> PlayingStatus.Paused
                         }
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
