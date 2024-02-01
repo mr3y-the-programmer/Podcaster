@@ -36,9 +36,7 @@ class DefaultPodcastIndexClient @Inject constructor(
     }
 
     override suspend fun getEpisodesByPodcastId(podcastId: Long): ApiResponse<NetworkEpisodes> {
-        return httpClient.getApiResponse("$BaseUrl/episodes/byfeedid", logger) {
-            parameter("id", podcastId)
-        }
+        return httpClient.getApiResponse("$BaseUrl/episodes/byfeedid?id=$podcastId&fulltext", logger)
     }
 
     override suspend fun getEpisodeById(episodeId: Long): ApiResponse<NetworkEpisode> {
