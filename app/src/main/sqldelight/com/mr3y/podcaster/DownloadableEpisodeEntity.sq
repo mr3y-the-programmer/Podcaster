@@ -40,7 +40,7 @@ ORDER BY ee.datePublishedTimestamp DESC LIMIT :limit;
 getUntouchedEpisodesIdsForPodcast:
 SELECT ee.id FROM episodeEntity AS ee
 INNER JOIN downloadableEpisodeEntity AS dee ON ee.id == dee.episodeId AND ee.podcastId = :podcastId
-WHERE ee.isCompleted = 0 AND (ee.progressInSec IS NULL OR ee.progressInSec < 30) AND dee.downloadStatus = "NotDownloaded";
+WHERE ee.isCompleted = 0 AND (ee.progressInSec IS NULL OR ee.progressInSec < 1) AND dee.downloadStatus = "NotDownloaded";
 
 countDownloads:
 SELECT count(*) FROM downloadableEpisodeEntity WHERE downloadStatus != "NotDownloaded";

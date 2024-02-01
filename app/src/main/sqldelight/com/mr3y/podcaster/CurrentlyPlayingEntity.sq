@@ -6,6 +6,11 @@ CREATE TABLE IF NOT EXISTS currentlyPlayingEntity (
     playingSpeed REAL AS kotlin.Float DEFAULT 1.0 NOT NULL
 );
 
+CREATE TRIGGER IF NOT EXISTS pre_delete_active_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM currentlyPlayingEntity WHERE episodeId = old.id;
+END;
+
 getCurrentlyPlayingEpisode:
 SELECT * FROM currentlyPlayingEntity;
 

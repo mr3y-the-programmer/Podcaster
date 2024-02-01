@@ -52,6 +52,39 @@ class DefaultPodcastsDaoTest {
     }
 
     @Test
+    fun `assert deleting the backing episode of the currently playing episode nullifies it`() = runTest(testDispatcher) {
+        sut.getCurrentlyPlayingEpisode().test {
+            // Initially, there is no playing episode
+            assertThat(awaitItem()).isNull()
+
+            // Assume, we added 2 episodes and then played one of them.
+            sut.addEpisode(EpisodeWithDetails)
+            sut.addEpisode(EpisodeWithDetails.copy(id = 17536508L))
+
+            val currentlyPlayingEpisode = CurrentlyPlayingEpisode(EpisodeWithDetails, PlayingStatus.Loading, 1.0f)
+            sut.setCurrentlyPlayingEpisode(currentlyPlayingEpisode)
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
+
+            // if we deleted an episode that is not currently playing, then it should have no effect on the currently playing episode
+            sut.deleteEpisode(17536508L)
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
+
+            sut.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode.copy(playingStatus = PlayingStatus.Playing))
+
+            // but, if we deleted the episode that is currently playing, then we should have no playing episode
+            sut.deleteEpisode(EpisodeWithDetails.id)
+            assertThat(awaitItem()).isNull()
+
+            // and any later updates should have no effect
+            sut.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Paused)
+            assertThat(awaitItem()).isNull()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
     fun `assert upsert episode insert a new episode or update an existing episode without affecting updated local fields`() {
         val episode = EpisodeWithDetails
         assertThat(sut.getEpisode(episode.id)).isNull()

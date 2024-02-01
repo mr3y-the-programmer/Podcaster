@@ -1,0 +1,4 @@
+CREATE TRIGGER IF NOT EXISTS pre_delete_active_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM currentlyPlayingEntity WHERE episodeId = old.id;
+END;
