@@ -85,6 +85,8 @@ interface PodcastsDao {
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 
+    fun updateEpisodeDuration(durationInSec: Int?, episodeId: Long)
+
     fun updateEpisodesPodcastTitle(title: String, podcastId: Long)
 
     fun deleteUntouchedEpisodes(podcastId: Long)
@@ -226,7 +228,6 @@ class DefaultPodcastsDao @Inject constructor(
                     episodeUrl = episode.episodeUrl,
                     datePublishedTimestamp = episode.datePublishedTimestamp,
                     datePublishedFormatted = episode.datePublishedFormatted,
-                    durationInSec = episode.durationInSec,
                     episodeNum = episode.episodeNum,
                     artworkUrl = episode.artworkUrl,
                     enclosureUrl = episode.enclosureUrl,
@@ -284,6 +285,10 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long) {
         database.episodeEntityQueries.updateEpisodeProgress(progressInSec, episodeId)
+    }
+
+    override fun updateEpisodeDuration(durationInSec: Int?, episodeId: Long) {
+        database.episodeEntityQueries.updateEpisodeDuration(durationInSec, episodeId)
     }
 
     override fun updateEpisodesPodcastTitle(title: String, podcastId: Long) {

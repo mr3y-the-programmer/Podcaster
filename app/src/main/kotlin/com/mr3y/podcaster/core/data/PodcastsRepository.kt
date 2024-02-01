@@ -44,6 +44,8 @@ interface PodcastsRepository {
 
     fun updateEpisodePlaybackProgress(progressInSec: Int?, episodeId: Long)
 
+    fun updateEpisodeDuration(durationInSec: Int?, episodeId: Long)
+
     fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus)
 
     fun updateEpisodeDownloadProgress(episodeId: Long, progress: Float)

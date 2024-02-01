@@ -76,6 +76,15 @@ class PlaybackService : MediaSessionService() {
             podcastsRepository.getCurrentlyPlayingEpisode().collectLatest { currentEpisode ->
                 currentlyPlayingEpisode.update { currentEpisode }
                 val player = mediaSession?.player
+                currentlyPlayingEpisode.value?.let { (episode, _, speed) ->
+                    val duration = player?.duration ?: return@let
+                    // episode's durationInSec is sometimes reported as an approximate value,
+                    // so we update it to match the exact value of the content duration.
+                    if (duration != C.TIME_UNSET && episode.durationInSec?.toLong() != (duration / 1000)) {
+                        podcastsRepository.updateEpisodeDuration((duration / 1000).toInt(), episode.id)
+                        podcastsRepository.updateCurrentlyPlayingEpisodeSpeed(speed)
+                    }
+                }
                 while (true) {
                     val episodeId = player?.currentMediaItem?.mediaId?.toLongOrNull() ?: break
                     val progressInSec = player.currentPosition.div(1000)

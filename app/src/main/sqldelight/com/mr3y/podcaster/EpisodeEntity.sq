@@ -43,7 +43,6 @@ UPDATE episodeEntity SET
     episodeUrl = :episodeUrl,
     datePublishedTimestamp = :datePublishedTimestamp,
     datePublishedFormatted = :datePublishedFormatted,
-    durationInSec = :durationInSec,
     episodeNum = :episodeNum,
     artworkUrl = :artworkUrl,
     enclosureUrl = :enclosureUrl,
@@ -56,6 +55,9 @@ UPDATE episodeEntity SET isCompleted = 1 WHERE id = :id;
 
 updateEpisodeProgress:
 UPDATE episodeEntity SET progressInSec = :progressInSec WHERE id = :id;
+
+updateEpisodeDuration:
+UPDATE episodeEntity SET durationInSec = :durationInSec WHERE id = :id;
 
 updateEpisodePodcastTitleById:
 UPDATE episodeEntity SET podcastTitle = :newPodcastTitle WHERE id = :id;

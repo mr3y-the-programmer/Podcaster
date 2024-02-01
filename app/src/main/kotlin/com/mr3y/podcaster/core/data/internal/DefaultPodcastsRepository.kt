@@ -113,6 +113,10 @@ class DefaultPodcastsRepository @Inject constructor(
         podcastsDao.updateEpisodePlaybackProgress(progressInSec, episodeId)
     }
 
+    override fun updateEpisodeDuration(durationInSec: Int?, episodeId: Long) {
+        podcastsDao.updateEpisodeDuration(durationInSec, episodeId)
+    }
+
     override fun updateEpisodeDownloadStatus(episodeId: Long, newStatus: EpisodeDownloadStatus) {
         podcastsDao.updateEpisodeDownloadStatus(episodeId, newStatus)
     }
