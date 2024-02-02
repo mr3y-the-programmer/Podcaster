@@ -1,5 +1,9 @@
 package com.mr3y.podcaster.ui.resources
 
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import cafe.adriel.lyricist.LyricistStrings
 
 @LyricistStrings(languageTag = "en", default = true)
@@ -38,4 +42,23 @@ val EnStrings = PodcasterStrings(
     sync_work_notification_channel_description = "Background Refreshing tasks for Podcaster",
     download_work_notification_message = "Downloading episode/s currently in progress...",
     downloads_empty_list = "You have no episodes downloaded or still downloading",
+    settings_label = "Settings",
+    appearance_label = "Appearance",
+    theme_heading = "Theme",
+    theme_light_label = "Light",
+    theme_dark_label = "Dark",
+    theme_system_default_label = "System Default",
+    dynamic_colors_label = "Dynamic color",
+    dynamic_colors_on_label = "On",
+    dynamic_colors_off_label = "Off",
+    open_source_licenses_label = "Open source licenses",
+    version_label = "Version",
+    feedback_and_issues_label = "Feedback & Issues",
+    privacy_policy_label = "Privacy Policy",
+    powered_by_label = buildAnnotatedString {
+        append("Powered by ")
+        withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+            append("PodcastIndex.org")
+        }
+    },
 )

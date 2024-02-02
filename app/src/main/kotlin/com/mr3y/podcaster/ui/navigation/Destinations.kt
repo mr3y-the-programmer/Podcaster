@@ -22,4 +22,7 @@ sealed interface Destinations : Destination {
 
     @Serializable
     data object Downloads : Destinations
+
+    @Serializable
+    data object Licenses : Destinations
 }

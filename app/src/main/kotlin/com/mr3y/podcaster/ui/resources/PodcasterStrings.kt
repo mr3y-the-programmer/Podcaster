@@ -1,5 +1,7 @@
 package com.mr3y.podcaster.ui.resources
 
+import androidx.compose.ui.text.AnnotatedString
+
 data class PodcasterStrings(
     val tab_subscriptions_label: String,
     val tab_explore_label: String,
@@ -35,4 +37,18 @@ data class PodcasterStrings(
     val sync_work_notification_channel_description: String,
     val download_work_notification_message: String,
     val downloads_empty_list: String,
+    val settings_label: String,
+    val appearance_label: String,
+    val theme_heading: String,
+    val theme_light_label: String,
+    val theme_dark_label: String,
+    val theme_system_default_label: String,
+    val dynamic_colors_label: String,
+    val dynamic_colors_on_label: String,
+    val dynamic_colors_off_label: String,
+    val open_source_licenses_label: String,
+    val version_label: String,
+    val feedback_and_issues_label: String,
+    val privacy_policy_label: String,
+    val powered_by_label: AnnotatedString,
 )

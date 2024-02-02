@@ -57,6 +57,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
+import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.resources.Subscriptions
 import com.mr3y.podcaster.ui.theme.isStatusBarAppearanceLight
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
@@ -67,6 +68,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 @Composable
 fun HomeScreen(
     appState: PodcasterAppState,
+    userPreferences: UserPreferences,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -191,6 +193,7 @@ fun HomeScreen(
                     scope.launch { drawerState.open() }
                 },
                 appState = appState,
+                userPreferences = userPreferences,
                 contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
                 excludedWindowInsets = if (currentlyPlayingEpisode != null) playerViewBottomInsets else null,
             )

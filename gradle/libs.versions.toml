@@ -36,6 +36,9 @@ google-services = "4.4.0"
 firebase-bom = "32.7.1"
 crashlytics = "2.9.9"
 leakcanary = "3.0-alpha-1"
+datastore = "1.1.0-beta01"
+aboutlibraries = "10.10.0"
+appversioning = "1.3.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -96,6 +99,8 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+datastore-pref = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+aboutlibraries-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -107,6 +112,8 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+appversioning = { id = "io.github.reactivecircus.app-versioning", version.ref = "appversioning" }
 
 [bundles]
 

@@ -1,6 +1,7 @@
 import app.cash.sqldelight.core.capitalize
 import app.cash.sqldelight.gradle.SqlDelightTask
 import java.io.FileInputStream
+import java.time.Instant
 import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
@@ -14,6 +15,8 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.appversioning)
 }
 
 android {
@@ -24,8 +27,6 @@ android {
         applicationId = "com.mr3y.podcaster"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -103,6 +104,23 @@ ktlint {
     }
 }
 
+appVersioning {
+    overrideVersionName { gitTag, providerFactory, variantInfo ->
+        val buildNumber = providerFactory
+            .environmentVariable("GITHUB_RUN_NUMBER")
+            .getOrElse("0").toInt()
+        val buildTypeSuffix = if (variantInfo.isDebugBuild) "-debug" else ""
+        if (buildNumber != 0) {
+            "${gitTag.rawTagName}$buildTypeSuffix - #$buildNumber (${gitTag.commitHash})"
+        } else {
+            "${gitTag.rawTagName}$buildTypeSuffix (${gitTag.commitHash})"
+        }
+    }
+    overrideVersionCode { _, _, _ ->
+        Instant.now().epochSecond.toInt()
+    }
+}
+
 ksp {
     arg("lyricist.packageName", "com.mr3y.podcaster")
 }
@@ -137,8 +155,15 @@ dependencies {
     implementation(libs.kotlinx.serialization)
 
     implementation(platform(libs.firebase.bom))
+    val excludeAndroidxDataStore = Action<ExternalModuleDependency> {
+        // Crashlytics is built with datastore v1.0 but we're using v1.1, and v1.1 isn't binary compatible with v1.0
+        exclude(group = "androidx.datastore", module = "datastore-preferences")
+    }
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
+
+    implementation(libs.datastore.pref)
+    implementation(libs.aboutlibraries.m3)
 
     ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)

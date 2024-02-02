@@ -9,9 +9,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
+import com.mr3y.podcaster.ui.presenter.Theme
+import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.HomeScreen
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,24 +29,49 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var podcasterAppState: PodcasterAppState
 
+    @Inject
+    lateinit var userPreferences: UserPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         goEdgeToEdge()
 
         setContent {
-            val useDarkIcons = !isSystemInDarkTheme()
+            val selectedTheme by userPreferences.selectedTheme.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.CREATED)
+            val isDynamicColorOn by userPreferences.dynamicColorEnabled.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.CREATED)
+            val useDarkIcons = shouldUseDarkIcons(theme = selectedTheme)
 
             DisposableEffect(useDarkIcons) {
                 goEdgeToEdge(isDarkTheme = { !useDarkIcons })
 
                 onDispose {}
             }
-            PodcasterTheme {
-                HomeScreen(
-                    appState = podcasterAppState,
-                    modifier = Modifier.fillMaxSize(),
-                )
+            if (selectedTheme != null) {
+                PodcasterTheme(
+                    darkTheme = when (selectedTheme!!) {
+                        Theme.Light -> {
+                            goEdgeToEdge(isDarkTheme = { false })
+                            false
+                        }
+                        Theme.Dark -> {
+                            goEdgeToEdge(isDarkTheme = { true })
+                            true
+                        }
+                        Theme.SystemDefault -> {
+                            val isDarkTheme = isSystemInDarkTheme()
+                            goEdgeToEdge(isDarkTheme = { isDarkTheme })
+                            isDarkTheme
+                        }
+                    },
+                    dynamicColor = isDynamicColorOn,
+                ) {
+                    HomeScreen(
+                        appState = podcasterAppState,
+                        userPreferences = userPreferences,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
         }
     }
@@ -62,5 +93,18 @@ class MainActivity : ComponentActivity() {
                 detectDarkMode = isDarkTheme,
             ),
         )
+    }
+
+    @Composable
+    private fun shouldUseDarkIcons(theme: Theme?): Boolean {
+        if (theme == null) {
+            return !isSystemInDarkTheme()
+        }
+
+        return when (theme) {
+            Theme.Light -> true
+            Theme.Dark -> false
+            Theme.SystemDefault -> !isSystemInDarkTheme()
+        }
     }
 }

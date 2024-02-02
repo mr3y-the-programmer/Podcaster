@@ -10,9 +10,11 @@ import com.kiwi.navigationcompose.typed.composable
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
+import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.DownloadsScreen
 import com.mr3y.podcaster.ui.screens.EpisodeDetailsScreen
 import com.mr3y.podcaster.ui.screens.ExploreScreen
+import com.mr3y.podcaster.ui.screens.LicensesScreen
 import com.mr3y.podcaster.ui.screens.PodcastDetailsScreen
 import com.mr3y.podcaster.ui.screens.SettingsScreen
 import com.mr3y.podcaster.ui.screens.SubscriptionsScreen
@@ -24,6 +26,7 @@ fun PodcasterNavGraph(
     navController: NavHostController,
     onNavDrawerClick: () -> Unit,
     appState: PodcasterAppState,
+    userPreferences: UserPreferences,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -71,9 +74,11 @@ fun PodcasterNavGraph(
         }
         composable<Destinations.Settings> {
             SettingsScreen(
+                userPreferences = userPreferences,
+                externalContentPadding = contentPadding,
+                excludedWindowInsets = excludedWindowInsets,
                 onNavigateUp = navController::navigateUp,
-                onDownloadsClick = { /*TODO*/ },
-                onFeedbackClick = { /*TODO*/ },
+                onLicensesClick = { navController.navigate(Destinations.Licenses) },
             )
         }
         composable<Destinations.Downloads> {
@@ -82,6 +87,13 @@ fun PodcasterNavGraph(
                 onNavDrawerClick = onNavDrawerClick,
                 appState = appState,
                 contentPadding = contentPadding,
+                excludedWindowInsets = excludedWindowInsets,
+            )
+        }
+        composable<Destinations.Licenses> {
+            LicensesScreen(
+                onNavigateUp = navController::navigateUp,
+                externalContentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )
         }
