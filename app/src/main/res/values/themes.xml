@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.Podcaster" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Podcaster.Splash" parent="Theme.SplashScreen">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="windowSplashScreenBackground" tools:targetApi="31">@color/maastricht_blue</item>
+        <item name="windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Podcaster</item>
+    </style>
 </resources>
