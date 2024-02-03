@@ -172,6 +172,11 @@ fun HomeScreen(
                     velocityThreshold = { with(density) { 80.dp.toPx() } },
                 )
             }
+            LaunchedEffect(currentDestination) {
+                if (currentDestination != null && state.currentValue == PlayerViewState.Expanded) {
+                    state.animateTo(PlayerViewState.Collapsed)
+                }
+            }
             LaunchedEffect(state.currentValue) {
                 when (state.currentValue) {
                     PlayerViewState.Collapsed -> {
