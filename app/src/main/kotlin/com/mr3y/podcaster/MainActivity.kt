@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.Theme
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.HomeScreen
+import com.mr3y.podcaster.ui.theme.LocalAppTheme
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -77,11 +79,13 @@ class MainActivity : ComponentActivity() {
                     },
                     dynamicColor = isDynamicColorOn,
                 ) {
-                    HomeScreen(
-                        appState = podcasterAppState,
-                        userPreferences = userPreferences,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    CompositionLocalProvider(LocalAppTheme provides selectedTheme!!) {
+                        HomeScreen(
+                            appState = podcasterAppState,
+                            userPreferences = userPreferences,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
             }
         }

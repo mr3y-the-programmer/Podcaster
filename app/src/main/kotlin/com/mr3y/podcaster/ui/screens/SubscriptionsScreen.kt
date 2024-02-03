@@ -2,7 +2,6 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,6 +89,7 @@ import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
@@ -155,7 +155,7 @@ fun SubscriptionsScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
     val context = LocalContext.current
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = isAppThemeDark()
     val playingStatus = currentlyPlayingEpisode?.playingStatus
     LaunchedEffect(state.refreshResult, playingStatus) {
         when (state.refreshResult) {

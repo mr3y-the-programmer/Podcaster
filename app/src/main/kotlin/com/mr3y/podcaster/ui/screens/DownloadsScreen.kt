@@ -1,7 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +60,7 @@ import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 
 @Composable
@@ -97,7 +97,7 @@ fun DownloadsScreen(
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = isAppThemeDark()
     val context = LocalContext.current
     LaunchedEffect(key1 = isDarkTheme) {
         context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)

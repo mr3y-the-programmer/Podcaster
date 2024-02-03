@@ -2,7 +2,6 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -86,6 +85,7 @@ import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.contrastAgainst
+import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
@@ -144,7 +144,7 @@ fun EpisodeDetailsScreen(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val strings = LocalStrings.current
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = isAppThemeDark()
     val context = LocalContext.current
     LaunchedEffect(state.refreshResult, playingStatus) {
         when (state.refreshResult) {
