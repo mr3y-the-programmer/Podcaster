@@ -113,10 +113,12 @@ class PlaybackService : MediaSessionService() {
                         }
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
                             val isAboutToPlay = playingStatus == PlayingStatus.Loading || playingStatus == PlayingStatus.Playing
-                            val hasReachedEndOfEpisode = abs(duration - currentPosition) <= 1000L || duration < 0L
-                            if (isAboutToPlay && hasReachedEndOfEpisode) {
-                                seekTo(0L)
-                                podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = episode.id)
+                            if (episode.durationInSec != null) {
+                                val hasReachedEndOfEpisode = abs((episode.durationInSec * 1000).toLong() - currentPosition) <= 1000L && episode.progressInSec == episode.durationInSec
+                                if (isAboutToPlay && hasReachedEndOfEpisode) {
+                                    seekTo(0L)
+                                    podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = episode.id)
+                                }
                             }
                         }
                         if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM) {
