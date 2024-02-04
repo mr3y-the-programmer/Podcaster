@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kiwi.navigationcompose.typed.composable
@@ -58,7 +59,7 @@ fun PodcasterNavGraph(
         }
         composable<Destinations.PodcastDetails> {
             PodcastDetailsScreen(
-                onNavigateUp = navController::navigateUp,
+                onNavigateUp = navController::navigateUpOnce,
                 onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, podcastArtworkUrl)) },
                 appState = appState,
                 contentPadding = contentPadding,
@@ -67,7 +68,7 @@ fun PodcasterNavGraph(
         }
         composable<Destinations.EpisodeDetails> {
             EpisodeDetailsScreen(
-                onNavigateUp = navController::navigateUp,
+                onNavigateUp = navController::navigateUpOnce,
                 appState = appState,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
@@ -78,7 +79,7 @@ fun PodcasterNavGraph(
                 userPreferences = userPreferences,
                 externalContentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
-                onNavigateUp = navController::navigateUp,
+                onNavigateUp = navController::navigateUpOnce,
                 onLicensesClick = { navController.navigate(Destinations.Licenses) },
             )
         }
@@ -93,10 +94,19 @@ fun PodcasterNavGraph(
         }
         composable<Destinations.Licenses> {
             LicensesScreen(
-                onNavigateUp = navController::navigateUp,
+                onNavigateUp = navController::navigateUpOnce,
                 externalContentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )
         }
+    }
+}
+
+/**
+ * Idempotent version of [NavHostController.navigateUp] function.
+ */
+private fun NavHostController.navigateUpOnce() {
+    if (currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+        navigateUp()
     }
 }
