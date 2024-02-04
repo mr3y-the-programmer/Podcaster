@@ -43,6 +43,7 @@ fun PodcasterNavGraph(
                 onNavDrawerClick = onNavDrawerClick,
                 onSettingsClick = { navController.navigate(Destinations.Settings) },
                 appState = appState,
+                userPreferences = userPreferences,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )

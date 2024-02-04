@@ -1,5 +1,12 @@
 package com.mr3y.podcaster.ui.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +34,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.NightlightRound
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,6 +91,8 @@ import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
+import com.mr3y.podcaster.ui.presenter.Theme
+import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -104,6 +115,7 @@ fun SubscriptionsScreen(
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
     appState: PodcasterAppState,
+    userPreferences: UserPreferences,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -116,6 +128,13 @@ fun SubscriptionsScreen(
         onPodcastClick = onPodcastClick,
         onEpisodeClick = onEpisodeClick,
         onSettingsClick = onSettingsClick,
+        onToggleAppTheme = { isDark ->
+            if (isDark) {
+                userPreferences.setAppTheme(Theme.Light)
+            } else {
+                userPreferences.setAppTheme(Theme.Dark)
+            }
+        },
         onNavDrawerClick = onNavDrawerClick,
         onRefresh = viewModel::refresh,
         onRefreshResultConsumed = viewModel::consumeRefreshResult,
@@ -137,6 +156,7 @@ fun SubscriptionsScreen(
     state: SubscriptionsUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
+    onToggleAppTheme: (isDarkTheme: Boolean) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
@@ -194,6 +214,7 @@ fun SubscriptionsScreen(
             topBar = {
                 SubscriptionsTopAppBar(
                     onSettingsClick = onSettingsClick,
+                    onToggleAppTheme = onToggleAppTheme,
                     onNavDrawerClick = onNavDrawerClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -246,6 +267,7 @@ fun SubscriptionsScreen(
 @Composable
 private fun SubscriptionsTopAppBar(
     onSettingsClick: () -> Unit,
+    onToggleAppTheme: (isDarkTheme: Boolean) -> Unit,
     onNavDrawerClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -263,6 +285,25 @@ private fun SubscriptionsTopAppBar(
         },
         title = { },
         actions = {
+            val darkTheme = isAppThemeDark()
+            IconButton(
+                onClick = { onToggleAppTheme(darkTheme) },
+            ) {
+                AnimatedContent(
+                    targetState = darkTheme,
+                    transitionSpec = {
+                        (fadeIn(animationSpec = tween(400, delayMillis = 90)) + slideInHorizontally()).togetherWith(
+                            fadeOut(animationSpec = tween(90)) + slideOutHorizontally()
+                        )
+                    },
+                    label = "Animated toggle theme icon"
+                ) { isDark ->
+                    Icon(
+                        imageVector = if (isDark) Icons.Filled.NightlightRound else Icons.Filled.WbSunny,
+                        contentDescription = strings.icon_theme_content_description,
+                    )
+                }
+            }
             IconButton(
                 onClick = onSettingsClick,
             ) {
@@ -518,6 +559,7 @@ fun SubscriptionsScreenPreview(
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
+            onToggleAppTheme = {},
             onNavDrawerClick = {},
             onRefresh = {},
             onRefreshResultConsumed = {},
@@ -556,6 +598,7 @@ fun EmptySubscriptionsScreenPreview() {
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
+            onToggleAppTheme = {},
             onNavDrawerClick = {},
             onRefresh = {},
             onRefreshResultConsumed = {},

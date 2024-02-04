@@ -16,6 +16,7 @@ val EnStrings = PodcasterStrings(
     icon_menu_content_description = "Tap to open Navigation drawer",
     icon_settings_content_description = "Tap to navigate to settings",
     icon_navigate_up_content_description = "Tap to go to the previous screen",
+    icon_theme_content_description = "Toggle App Theme",
     subscriptions_label = "Subscriptions",
     subscriptions_empty_list = "You aren't subscribed to any podcast.\nYour subscriptions will show up here.",
     subscriptions_episodes_empty_list = "Start subscribing podcasts by clicking on ☰ icon -> then Explore.",

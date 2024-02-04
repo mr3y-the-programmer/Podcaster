@@ -11,6 +11,7 @@ data class PodcasterStrings(
     val icon_menu_content_description: String,
     val icon_settings_content_description: String,
     val icon_navigate_up_content_description: String,
+    val icon_theme_content_description: String,
     val subscriptions_label: String,
     val subscriptions_empty_list: String,
     val subscriptions_episodes_empty_list: String,
