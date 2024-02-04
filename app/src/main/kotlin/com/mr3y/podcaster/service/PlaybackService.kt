@@ -11,6 +11,9 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.RenderersFactory
+import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSession.ConnectionResult
@@ -54,11 +57,13 @@ class PlaybackService : MediaSessionService() {
             .setUsage(C.USAGE_MEDIA)
             .build()
         val mediaSourceFactory = ProgressiveMediaSource.Factory(DownloadMediaService.buildCacheDataSourceFactory(this))
-        val player = ExoPlayer.Builder(this)
+        val audioOnlyRenderersFactory = RenderersFactory { handler, _, audioListener, _, _ ->
+            arrayOf(MediaCodecAudioRenderer(this, MediaCodecSelector.DEFAULT, handler, audioListener))
+        }
+        val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory, mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
             .setPauseAtEndOfMediaItems(true)
-            .setMediaSourceFactory(mediaSourceFactory)
             .build()
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(PlaybackMediaSessionCallback())
