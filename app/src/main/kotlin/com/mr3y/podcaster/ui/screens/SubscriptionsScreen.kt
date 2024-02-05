@@ -293,10 +293,10 @@ private fun SubscriptionsTopAppBar(
                     targetState = darkTheme,
                     transitionSpec = {
                         (fadeIn(animationSpec = tween(400, delayMillis = 90)) + slideInHorizontally()).togetherWith(
-                            fadeOut(animationSpec = tween(90)) + slideOutHorizontally()
+                            fadeOut(animationSpec = tween(90)) + slideOutHorizontally(),
                         )
                     },
-                    label = "Animated toggle theme icon"
+                    label = "Animated toggle theme icon",
                 ) { isDark ->
                     Icon(
                         imageVector = if (isDark) Icons.Filled.NightlightRound else Icons.Filled.WbSunny,
