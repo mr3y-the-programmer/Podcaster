@@ -37,11 +37,25 @@ android {
         buildConfigField("String", "API_SECRET", "\"${getValueOfKey("API_SECRET")}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            if (rootProject.file("keystore.properties").exists()) {
+                val keystoreProperties = Properties()
+                keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             isDebuggable = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
