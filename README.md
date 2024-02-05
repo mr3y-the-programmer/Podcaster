@@ -18,7 +18,7 @@ the app is still a work-in-progress and there are some features that are not yet
 </p>
 
 ## Features
-- ✅ Support for millions of podcasts.
+- ✅ Access to millions of podcasts.
 - ✅ Subscribe to a podcast by RSS feed url.
 - ✅ Select episode's playback speed.
 - ✅ Download episodes to play them offline.
