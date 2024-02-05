@@ -86,10 +86,10 @@ fun SettingsScreen(
         onNavigateUp = onNavigateUp,
         onLicensesClick = onLicensesClick,
         onFeedbackClick = {
-            urlHandler.openUri("https://github.com/mr3y-the-programmer/Podcaster/issues/new")
+            urlHandler.openUri("https://github.com/mr3y-the-programmer/Podcaster/issues/new?template=bug_report.md")
         },
         onPrivacyPolicyClick = {
-            urlHandler.openUri("")
+            urlHandler.openUri("https://mr3y-the-programmer.github.io/Podcaster/docs/PrivacyPolicy")
         },
         externalContentPadding = externalContentPadding,
         excludedWindowInsets = excludedWindowInsets,
