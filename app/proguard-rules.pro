@@ -24,4 +24,6 @@
 # hide the original source file name.
 -renamesourcefileattribute SourceFile
 
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
