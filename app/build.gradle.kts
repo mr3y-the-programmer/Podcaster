@@ -137,8 +137,8 @@ ksp {
     arg("lyricist.packageName", "com.mr3y.podcaster")
 }
 
-fun getValueOfKey(key: String) {
-    if (System.getenv("CI").toBoolean()) {
+fun getValueOfKey(key: String): String {
+    return if (System.getenv("CI").toBoolean()) {
         System.getenv(key)
     } else {
         val properties = Properties()
