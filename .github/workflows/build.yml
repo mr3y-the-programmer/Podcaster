@@ -1,0 +1,76 @@
+name: Build and run local tests
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - 'v*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  API_KEY: ${{ secrets.API_KEY }}
+  API_SECRET: ${{ secrets.API_SECRET }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Run local tests
+        run: ./gradlew testDebug --stacktrace
+
+      - name: Apply ktlint formatting to (.kt/s) files.
+        run: ./gradlew ktlintFormat --stacktrace
+
+      - name: Commit and push changes (if any).
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: github-actions@github.com
+          message: Apply style formatting
+          push: true
+
+      - name: Upload build outputs (APKs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: |
+            **/build/outputs/*
+
+      - name: Upload build reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: ./**/build/reports

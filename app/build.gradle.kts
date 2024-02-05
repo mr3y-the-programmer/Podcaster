@@ -33,10 +33,8 @@ android {
             useSupportLibrary = true
         }
 
-        val properties = Properties()
-        properties.load(FileInputStream(rootProject.file("local.properties")))
-        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
-        buildConfigField("String", "API_SECRET", "\"${properties.getProperty("API_SECRET")}\"")
+        buildConfigField("String", "API_KEY", "\"${getValueOfKey("API_KEY")}\"")
+        buildConfigField("String", "API_SECRET", "\"${getValueOfKey("API_SECRET")}\"")
     }
 
     buildTypes {
@@ -123,6 +121,16 @@ appVersioning {
 
 ksp {
     arg("lyricist.packageName", "com.mr3y.podcaster")
+}
+
+fun getValueOfKey(key: String) {
+    if (System.getenv("CI").toBoolean()) {
+        System.getenv(key)
+    } else {
+        val properties = Properties()
+        properties.load(FileInputStream(rootProject.file("local.properties")))
+        properties.getProperty(key)
+    }
 }
 
 dependencies {
