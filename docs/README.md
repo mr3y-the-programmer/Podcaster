@@ -1,0 +1,1 @@
+[PrivacyPolicy](https://github.com/mr3y-the-programmer/Podcaster/blob/main/docs/PrivacyPolicy.md)
