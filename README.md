@@ -1,4 +1,7 @@
-# Podcaster
+<div align="center">
+  <img style="border-radius: 50%" src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/6d9a6bd5-3056-4cf7-bd23-6519354a72d4" width="100px">
+  <h1>Podcaster</h1>
+</div>
 
 A minimalistic podcast listening app that showcases using Jetpack Media 3 in a real, offline-first app.
 the app is still a work-in-progress and there are some features that are not yet implemented.
