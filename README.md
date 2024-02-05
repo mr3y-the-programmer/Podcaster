@@ -45,7 +45,7 @@ TODO:
 | 🛢 Database     | [Sqldelight](https://github.com/cashapp/sqldelight) |
 | 🌐 Networking   | [Ktor](https://github.com/ktorio/ktor) |
 
-### Powered By [Podcast Index.org](https://podcastindex-org.github.io/)
+### Powered By [Podcast Index.org](https://podcastindex.org/)
 
 ## License
 ```
