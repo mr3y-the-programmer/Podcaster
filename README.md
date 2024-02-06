@@ -34,7 +34,9 @@ the app is still a work-in-progress and there are some features that are not yet
 ✅ Implemented     ❌ Not yet Implemented
 
 ## Download
-TODO:
+Google Play: In review
+
+Or from [github releases](https://github.com/mr3y-the-programmer/Podcaster/releases)
 
 ## Tech Stack
 |                 |                                                |
