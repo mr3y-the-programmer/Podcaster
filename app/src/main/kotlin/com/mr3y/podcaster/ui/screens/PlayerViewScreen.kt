@@ -26,8 +26,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forward30
 import androidx.compose.material.icons.filled.Pause
@@ -69,6 +71,8 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.ui.components.MoveToNextButton
+import com.mr3y.podcaster.ui.components.MoveToPreviousButton
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
@@ -93,6 +97,10 @@ fun ExpandedPlayerView(
     onPlaybackSpeedChange: (oldSpeed: Float) -> Float,
     progress: Int,
     onSeeking: (Int) -> Unit,
+    isSeekingToNextEnabled: Boolean,
+    isSeekingToPreviousEnabled: Boolean,
+    onSeekToNext: () -> Unit,
+    onSeekToPrevious: () -> Unit,
     onBack: () -> Unit,
     containerColor: Color,
     modifier: Modifier = Modifier,
@@ -110,6 +118,7 @@ fun ExpandedPlayerView(
                 .padding(contentPadding)
                 .padding(top = 48.dp)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
         ) {
             AsyncImage(
@@ -191,35 +200,16 @@ fun ExpandedPlayerView(
             }
 
             Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
-                AnimatedContent(
-                    targetState = currentSpeed,
-                    transitionSpec = {
-                        if (targetState > initialState) {
-                            (slideInHorizontally { it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { -it } + fadeOut(animationSpec = tween(90)))
-                        } else {
-                            (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
-                        }
-                    },
-                    label = "Animated Playback Speed",
-                ) { targetState ->
-                    TextButton(
-                        onClick = {
-                            currentSpeed = onPlaybackSpeedChange(targetState)
-                        },
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface),
-                    ) {
-                        Text(
-                            text = "${targetState}x",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
+                MoveToPreviousButton(
+                    onClick = onSeekToPrevious,
+                    isEnabled = isSeekingToPreviousEnabled,
+                    modifier = Modifier.size(56.dp)
+                )
 
-                Spacer(modifier = Modifier.weight(1f))
                 OutlinedIconButton(
                     onClick = { onReplay(10) },
                     modifier = Modifier.size(56.dp),
@@ -236,8 +226,6 @@ fun ExpandedPlayerView(
                         modifier = Modifier.size(40.dp),
                     )
                 }
-
-                Spacer(modifier = Modifier.width(8.dp))
 
                 IconButton(
                     onClick = {
@@ -279,8 +267,6 @@ fun ExpandedPlayerView(
                     }
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
-
                 OutlinedIconButton(
                     onClick = { onForward(30) },
                     modifier = Modifier.size(56.dp),
@@ -297,7 +283,41 @@ fun ExpandedPlayerView(
                         modifier = Modifier.size(40.dp),
                     )
                 }
-                Spacer(modifier = Modifier.weight(2f))
+                
+                MoveToNextButton(
+                    onClick = onSeekToNext,
+                    isEnabled = isSeekingToNextEnabled,
+                    modifier = Modifier.size(56.dp)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
+                AnimatedContent(
+                    targetState = currentSpeed,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            (slideInHorizontally { it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { -it } + fadeOut(animationSpec = tween(90)))
+                        } else {
+                            (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
+                        }
+                    },
+                    label = "Animated Playback Speed",
+                ) { targetState ->
+                    TextButton(
+                        onClick = {
+                            currentSpeed = onPlaybackSpeedChange(targetState)
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface),
+                    ) {
+                        Text(
+                            text = "${targetState}x",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
             }
         }
     }
@@ -423,6 +443,10 @@ fun ExpandedPlayerViewPreview(
             ),
             onResume = {},
             onPause = {},
+            isSeekingToPreviousEnabled = true,
+            isSeekingToNextEnabled = false,
+            onSeekToNext = {},
+            onSeekToPrevious = {},
             onForward = {},
             onReplay = {},
             onPlaybackSpeedChange = { it },

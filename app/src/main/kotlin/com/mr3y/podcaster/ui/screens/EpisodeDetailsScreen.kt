@@ -67,12 +67,14 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PlayPauseExpandedButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -91,6 +93,7 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import kotlin.random.Random
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -110,6 +113,9 @@ fun EpisodeDetailsScreen(
         onRefresh = viewModel::refresh,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
+        isEpisodeInQueue = appState::isEpisodeInQueue,
+        onAddEpisodeToQueue = appState::addToQueue,
+        onRemoveEpisodeFromQueue = appState::removeFromQueue,
         onDownloadingEpisode = appState::downloadEpisode,
         onResumeDownloadingEpisode = appState::resumeDownloading,
         onPauseDownloadingEpisode = appState::pauseDownloading,
@@ -131,6 +137,9 @@ fun EpisodeDetailsScreen(
     onRefresh: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
+    isEpisodeInQueue: (episodeId: Long) -> Boolean,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
@@ -256,6 +265,9 @@ fun EpisodeDetailsScreen(
                             downloadMetadata = state.downloadMetadata,
                             onPlay = onPlayEpisode,
                             onPause = onPause,
+                            isEpisodeInQueue = isEpisodeInQueue,
+                            onAddEpisodeToQueue = onAddEpisodeToQueue,
+                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                             onDownloadingEpisode = onDownloadingEpisode,
                             onResumeDownloadingEpisode = onResumeDownloadingEpisode,
                             onPauseDownloadingEpisode = onPauseDownloadingEpisode,
@@ -318,6 +330,9 @@ private fun BoxScope.Header(
     downloadMetadata: EpisodeDownloadMetadata?,
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
+    isEpisodeInQueue: (episodeId: Long) -> Boolean,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
@@ -364,22 +379,22 @@ private fun BoxScope.Header(
             .zIndex(2f),
         horizontalArrangement = Arrangement.End,
     ) {
-        if (episode.durationInSec != null && episode.durationInSec > 10) {
-            PlayPauseExpandedButton(
-                isSelected = isSelected,
-                playingStatus = playingStatus,
-                onPlay = { onPlay(episode) },
-                onPause = onPause,
-                durationInSec = episode.durationInSec,
+        PlayPauseCompactButton(
+            isSelected = isSelected,
+            playingStatus = playingStatus,
+            onPlay = { onPlay(episode) },
+            onPause = onPause,
+            containerColor = MaterialTheme.colorScheme.primaryTertiary,
+            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        if (!isEpisodeInQueue(episode.id)) {
+            AddToQueueButton(
+                onClick = { onAddEpisodeToQueue(episode) },
             )
         } else {
-            PlayPauseCompactButton(
-                isSelected = isSelected,
-                playingStatus = playingStatus,
-                onPlay = { onPlay(episode) },
-                onPause = onPause,
-                containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+            RemoveFromQueueButton(
+                onClick = { onRemoveEpisodeFromQueue(episode.id) }
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -454,6 +469,9 @@ fun EpisodeDetailsScreenPreview(
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            isEpisodeInQueue = { _ -> Random.nextBoolean() },
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
@@ -485,6 +503,9 @@ fun EpisodeDetailsErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            isEpisodeInQueue = { _ -> Random.nextBoolean() },
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},

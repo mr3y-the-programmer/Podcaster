@@ -23,6 +23,7 @@ import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.ListenableFuture
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -134,6 +135,23 @@ class PlaybackService : MediaSessionService() {
                             }
                         }
                         podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+                    }
+
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        currentlyPlayingEpisode.value?.let { (episode, _, _) ->
+                            if (!episode.isCompleted && episode.durationInSec == episode.progressInSec) {
+                                podcastsRepository.markEpisodeAsCompleted(episode.id)
+                            }
+                        }
+
+                        if (mediaItem != null) {
+                            val episode = mediaItem.localConfiguration?.let { it.tag as? Episode } ?: return
+                            currentlyPlayingEpisode.value?.let { (currentEpisode, playingStatus, playingSpeed) ->
+                                if (currentEpisode.id != episode.id) {
+                                    podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed))
+                                }
+                            }
+                        }
                     }
 
                     override fun onPlayerError(error: PlaybackException) {

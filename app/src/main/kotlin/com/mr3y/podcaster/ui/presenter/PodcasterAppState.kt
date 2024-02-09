@@ -60,6 +60,12 @@ class PodcasterAppState @Inject constructor(
     private val _trackProgress = MutableStateFlow(0)
     val trackProgress = _trackProgress.asStateFlow()
 
+    val canSeekToNextInQueue: Boolean
+        get() = controller?.hasNextMediaItem() ?: false
+
+    val canSeekToPreviousInQueue: Boolean
+        get() = controller?.hasPreviousMediaItem() ?: false
+
     init {
         applicationScope.launch {
             while (true) {
@@ -233,6 +239,53 @@ class PodcasterAppState @Inject constructor(
         }
     }
 
+    fun addToQueue(episode: Episode) {
+        currentlyPlayingEpisode.value?.let { (currentEpisode, _, _) ->
+            if (currentEpisode.id == episode.id || isEpisodeInQueue(episode.id)) {
+                return
+            }
+        }
+        controller?.addMediaItemForEpisode(episode)
+    }
+
+    fun removeFromQueue(episodeId: Long) {
+        currentlyPlayingEpisode.value?.let { (currentEpisode, _, _) ->
+            if (currentEpisode.id == episodeId) {
+                return
+            }
+        }
+        val queueSize = controller?.mediaItemCount ?: return
+        for (i in 0..< queueSize) {
+            val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
+            if (mediaItemEpisodeId == episodeId) {
+                controller?.removeMediaItem(i)
+            }
+        }
+    }
+
+    fun seekToNextInQueue() {
+        if (canSeekToNextInQueue) {
+            controller?.seekToNextMediaItem()
+        }
+    }
+
+    fun seekToPreviousInQueue() {
+        if (canSeekToPreviousInQueue) {
+            controller?.seekToPreviousMediaItem()
+        }
+    }
+
+    fun isEpisodeInQueue(episodeId: Long): Boolean {
+        val queueSize = controller?.mediaItemCount ?: return false
+        for (i in 0..< queueSize) {
+            val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
+            if (mediaItemEpisodeId == episodeId) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun releasePlayer() {
         MediaController.releaseFuture(controllerFuture)
         currentContext = null
@@ -243,23 +296,29 @@ class PodcasterAppState @Inject constructor(
     }
 
     private fun MediaController.setMediaItemForEpisode(episode: Episode) {
-        val uri = Uri.Builder()
-            .encodedPath(episode.enclosureUrl)
-            .build()
-        val mediaMetadata = MediaMetadata.Builder()
-            .setTitle(episode.title)
-            .setArtist(episode.podcastTitle)
-            .setIsBrowsable(false)
-            .setIsPlayable(true)
-            .setArtworkUri(Uri.parse(episode.artworkUrl))
-            .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
-            .build()
-        val mediaItem = MediaItem.fromUri(uri)
+        val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
-            .setMediaMetadata(mediaMetadata)
+            .setTag(episode)
+            .setMediaMetadata(episode.mediaMetadata())
             .build()
-        setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+
+        if (!hasPreviousMediaItem() && !hasNextMediaItem()) {
+            setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+        } else {
+            replaceMediaItem(currentMediaItemIndex, mediaItem)
+            seekTo(episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+        }
+    }
+
+    private fun MediaController.addMediaItemForEpisode(episode: Episode) {
+        val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
+            .buildUpon()
+            .setMediaId(episode.id.toString())
+            .setTag(episode)
+            .setMediaMetadata(episode.mediaMetadata())
+            .build()
+        addMediaItem(mediaItem)
     }
 
     private fun seekToAndPlay(positionInSec: Int?) {
@@ -268,5 +327,22 @@ class PodcasterAppState @Inject constructor(
             controller?.seekTo(positionInSec * 1000L)
         }
         controller?.play()
+    }
+
+    private fun Episode.mediaMetadata(): MediaMetadata {
+        return MediaMetadata.Builder()
+            .setTitle(title)
+            .setArtist(podcastTitle)
+            .setIsBrowsable(false)
+            .setIsPlayable(true)
+            .setArtworkUri(Uri.parse(artworkUrl))
+            .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+            .build()
+    }
+
+    private fun String.toUri(): Uri {
+        return Uri.Builder()
+            .encodedPath(this)
+            .build()
     }
 }
