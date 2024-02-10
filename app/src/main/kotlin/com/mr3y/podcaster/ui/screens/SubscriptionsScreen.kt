@@ -506,6 +506,7 @@ private fun ColumnScope.EpisodesList(
                             }
                             Column(
                                 verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 PlayPauseCompactButton(
                                     isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,

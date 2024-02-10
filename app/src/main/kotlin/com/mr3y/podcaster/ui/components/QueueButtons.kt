@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
@@ -26,6 +27,7 @@ fun AddToQueueButton(
     modifier: Modifier = Modifier,
     containerColor: Color = Color.Transparent,
     contentColor: Color = MaterialTheme.colorScheme.tertiaryPrimary,
+    iconSize: Dp = 32.dp,
 ) {
     IconButton(
         onClick = onClick,
@@ -40,6 +42,7 @@ fun AddToQueueButton(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
             contentDescription = null,
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -50,6 +53,7 @@ fun RemoveFromQueueButton(
     modifier: Modifier = Modifier,
     containerColor: Color = Color.Transparent,
     contentColor: Color = MaterialTheme.colorScheme.tertiaryPrimary,
+    iconSize: Dp = 32.dp,
 ) {
     IconButton(
         onClick = onClick,
@@ -64,6 +68,7 @@ fun RemoveFromQueueButton(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.PlaylistAddCheck,
             contentDescription = null,
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -74,6 +79,7 @@ fun MoveToNextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.inverseSurface,
+    iconSize: Dp = 24.dp,
 ) {
     IconButton(
         onClick = onClick,
@@ -90,6 +96,7 @@ fun MoveToNextButton(
         Icon(
             imageVector = Icons.Filled.SkipNext,
             contentDescription = null,
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -100,6 +107,7 @@ fun MoveToPreviousButton(
     isEnabled: Boolean,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.inverseSurface,
+    iconSize: Dp = 24.dp,
 ) {
     IconButton(
         onClick = onClick,
@@ -116,6 +124,7 @@ fun MoveToPreviousButton(
         Icon(
             imageVector = Icons.Filled.SkipPrevious,
             contentDescription = null,
+            modifier = Modifier.size(iconSize),
         )
     }
 }

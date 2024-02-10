@@ -207,6 +207,7 @@ fun ExpandedPlayerView(
                     onClick = onSeekToPrevious,
                     isEnabled = isSeekingToPreviousEnabled,
                     modifier = Modifier.size(56.dp),
+                    iconSize = 32.dp,
                 )
 
                 OutlinedIconButton(
@@ -287,6 +288,7 @@ fun ExpandedPlayerView(
                     onClick = onSeekToNext,
                     isEnabled = isSeekingToNextEnabled,
                     modifier = Modifier.size(56.dp),
+                    iconSize = 32.dp,
                 )
             }
             Row(

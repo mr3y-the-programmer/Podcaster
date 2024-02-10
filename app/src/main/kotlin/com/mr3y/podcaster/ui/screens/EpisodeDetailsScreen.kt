@@ -387,10 +387,12 @@ private fun BoxScope.Header(
         if (episode.id !in queueEpisodes) {
             AddToQueueButton(
                 onClick = { onAddEpisodeToQueue(episode) },
+                contentColor = MaterialTheme.colorScheme.primaryTertiary,
             )
         } else {
             RemoveFromQueueButton(
                 onClick = { onRemoveEpisodeFromQueue(episode.id) },
+                contentColor = MaterialTheme.colorScheme.primaryTertiary,
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
