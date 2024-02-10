@@ -36,6 +36,8 @@ interface PodcastsRepository {
 
     fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
 
+    fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode?
+
     fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode)
 
     fun updateCurrentlyPlayingEpisodeStatus(newStatus: PlayingStatus)
@@ -57,6 +59,8 @@ interface PodcastsRepository {
     fun getEpisodeFromQueue(episodeId: Long): Episode
 
     fun getQueueEpisodesIds(): Flow<List<Long>>
+
+    fun getQueueEpisodes(): List<Episode>
 
     fun addEpisodeToQueue(episode: Episode)
 

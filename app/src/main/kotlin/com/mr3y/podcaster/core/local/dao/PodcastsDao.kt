@@ -57,6 +57,8 @@ interface PodcastsDao {
 
     fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
 
+    fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode?
+
     fun isEpisodeAvailable(episodeId: Long): Flow<Boolean>
 
     fun isEpisodeAvailableNonObservable(episodeId: Long): Boolean
@@ -96,6 +98,8 @@ interface PodcastsDao {
     fun deleteEpisode(episodeId: Long)
 
     fun getQueueEpisodesIds(): Flow<List<Long>>
+
+    fun getQueueEpisodes(): List<Episode>
 
     fun addEpisodeToQueue(episode: Episode)
 
@@ -195,6 +199,14 @@ class DefaultPodcastsDao @Inject constructor(
         }
             .asFlow()
             .mapToOneOrNull(dispatcher)
+    }
+
+    override fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode? {
+        return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus, playingSpeed ->
+            val episode = getEpisode(episodeId)
+            CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed)
+        }
+            .executeAsOneOrNull()
     }
 
     override fun isEpisodeAvailable(episodeId: Long): Flow<Boolean> {
@@ -331,6 +343,11 @@ class DefaultPodcastsDao @Inject constructor(
         return database.queueEntityQueries.getQueueEpisodesIds()
             .asFlow()
             .mapToList(dispatcher)
+    }
+
+    override fun getQueueEpisodes(): List<Episode> {
+        return database.queueEntityQueries.getQueueEpisodes(mapper = ::mapToEpisode)
+            .executeAsList()
     }
 
     override fun addEpisodeToQueue(episode: Episode) {

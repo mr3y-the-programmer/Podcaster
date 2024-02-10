@@ -97,6 +97,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> = podcastsDao.getCurrentlyPlayingEpisode()
 
+    override fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode? = podcastsDao.getCurrentlyPlayingEpisodeNonObservable()
+
     override fun setCurrentlyPlayingEpisode(episode: CurrentlyPlayingEpisode) {
         podcastsDao.setCurrentlyPlayingEpisode(episode)
     }
@@ -136,6 +138,8 @@ class DefaultPodcastsRepository @Inject constructor(
     override fun getEpisodeFromQueue(episodeId: Long): Episode = podcastsDao.getEpisode(episodeId)
 
     override fun getQueueEpisodesIds(): Flow<List<Long>> = podcastsDao.getQueueEpisodesIds()
+
+    override fun getQueueEpisodes(): List<Episode> = podcastsDao.getQueueEpisodes()
 
     override fun addEpisodeToQueue(episode: Episode) {
         podcastsDao.addEpisodeToQueue(episode)

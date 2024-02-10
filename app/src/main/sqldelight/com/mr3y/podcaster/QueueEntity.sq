@@ -11,6 +11,10 @@ END;
 getQueueEpisodesIds:
 SELECT episodeId FROM queueEntity ORDER BY datetime(added_at) ASC;
 
+getQueueEpisodes:
+SELECT ee.* FROM episodeEntity AS ee INNER JOIN queueEntity AS qe ON ee.id == qe.episodeId
+ORDER BY datetime(qe.added_at) ASC;
+
 insertNewQueueEpisode:
 INSERT OR REPLACE INTO queueEntity (episodeId) VALUES (:episodeId);
 
