@@ -88,7 +88,7 @@ class PodcasterAppState @Inject constructor(
                         currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
                             setMediaItemForEpisode(episode)
                             setPlaybackSpeed(playingSpeed)
-                            clearAnyObsoleteQueueItems()
+                            maybeAddQueueEpisodes()
 
                             if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
                                 seekToAndPlay(episode.progressInSec)
@@ -329,15 +329,30 @@ class PodcasterAppState @Inject constructor(
         controller?.play()
     }
 
-    private fun MediaController.clearAnyObsoleteQueueItems() {
-        val notObsoleteItems = mutableSetOf<Long>()
-        currentlyPlayingEpisode.value?.episode?.id?.let {
-            notObsoleteItems += it
+    private fun MediaController.maybeAddQueueEpisodes() {
+        // add all episodes in the app's local queue to player playlist and maintain their order.
+        val episodesQueue = podcastsRepository.getQueueEpisodes()
+
+        if (episodesQueue.isEmpty() || mediaItemCount == 0) return
+
+        // prepend all the episodes that were before the current episode in the playlist.
+        var nextQueueEpisodeIndex = 0
+        if (mediaItemCount != episodesQueue.size) {
+            currentlyPlayingEpisode.value?.episode?.let { currentEpisode ->
+                while (episodesQueue[nextQueueEpisodeIndex].id != currentEpisode.id) {
+                    addMediaItemForEpisode(episodesQueue[nextQueueEpisodeIndex])
+                    moveMediaItem(currentMediaItemIndex, currentMediaItemIndex + 1)
+                    nextQueueEpisodeIndex++
+                }
+            }
         }
-        for (i in 0..<mediaItemCount) {
-            notObsoleteItems += getMediaItemAt(i).mediaId.toLong()
+
+        // append all the episodes that were after the current episode in the playlist.
+        if (mediaItemCount < episodesQueue.size) {
+            episodesQueue.drop(nextQueueEpisodeIndex + 1).forEach { episode ->
+                addMediaItemForEpisode(episode)
+            }
         }
-        podcastsRepository.deleteAllInQueueExcept(notObsoleteItems)
     }
 
     private fun Episode.mediaMetadata(): MediaMetadata {
