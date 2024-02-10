@@ -72,7 +72,6 @@ import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
-import com.mr3y.podcaster.ui.components.PlayPauseExpandedButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
@@ -93,7 +92,6 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import kotlin.random.Random
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -392,7 +390,7 @@ private fun BoxScope.Header(
             )
         } else {
             RemoveFromQueueButton(
-                onClick = { onRemoveEpisodeFromQueue(episode.id) }
+                onClick = { onRemoveEpisodeFromQueue(episode.id) },
             )
         }
         Spacer(modifier = Modifier.width(8.dp))

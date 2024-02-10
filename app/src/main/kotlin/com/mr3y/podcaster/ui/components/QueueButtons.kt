@@ -84,7 +84,7 @@ fun MoveToNextButton(
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = Color.Transparent,
             contentColor = color,
-            disabledContainerColor = Color.Transparent
+            disabledContainerColor = Color.Transparent,
         ),
     ) {
         Icon(
@@ -110,7 +110,7 @@ fun MoveToPreviousButton(
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = Color.Transparent,
             contentColor = color,
-            disabledContainerColor = Color.Transparent
+            disabledContainerColor = Color.Transparent,
         ),
     ) {
         Icon(

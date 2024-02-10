@@ -85,7 +85,6 @@ import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.model.dateTimePublished
 import com.mr3y.podcaster.ui.components.AddToQueueButton
-import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
@@ -110,7 +109,6 @@ import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.random.Random
 
 @Composable
 fun SubscriptionsScreen(
@@ -521,7 +519,7 @@ private fun ColumnScope.EpisodesList(
                                     )
                                 } else {
                                     RemoveFromQueueButton(
-                                        onClick = { onRemoveEpisodeFromQueue(episode.id) }
+                                        onClick = { onRemoveEpisodeFromQueue(episode.id) },
                                     )
                                 }
                             }
@@ -569,7 +567,7 @@ fun SubscriptionsScreenPreview(
                     refreshResult = null,
                     subscriptions = Podcasts,
                     episodes = EpisodesWithDownloadMetadata,
-                    queueEpisodesIds = Episodes.take(2).map { it.id }
+                    queueEpisodesIds = Episodes.take(2).map { it.id },
                 ),
             )
         }
@@ -611,7 +609,7 @@ fun EmptySubscriptionsScreenPreview() {
                     refreshResult = null,
                     subscriptions = emptyList(),
                     episodes = emptyList(),
-                    queueEpisodesIds = Episodes.take(2).map { it.id }
+                    queueEpisodesIds = Episodes.take(2).map { it.id },
                 ),
             )
         }

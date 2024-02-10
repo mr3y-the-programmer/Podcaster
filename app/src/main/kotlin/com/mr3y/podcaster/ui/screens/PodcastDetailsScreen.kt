@@ -116,7 +116,6 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import kotlin.random.Random
 
 @Composable
 fun PodcastDetailsScreen(
@@ -619,7 +618,7 @@ private fun LazyItemScope.Episode(
         }
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             PlayPauseCompactButton(
                 isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
@@ -633,7 +632,7 @@ private fun LazyItemScope.Episode(
                 )
             } else {
                 RemoveFromQueueButton(
-                    onClick = { onRemoveEpisodeFromQueue(episode.id) }
+                    onClick = { onRemoveEpisodeFromQueue(episode.id) },
                 )
             }
         }
@@ -656,7 +655,7 @@ fun PodcastDetailsScreenPreview(
                 episodes = Episodes.take(4),
                 isRefreshing = false,
                 refreshResult = null,
-                queueEpisodesIds = Episodes.take(1).map { it.id }
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -692,7 +691,7 @@ fun PodcastDetailsScreenErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
-                queueEpisodesIds = Episodes.take(1).map { it.id }
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -728,7 +727,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
-                queueEpisodesIds = Episodes.take(1).map { it.id }
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},

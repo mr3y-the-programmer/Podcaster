@@ -262,7 +262,7 @@ class PodcasterAppState @Inject constructor(
             }
         }
         val queueSize = controller?.mediaItemCount ?: return
-        for (i in 0..< queueSize) {
+        for (i in 0..<queueSize) {
             val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
             if (mediaItemEpisodeId == episodeId) {
                 controller?.removeMediaItem(i)
@@ -334,7 +334,7 @@ class PodcasterAppState @Inject constructor(
         currentlyPlayingEpisode.value?.episode?.id?.let {
             notObsoleteItems += it
         }
-        for (i in 0..< mediaItemCount) {
+        for (i in 0..<mediaItemCount) {
             notObsoleteItems += getMediaItemAt(i).mediaId.toLong()
         }
         podcastsRepository.deleteAllInQueueExcept(notObsoleteItems)

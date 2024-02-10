@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -207,7 +206,7 @@ fun ExpandedPlayerView(
                 MoveToPreviousButton(
                     onClick = onSeekToPrevious,
                     isEnabled = isSeekingToPreviousEnabled,
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier.size(56.dp),
                 )
 
                 OutlinedIconButton(
@@ -283,11 +282,11 @@ fun ExpandedPlayerView(
                         modifier = Modifier.size(40.dp),
                     )
                 }
-                
+
                 MoveToNextButton(
                     onClick = onSeekToNext,
                     isEnabled = isSeekingToNextEnabled,
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier.size(56.dp),
                 )
             }
             Row(

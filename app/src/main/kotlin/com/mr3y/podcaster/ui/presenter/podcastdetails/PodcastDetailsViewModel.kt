@@ -192,6 +192,6 @@ internal fun PodcastDetailsPresenter(
         episodes = episodes,
         isRefreshing = isRefreshing,
         refreshResult = refreshResult,
-        queueEpisodesIds = queueEpisodesIds
+        queueEpisodesIds = queueEpisodesIds,
     )
 }
