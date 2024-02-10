@@ -95,6 +95,8 @@ interface PodcastsDao {
 
     fun deleteEpisode(episodeId: Long)
 
+    fun getQueueEpisodesIds(): Flow<List<Long>>
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun removeEpisodeFromQueue(episodeId: Long)
@@ -323,6 +325,12 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun deleteEpisode(episodeId: Long) {
         database.episodeEntityQueries.deleteEpisodesByIds(listOf(episodeId))
+    }
+
+    override fun getQueueEpisodesIds(): Flow<List<Long>> {
+        return database.queueEntityQueries.getQueueEpisodesIds()
+            .asFlow()
+            .mapToList(dispatcher)
     }
 
     override fun addEpisodeToQueue(episode: Episode) {

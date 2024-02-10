@@ -113,7 +113,6 @@ fun EpisodeDetailsScreen(
         onRefresh = viewModel::refresh,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
-        isEpisodeInQueue = appState::isEpisodeInQueue,
         onAddEpisodeToQueue = appState::addToQueue,
         onRemoveEpisodeFromQueue = appState::removeFromQueue,
         onDownloadingEpisode = appState::downloadEpisode,
@@ -137,7 +136,6 @@ fun EpisodeDetailsScreen(
     onRefresh: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onDownloadingEpisode: (Episode) -> Unit,
@@ -265,7 +263,7 @@ fun EpisodeDetailsScreen(
                             downloadMetadata = state.downloadMetadata,
                             onPlay = onPlayEpisode,
                             onPause = onPause,
-                            isEpisodeInQueue = isEpisodeInQueue,
+                            queueEpisodes = state.queueEpisodesIds,
                             onAddEpisodeToQueue = onAddEpisodeToQueue,
                             onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                             onDownloadingEpisode = onDownloadingEpisode,
@@ -330,7 +328,7 @@ private fun BoxScope.Header(
     downloadMetadata: EpisodeDownloadMetadata?,
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
+    queueEpisodes: List<Long>,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onDownloadingEpisode: (Episode) -> Unit,
@@ -388,7 +386,7 @@ private fun BoxScope.Header(
             contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
         )
         Spacer(modifier = Modifier.width(8.dp))
-        if (!isEpisodeInQueue(episode.id)) {
+        if (episode.id !in queueEpisodes) {
             AddToQueueButton(
                 onClick = { onAddEpisodeToQueue(episode) },
             )
@@ -460,6 +458,7 @@ fun EpisodeDetailsScreenPreview(
             state = EpisodeDetailsUIState(
                 isLoading = false,
                 episode = EpisodeWithDetails,
+                queueEpisodesIds = emptyList(),
                 isRefreshing = false,
                 refreshResult = null,
                 downloadMetadata = DownloadMetadata,
@@ -469,7 +468,6 @@ fun EpisodeDetailsScreenPreview(
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             onDownloadingEpisode = {},
@@ -494,6 +492,7 @@ fun EpisodeDetailsErrorPreview() {
             state = EpisodeDetailsUIState(
                 isLoading = false,
                 episode = null,
+                queueEpisodesIds = emptyList(),
                 isRefreshing = false,
                 refreshResult = null,
                 downloadMetadata = null,
@@ -503,7 +502,6 @@ fun EpisodeDetailsErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             onDownloadingEpisode = {},

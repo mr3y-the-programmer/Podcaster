@@ -11,6 +11,7 @@ data class SubscriptionsUIState(
     val refreshResult: RefreshResult?,
     val subscriptions: List<Podcast>,
     val episodes: List<EpisodeWithDownloadMetadata>,
+    val queueEpisodesIds: List<Long>,
 )
 
 sealed interface SubscriptionsUIEvent {

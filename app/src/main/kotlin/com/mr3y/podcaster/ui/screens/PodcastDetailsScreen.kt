@@ -138,7 +138,6 @@ fun PodcastDetailsScreen(
         onRefresh = viewModel::refresh,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
-        isEpisodeInQueue = appState::isEpisodeInQueue,
         onAddEpisodeToQueue = appState::addToQueue,
         onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
@@ -161,7 +160,6 @@ fun PodcastDetailsScreen(
     onRefresh: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
@@ -336,7 +334,7 @@ fun PodcastDetailsScreen(
                                             currentlyPlayingEpisode = currentlyPlayingEpisode,
                                             onPlay = onPlayEpisode,
                                             onPause = onPause,
-                                            isEpisodeInQueue = isEpisodeInQueue,
+                                            queueEpisodes = state.queueEpisodesIds,
                                             onAddEpisodeToQueue = onAddEpisodeToQueue,
                                             onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                                         )
@@ -587,7 +585,7 @@ private fun LazyItemScope.Episode(
     episode: Episode,
     onEpisodeClick: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
+    queueEpisodes: List<Long>,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onPlay: (Episode) -> Unit,
@@ -629,7 +627,7 @@ private fun LazyItemScope.Episode(
                 onPlay = { onPlay(episode) },
                 onPause = onPause,
             )
-            if (!isEpisodeInQueue(episode.id)) {
+            if (episode.id !in queueEpisodes) {
                 AddToQueueButton(
                     onClick = { onAddEpisodeToQueue(episode) },
                 )
@@ -658,6 +656,7 @@ fun PodcastDetailsScreenPreview(
                 episodes = Episodes.take(4),
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id }
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -665,7 +664,6 @@ fun PodcastDetailsScreenPreview(
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
@@ -694,6 +692,7 @@ fun PodcastDetailsScreenErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id }
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -701,7 +700,6 @@ fun PodcastDetailsScreenErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
@@ -730,6 +728,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id }
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -737,7 +736,6 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,

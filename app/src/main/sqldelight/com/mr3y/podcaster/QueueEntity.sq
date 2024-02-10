@@ -8,6 +8,9 @@ BEFORE DELETE ON episodeEntity
 BEGIN DELETE FROM queueEntity WHERE episodeId = old.id;
 END;
 
+getQueueEpisodesIds:
+SELECT episodeId FROM queueEntity ORDER BY datetime(added_at) ASC;
+
 insertNewQueueEpisode:
 INSERT OR REPLACE INTO queueEntity (episodeId) VALUES (:episodeId);
 

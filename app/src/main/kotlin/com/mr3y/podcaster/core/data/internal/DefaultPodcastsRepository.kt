@@ -135,6 +135,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getEpisodeFromQueue(episodeId: Long): Episode = podcastsDao.getEpisode(episodeId)
 
+    override fun getQueueEpisodesIds(): Flow<List<Long>> = podcastsDao.getQueueEpisodesIds()
+
     override fun addEpisodeToQueue(episode: Episode) {
         podcastsDao.addEpisodeToQueue(episode)
     }

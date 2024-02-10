@@ -73,6 +73,7 @@ internal fun EpisodeDetailsPresenter(
     var isRefreshing by remember { mutableStateOf(false) }
     var episode: Episode? by remember { mutableStateOf(null) }
     val downloadMetadata by repository.getEpisodeDownloadMetadata(episodeId).collectAsState(initial = null)
+    val queueEpisodesIds by repository.getQueueEpisodesIds().collectAsState(initial = emptyList())
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
@@ -112,6 +113,7 @@ internal fun EpisodeDetailsPresenter(
     return EpisodeDetailsUIState(
         isLoading = isLoading,
         episode = episode,
+        queueEpisodesIds = queueEpisodesIds,
         isRefreshing = isRefreshing,
         refreshResult = refreshResult,
         downloadMetadata = downloadMetadata,

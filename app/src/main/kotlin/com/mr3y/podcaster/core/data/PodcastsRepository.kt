@@ -56,6 +56,8 @@ interface PodcastsRepository {
 
     fun getEpisodeFromQueue(episodeId: Long): Episode
 
+    fun getQueueEpisodesIds(): Flow<List<Long>>
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun removeEpisodeFromQueue(episodeId: Long)

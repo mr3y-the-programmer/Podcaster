@@ -3,6 +3,7 @@ package com.mr3y.podcaster.ui.presenter.podcastdetails
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,6 +86,7 @@ internal fun PodcastDetailsPresenter(
     var subscriptionState by remember { mutableStateOf(SubscriptionState.NotSubscribed) }
     var isSubscriptionStateInEditMode by remember { mutableStateOf(true) }
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
+    val queueEpisodesIds by repository.getQueueEpisodesIds().collectAsState(initial = emptyList())
 
     LaunchedEffect(Unit) {
         launch {
@@ -190,5 +192,6 @@ internal fun PodcastDetailsPresenter(
         episodes = episodes,
         isRefreshing = isRefreshing,
         refreshResult = refreshResult,
+        queueEpisodesIds = queueEpisodesIds
     )
 }

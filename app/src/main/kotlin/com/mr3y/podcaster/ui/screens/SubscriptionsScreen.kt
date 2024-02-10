@@ -98,6 +98,7 @@ import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
+import com.mr3y.podcaster.ui.preview.Episodes
 import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
@@ -146,7 +147,6 @@ fun SubscriptionsScreen(
         onDownloadingEpisode = appState::downloadEpisode,
         onResumeDownloadingEpisode = appState::resumeDownloading,
         onPauseDownloadingEpisode = appState::pauseDownloading,
-        isEpisodeInQueue = appState::isEpisodeInQueue,
         onAddEpisodeToQueue = appState::addToQueue,
         onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
@@ -170,7 +170,6 @@ fun SubscriptionsScreen(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
@@ -264,7 +263,7 @@ fun SubscriptionsScreen(
                         onDownloadingEpisode = onDownloadingEpisode,
                         onResumeDownloadingEpisode = onResumeDownloadingEpisode,
                         onPauseDownloadingEpisode = onPauseDownloadingEpisode,
-                        isEpisodeInQueue = isEpisodeInQueue,
+                        queueEpisodes = state.queueEpisodesIds,
                         onAddEpisodeToQueue = onAddEpisodeToQueue,
                         onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                         currentlyPlayingEpisode = currentlyPlayingEpisode,
@@ -423,7 +422,7 @@ private fun ColumnScope.EpisodesList(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
-    isEpisodeInQueue: (episodeId: Long) -> Boolean,
+    queueEpisodes: List<Long>,
     onAddEpisodeToQueue: (Episode) -> Unit,
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
@@ -449,9 +448,9 @@ private fun ColumnScope.EpisodesList(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     itemsIndexed(episodes, key = { _, (episode, _) -> episode.id }) { index, (episode, downloadMetadata) ->
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable(onClick = {
@@ -462,60 +461,53 @@ private fun ColumnScope.EpisodesList(
                                 })
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.fillMaxWidth(),
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(72.dp),
                             ) {
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.width(72.dp),
-                                ) {
-                                    AsyncImage(
-                                        model = episode.artworkUrl,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(64.dp)
-                                            .aspectRatio(1f)
-                                            .clip(RoundedCornerShape(8.dp)),
-                                        contentScale = ContentScale.FillBounds,
-                                    )
-                                }
-
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Text(
-                                        text = episode.title,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                    val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
-                                    Text(
-                                        text = formattedEpisodeDate,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.inverseSurface,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                    Text(
-                                        text = rememberHtmlToAnnotatedString(text = episode.description),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        maxLines = 3,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
+                                AsyncImage(
+                                    model = episode.artworkUrl,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .aspectRatio(1f)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.FillBounds,
+                                )
+                                val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
+                                Text(
+                                    text = formattedEpisodeDate,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.inverseSurface,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
                             }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                Text(
+                                    text = episode.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+
+                                Text(
+                                    text = rememberHtmlToAnnotatedString(text = episode.description),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                            Column(
+                                verticalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 PlayPauseCompactButton(
                                     isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
@@ -523,7 +515,7 @@ private fun ColumnScope.EpisodesList(
                                     onPlay = { onPlayEpisode(episode) },
                                     onPause = onPause,
                                 )
-                                if (!isEpisodeInQueue(episode.id)) {
+                                if (episode.id !in queueEpisodes) {
                                     AddToQueueButton(
                                         onClick = { onAddEpisodeToQueue(episode) },
                                     )
@@ -532,12 +524,6 @@ private fun ColumnScope.EpisodesList(
                                         onClick = { onRemoveEpisodeFromQueue(episode.id) }
                                     )
                                 }
-                                DownloadButton(
-                                    downloadMetadata = downloadMetadata,
-                                    onDownload = { onDownloadingEpisode(episode) },
-                                    onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
-                                    onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
-                                )
                             }
                         }
                         if (index != episodes.lastIndex) {
@@ -583,6 +569,7 @@ fun SubscriptionsScreenPreview(
                     refreshResult = null,
                     subscriptions = Podcasts,
                     episodes = EpisodesWithDownloadMetadata,
+                    queueEpisodesIds = Episodes.take(2).map { it.id }
                 ),
             )
         }
@@ -600,7 +587,6 @@ fun SubscriptionsScreenPreview(
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
@@ -625,6 +611,7 @@ fun EmptySubscriptionsScreenPreview() {
                     refreshResult = null,
                     subscriptions = emptyList(),
                     episodes = emptyList(),
+                    queueEpisodesIds = Episodes.take(2).map { it.id }
                 ),
             )
         }
@@ -642,7 +629,6 @@ fun EmptySubscriptionsScreenPreview() {
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
-            isEpisodeInQueue = { _ -> Random.nextBoolean() },
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
             externalContentPadding = PaddingValues(0.dp),
