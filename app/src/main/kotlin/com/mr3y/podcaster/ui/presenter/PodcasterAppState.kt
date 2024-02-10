@@ -88,6 +88,7 @@ class PodcasterAppState @Inject constructor(
                         currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
                             setMediaItemForEpisode(episode)
                             setPlaybackSpeed(playingSpeed)
+                            clearAnyObsoleteQueueItems()
 
                             if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
                                 seekToAndPlay(episode.progressInSec)
@@ -110,9 +111,14 @@ class PodcasterAppState @Inject constructor(
                 return
             }
         }
+        val currentEpisodeId = currentlyPlayingEpisode.value?.episode?.id
         val playbackSpeed = currentlyPlayingEpisode.value?.playingSpeed ?: 1.0f
         _trackProgress.update { episode.progressInSec ?: 0 }
         podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, PlayingStatus.Loading, playbackSpeed))
+        podcastsRepository.addEpisodeToQueue(episode)
+        if (currentEpisodeId != null) {
+            podcastsRepository.removeEpisodeFromQueue(currentEpisodeId)
+        }
         controller?.setMediaItemForEpisode(episode)
         controller?.setPlaybackSpeed(playbackSpeed)
         seekToAndPlay(_trackProgress.value)
@@ -245,6 +251,7 @@ class PodcasterAppState @Inject constructor(
                 return
             }
         }
+        podcastsRepository.addEpisodeToQueue(episode)
         controller?.addMediaItemForEpisode(episode)
     }
 
@@ -259,6 +266,8 @@ class PodcasterAppState @Inject constructor(
             val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
             if (mediaItemEpisodeId == episodeId) {
                 controller?.removeMediaItem(i)
+                podcastsRepository.removeEpisodeFromQueue(episodeId)
+                break
             }
         }
     }
@@ -276,14 +285,7 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun isEpisodeInQueue(episodeId: Long): Boolean {
-        val queueSize = controller?.mediaItemCount ?: return false
-        for (i in 0..< queueSize) {
-            val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
-            if (mediaItemEpisodeId == episodeId) {
-                return true
-            }
-        }
-        return false
+        return podcastsRepository.isEpisodeInQueue(episodeId)
     }
 
     fun releasePlayer() {
@@ -299,7 +301,6 @@ class PodcasterAppState @Inject constructor(
         val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
-            .setTag(episode)
             .setMediaMetadata(episode.mediaMetadata())
             .build()
 
@@ -315,7 +316,6 @@ class PodcasterAppState @Inject constructor(
         val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
-            .setTag(episode)
             .setMediaMetadata(episode.mediaMetadata())
             .build()
         addMediaItem(mediaItem)
@@ -327,6 +327,17 @@ class PodcasterAppState @Inject constructor(
             controller?.seekTo(positionInSec * 1000L)
         }
         controller?.play()
+    }
+
+    private fun MediaController.clearAnyObsoleteQueueItems() {
+        val notObsoleteItems = mutableSetOf<Long>()
+        currentlyPlayingEpisode.value?.episode?.id?.let {
+            notObsoleteItems += it
+        }
+        for (i in 0..< mediaItemCount) {
+            notObsoleteItems += getMediaItemAt(i).mediaId.toLong()
+        }
+        podcastsRepository.deleteAllInQueueExcept(notObsoleteItems)
     }
 
     private fun Episode.mediaMetadata(): MediaMetadata {

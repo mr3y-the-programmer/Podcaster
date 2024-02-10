@@ -87,16 +87,16 @@ class DefaultPodcastsDaoTest {
     @Test
     fun `assert upsert episode insert a new episode or update an existing episode without affecting updated local fields`() {
         val episode = EpisodeWithDetails
-        assertThat(sut.getEpisode(episode.id)).isNull()
+        assertThat(sut.getEpisodeOrNull(episode.id)).isNull()
 
         sut.upsertEpisode(episode)
-        assertThat(sut.getEpisode(episode.id)).isEqualTo(episode)
+        assertThat(sut.getEpisodeOrNull(episode.id)).isEqualTo(episode)
         sut.updateEpisodePlaybackProgress(episodeId = episode.id, progressInSec = 800)
         sut.markEpisodeAsCompleted(episode.id)
 
         val updatedEpisode = episode.copy(artworkUrl = "http://www.androidstrength.com/assets/androidstrength_podcast_cover.jpg", isCompleted = false, progressInSec = null)
         sut.upsertEpisode(updatedEpisode)
-        assertThat(sut.getEpisode(updatedEpisode.id)).isEqualTo(updatedEpisode.copy(isCompleted = true, progressInSec = 800))
+        assertThat(sut.getEpisodeOrNull(updatedEpisode.id)).isEqualTo(updatedEpisode.copy(isCompleted = true, progressInSec = 800))
     }
 
     @Test
@@ -137,5 +137,17 @@ class DefaultPodcastsDaoTest {
         sut.getEpisodeDownloadMetadataById(episodes[0].id).test {
             assertThat(awaitItem()).isNotNull().isEqualTo(EpisodeDownloadMetadata(episodes[0].id, EpisodeDownloadStatus.Queued))
         }
+
+        // Reset
+        sut.deleteEpisode(episodes[0].id)
+
+        // Repeat the same steps but add an episode to the queue this time.
+        episodes.forEach {
+            sut.addEpisode(it)
+        }
+        sut.addEpisodeToQueue(episodes[0])
+
+        sut.deleteUntouchedEpisodes(podcastId = 456857L)
+        assertThat(sut.getEpisodesForPodcast(podcastId = 456857L)).isEqualTo(listOf(episodes[0]))
     }
 }

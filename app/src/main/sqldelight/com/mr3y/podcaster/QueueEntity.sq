@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS queueEntity (
+    episodeId INTEGER PRIMARY KEY NOT NULL,
+    added_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TRIGGER IF NOT EXISTS pre_delete_queue_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM queueEntity WHERE episodeId = old.id;
+END;
+
+insertNewQueueEpisode:
+INSERT OR REPLACE INTO queueEntity (episodeId) VALUES (:episodeId);
+
+deleteEpisodeFromQueue:
+DELETE FROM queueEntity WHERE episodeId = :episodeId;
+
+isEpisodeInQueue:
+SELECT 1 FROM queueEntity WHERE episodeId = :episodeId;
+
+clearQueueExceptEpisodes:
+DELETE FROM queueEntity WHERE episodeId NOT IN :episodeIds;

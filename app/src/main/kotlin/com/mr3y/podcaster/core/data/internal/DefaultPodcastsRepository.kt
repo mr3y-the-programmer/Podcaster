@@ -90,7 +90,7 @@ class DefaultPodcastsRepository @Inject constructor(
         return if (forceRefresh) {
             fetchFromNetworkAndRefresh()
         } else {
-            val localEpisode = podcastsDao.getEpisode(episodeId)
+            val localEpisode = podcastsDao.getEpisodeOrNull(episodeId)
             localEpisode ?: fetchFromNetworkAndRefresh()
         }
     }
@@ -132,6 +132,20 @@ class DefaultPodcastsRepository @Inject constructor(
             podcastsDao.addEpisode(episode)
         }
     }
+
+    override fun getEpisodeFromQueue(episodeId: Long): Episode = podcastsDao.getEpisode(episodeId)
+
+    override fun addEpisodeToQueue(episode: Episode) {
+        podcastsDao.addEpisodeToQueue(episode)
+    }
+
+    override fun removeEpisodeFromQueue(episodeId: Long) {
+        podcastsDao.removeEpisodeFromQueue(episodeId)
+    }
+
+    override fun isEpisodeInQueue(episodeId: Long): Boolean = podcastsDao.isEpisodeInQueue(episodeId)
+
+    override fun deleteAllInQueueExcept(episodesIds: Set<Long>) = podcastsDao.deleteAllInQueueExcept(episodesIds)
 
     override fun markEpisodeAsCompleted(episodeId: Long) {
         podcastsDao.markEpisodeAsCompleted(episodeId)

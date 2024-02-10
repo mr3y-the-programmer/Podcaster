@@ -54,6 +54,16 @@ interface PodcastsRepository {
 
     fun addEpisodeOnDeviceIfNotExist(episode: Episode)
 
+    fun getEpisodeFromQueue(episodeId: Long): Episode
+
+    fun addEpisodeToQueue(episode: Episode)
+
+    fun removeEpisodeFromQueue(episodeId: Long)
+
+    fun isEpisodeInQueue(episodeId: Long): Boolean
+
+    fun deleteAllInQueueExcept(episodesIds: Set<Long>)
+
     fun markEpisodeAsCompleted(episodeId: Long)
 
     fun subscribeToPodcast(podcast: Podcast, episodes: List<Episode>)

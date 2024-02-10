@@ -23,7 +23,6 @@ import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.ListenableFuture
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
-import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -64,7 +63,6 @@ class PlaybackService : MediaSessionService() {
         val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory, mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
-            .setPauseAtEndOfMediaItems(true)
             .build()
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(PlaybackMediaSessionCallback())
@@ -95,6 +93,12 @@ class PlaybackService : MediaSessionService() {
                     val episodeId = player?.currentMediaItem?.mediaId?.toLongOrNull() ?: break
                     val progressInSec = player.currentPosition.div(1000)
                     if (progressInSec != 0L && player.isPlaying) {
+                        currentlyPlayingEpisode.value?.let { (episode, _, _) ->
+                            if (!episode.isCompleted && episode.durationInSec?.toLong() == progressInSec) {
+                                podcastsRepository.markEpisodeAsCompleted(episode.id)
+                            }
+                        }
+
                         podcastsRepository.updateEpisodePlaybackProgress(progressInSec.toInt(), episodeId)
                     }
                     delay(1.seconds)
@@ -127,30 +131,27 @@ class PlaybackService : MediaSessionService() {
                                 }
                             }
                         }
-                        if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM) {
+
+                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+                    }
+
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO || reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
                             currentlyPlayingEpisode.value?.let { (episode, _, _) ->
                                 if (!episode.isCompleted) {
                                     podcastsRepository.markEpisodeAsCompleted(episode.id)
                                 }
                             }
                         }
-                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
-                    }
-
-                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                        currentlyPlayingEpisode.value?.let { (episode, _, _) ->
-                            if (!episode.isCompleted && episode.durationInSec == episode.progressInSec) {
-                                podcastsRepository.markEpisodeAsCompleted(episode.id)
-                            }
-                        }
 
                         if (mediaItem != null) {
-                            val episode = mediaItem.localConfiguration?.let { it.tag as? Episode } ?: return
+                            val nextEpisode = podcastsRepository.getEpisodeFromQueue(mediaItem.mediaId.toLong())
                             currentlyPlayingEpisode.value?.let { (currentEpisode, playingStatus, playingSpeed) ->
-                                if (currentEpisode.id != episode.id) {
-                                    podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed))
+                                if (currentEpisode.id != nextEpisode.id) {
+                                    podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(nextEpisode, playingStatus, playingSpeed))
                                 }
                             }
+                            seekTo(nextEpisode.progressInSec?.times(1000)?.toLong() ?: 0L)
                         }
                     }
 
