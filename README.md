@@ -3,7 +3,7 @@
   <h1>Podcaster</h1>
 </div>
 
-A minimalistic podcast listening app that showcases using Jetpack Media 3 in a real, offline-first app.
+A podcast listening app that showcases using Jetpack Media 3 in a real, offline-first app.
 the app is still a work-in-progress and there are some features that are not yet implemented.
 
 ## Screenshots
@@ -34,7 +34,10 @@ the app is still a work-in-progress and there are some features that are not yet
 ✅ Implemented     ❌ Not yet Implemented
 
 ## Download
-Google Play: In review
+Google Play:  
+<a href="https://play.google.com/store/apps/details?id=com.mr3y.podcaster" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
+</a>
 
 Or from [github releases](https://github.com/mr3y-the-programmer/Podcaster/releases)
 
