@@ -149,10 +149,17 @@ class PlaybackService : MediaSessionService() {
                             val nextEpisode = podcastsRepository.getEpisodeFromQueue(mediaItem.mediaId.toLong())
                             currentlyPlayingEpisode.value?.let { (currentEpisode, playingStatus, playingSpeed) ->
                                 if (currentEpisode.id != nextEpisode.id) {
+                                    val hasReachedEndOfEpisode = nextEpisode.durationInSec != null && nextEpisode.progressInSec != null && (nextEpisode.durationInSec - nextEpisode.progressInSec) <= 1
+                                    val position = if (hasReachedEndOfEpisode) {
+                                        podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = nextEpisode.id)
+                                        0L
+                                    } else {
+                                        nextEpisode.progressInSec?.times(1000)?.toLong() ?: 0L
+                                    }
                                     podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(nextEpisode, playingStatus, playingSpeed))
+                                    seekTo(position)
                                 }
                             }
-                            seekTo(nextEpisode.progressInSec?.times(1000)?.toLong() ?: 0L)
                         }
                     }
 
