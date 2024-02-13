@@ -7,6 +7,7 @@ import com.mr3y.podcaster.ui.presenter.RefreshResult
 data class EpisodeDetailsUIState(
     val isLoading: Boolean,
     val episode: Episode?,
+    val queueEpisodesIds: List<Long>,
     val isRefreshing: Boolean,
     val refreshResult: RefreshResult?,
     val downloadMetadata: EpisodeDownloadMetadata?,

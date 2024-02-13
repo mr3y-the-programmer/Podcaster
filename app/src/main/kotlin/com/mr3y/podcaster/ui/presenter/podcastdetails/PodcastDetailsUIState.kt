@@ -11,6 +11,7 @@ data class PodcastDetailsUIState(
     val subscriptionState: SubscriptionState,
     val isSubscriptionStateInEditMode: Boolean,
     val episodes: List<Episode>?,
+    val queueEpisodesIds: List<Long>,
     val isRefreshing: Boolean,
     val refreshResult: RefreshResult?,
 )

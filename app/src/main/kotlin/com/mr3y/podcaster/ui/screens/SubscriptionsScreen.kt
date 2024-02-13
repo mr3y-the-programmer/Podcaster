@@ -84,10 +84,11 @@ import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.model.dateTimePublished
-import com.mr3y.podcaster.ui.components.DownloadButton
+import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -96,6 +97,7 @@ import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
+import com.mr3y.podcaster.ui.preview.Episodes
 import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.preview.Podcasts
@@ -143,6 +145,8 @@ fun SubscriptionsScreen(
         onDownloadingEpisode = appState::downloadEpisode,
         onResumeDownloadingEpisode = appState::resumeDownloading,
         onPauseDownloadingEpisode = appState::pauseDownloading,
+        onAddEpisodeToQueue = appState::addToQueue,
+        onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
         onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
@@ -164,6 +168,8 @@ fun SubscriptionsScreen(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
@@ -255,6 +261,9 @@ fun SubscriptionsScreen(
                         onDownloadingEpisode = onDownloadingEpisode,
                         onResumeDownloadingEpisode = onResumeDownloadingEpisode,
                         onPauseDownloadingEpisode = onPauseDownloadingEpisode,
+                        queueEpisodes = state.queueEpisodesIds,
+                        onAddEpisodeToQueue = onAddEpisodeToQueue,
+                        onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                         currentlyPlayingEpisode = currentlyPlayingEpisode,
                     )
                 }
@@ -411,6 +420,9 @@ private fun ColumnScope.EpisodesList(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
+    queueEpisodes: List<Long>,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
 ) {
     Card(
@@ -483,6 +495,7 @@ private fun ColumnScope.EpisodesList(
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
                                 )
+
                                 Text(
                                     text = rememberHtmlToAnnotatedString(text = episode.description),
                                     style = MaterialTheme.typography.bodyMedium,
@@ -493,6 +506,7 @@ private fun ColumnScope.EpisodesList(
                             }
                             Column(
                                 verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 PlayPauseCompactButton(
                                     isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
@@ -500,12 +514,15 @@ private fun ColumnScope.EpisodesList(
                                     onPlay = { onPlayEpisode(episode) },
                                     onPause = onPause,
                                 )
-                                DownloadButton(
-                                    downloadMetadata = downloadMetadata,
-                                    onDownload = { onDownloadingEpisode(episode) },
-                                    onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
-                                    onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
-                                )
+                                if (episode.id !in queueEpisodes) {
+                                    AddToQueueButton(
+                                        onClick = { onAddEpisodeToQueue(episode) },
+                                    )
+                                } else {
+                                    RemoveFromQueueButton(
+                                        onClick = { onRemoveEpisodeFromQueue(episode.id) },
+                                    )
+                                }
                             }
                         }
                         if (index != episodes.lastIndex) {
@@ -551,6 +568,7 @@ fun SubscriptionsScreenPreview(
                     refreshResult = null,
                     subscriptions = Podcasts,
                     episodes = EpisodesWithDownloadMetadata,
+                    queueEpisodesIds = Episodes.take(2).map { it.id },
                 ),
             )
         }
@@ -568,6 +586,8 @@ fun SubscriptionsScreenPreview(
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -590,6 +610,7 @@ fun EmptySubscriptionsScreenPreview() {
                     refreshResult = null,
                     subscriptions = emptyList(),
                     episodes = emptyList(),
+                    queueEpisodesIds = Episodes.take(2).map { it.id },
                 ),
             )
         }
@@ -607,6 +628,8 @@ fun EmptySubscriptionsScreenPreview() {
             onDownloadingEpisode = {},
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,

@@ -51,9 +51,13 @@ interface PodcastsDao {
 
     fun getCompletedEpisodes(): Flow<List<Episode>>
 
-    fun getEpisode(episodeId: Long): Episode?
+    fun getEpisodeOrNull(episodeId: Long): Episode?
+
+    fun getEpisode(episodeId: Long): Episode
 
     fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?>
+
+    fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode?
 
     fun isEpisodeAvailable(episodeId: Long): Flow<Boolean>
 
@@ -92,6 +96,18 @@ interface PodcastsDao {
     fun deleteUntouchedEpisodes(podcastId: Long)
 
     fun deleteEpisode(episodeId: Long)
+
+    fun getQueueEpisodesIds(): Flow<List<Long>>
+
+    fun getQueueEpisodes(): List<Episode>
+
+    fun addEpisodeToQueue(episode: Episode)
+
+    fun removeEpisodeFromQueue(episodeId: Long)
+
+    fun isEpisodeInQueue(episodeId: Long): Boolean
+
+    fun deleteAllInQueueExcept(episodesIds: Set<Long>)
 }
 
 class DefaultPodcastsDao @Inject constructor(
@@ -166,18 +182,31 @@ class DefaultPodcastsDao @Inject constructor(
             .mapToList(dispatcher)
     }
 
-    override fun getEpisode(episodeId: Long): Episode? {
+    override fun getEpisodeOrNull(episodeId: Long): Episode? {
         return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode)
             .executeAsOneOrNull()
     }
 
+    override fun getEpisode(episodeId: Long): Episode {
+        return database.episodeEntityQueries.getEpisode(episodeId, mapper = ::mapToEpisode)
+            .executeAsOne()
+    }
+
     override fun getCurrentlyPlayingEpisode(): Flow<CurrentlyPlayingEpisode?> {
         return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus, playingSpeed ->
-            val episode = getEpisode(episodeId)!!
+            val episode = getEpisode(episodeId)
             CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed)
         }
             .asFlow()
             .mapToOneOrNull(dispatcher)
+    }
+
+    override fun getCurrentlyPlayingEpisodeNonObservable(): CurrentlyPlayingEpisode? {
+        return database.currentlyPlayingEntityQueries.getCurrentlyPlayingEpisode { episodeId, playingStatus, playingSpeed ->
+            val episode = getEpisode(episodeId)
+            CurrentlyPlayingEpisode(episode, playingStatus, playingSpeed)
+        }
+            .executeAsOneOrNull()
     }
 
     override fun isEpisodeAvailable(episodeId: Long): Flow<Boolean> {
@@ -298,11 +327,52 @@ class DefaultPodcastsDao @Inject constructor(
     override fun deleteUntouchedEpisodes(podcastId: Long) {
         database.downloadableEpisodeEntityQueries.transaction {
             val ids = database.downloadableEpisodeEntityQueries.getUntouchedEpisodesIdsForPodcast(podcastId).executeAsList()
-            database.episodeEntityQueries.deleteEpisodesByIds(ids)
+            ids.forEach { id ->
+                if (!isEpisodeInQueue(id)) {
+                    database.episodeEntityQueries.deleteEpisodesByIds(listOf(id))
+                }
+            }
         }
     }
 
     override fun deleteEpisode(episodeId: Long) {
         database.episodeEntityQueries.deleteEpisodesByIds(listOf(episodeId))
+    }
+
+    override fun getQueueEpisodesIds(): Flow<List<Long>> {
+        return database.queueEntityQueries.getQueueEpisodesIds()
+            .asFlow()
+            .mapToList(dispatcher)
+    }
+
+    override fun getQueueEpisodes(): List<Episode> {
+        return database.queueEntityQueries.getQueueEpisodes(mapper = ::mapToEpisode)
+            .executeAsList()
+    }
+
+    override fun addEpisodeToQueue(episode: Episode) {
+        if (isEpisodeAvailableNonObservable(episode.id)) {
+            database.queueEntityQueries.insertNewQueueEpisode(episode.id)
+            return
+        }
+
+        database.episodeEntityQueries.transaction {
+            database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+            database.queueEntityQueries.insertNewQueueEpisode(episode.id)
+        }
+    }
+
+    override fun removeEpisodeFromQueue(episodeId: Long) {
+        database.queueEntityQueries.deleteEpisodeFromQueue(episodeId)
+    }
+
+    override fun isEpisodeInQueue(episodeId: Long): Boolean {
+        return database.queueEntityQueries.isEpisodeInQueue(episodeId)
+            .executeAsOneOrNull()
+            .let { it == 1L }
+    }
+
+    override fun deleteAllInQueueExcept(episodesIds: Set<Long>) {
+        database.queueEntityQueries.clearQueueExceptEpisodes(episodesIds)
     }
 }

@@ -60,6 +60,7 @@ internal fun SubscriptionsPresenter(
     var isRefreshing by remember { mutableStateOf(false) }
     val podcasts by repository.getSubscriptions().collectAsState(initial = emptyList())
     val episodes by repository.getEpisodesWithDownloadMetadataForPodcasts(podcasts.map { it.id }.toSet(), limit = 200).collectAsState(initial = emptyList())
+    val queueEpisodesIds by repository.getQueueEpisodesIds().collectAsState(initial = emptyList())
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
@@ -120,6 +121,7 @@ internal fun SubscriptionsPresenter(
         isRefreshing = isRefreshing,
         subscriptions = podcasts,
         episodes = episodes,
+        queueEpisodesIds = queueEpisodesIds,
         refreshResult = refreshResult,
     )
 }

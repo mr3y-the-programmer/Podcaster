@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS queueEntity (
+    episodeId INTEGER PRIMARY KEY NOT NULL,
+    added_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TRIGGER IF NOT EXISTS pre_delete_queue_episode
+BEFORE DELETE ON episodeEntity
+BEGIN DELETE FROM queueEntity WHERE episodeId = old.id;
+END;
+
+getQueueEpisodesIds:
+SELECT episodeId FROM queueEntity ORDER BY datetime(added_at) ASC;
+
+getQueueEpisodes:
+SELECT ee.* FROM episodeEntity AS ee INNER JOIN queueEntity AS qe ON ee.id == qe.episodeId
+ORDER BY datetime(qe.added_at) ASC;
+
+insertNewQueueEpisode:
+INSERT OR REPLACE INTO queueEntity (episodeId) VALUES (:episodeId);
+
+deleteEpisodeFromQueue:
+DELETE FROM queueEntity WHERE episodeId = :episodeId;
+
+isEpisodeInQueue:
+SELECT 1 FROM queueEntity WHERE episodeId = :episodeId;
+
+clearQueueExceptEpisodes:
+DELETE FROM queueEntity WHERE episodeId NOT IN :episodeIds;

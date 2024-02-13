@@ -91,10 +91,12 @@ import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
+import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -135,6 +137,8 @@ fun PodcastDetailsScreen(
         onRefresh = viewModel::refresh,
         onPlayEpisode = appState::play,
         onPause = appState::pause,
+        onAddEpisodeToQueue = appState::addToQueue,
+        onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
         onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
@@ -155,6 +159,8 @@ fun PodcastDetailsScreen(
     onRefresh: () -> Unit,
     onPlayEpisode: (Episode) -> Unit,
     onPause: () -> Unit,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
@@ -327,6 +333,9 @@ fun PodcastDetailsScreen(
                                             currentlyPlayingEpisode = currentlyPlayingEpisode,
                                             onPlay = onPlayEpisode,
                                             onPause = onPause,
+                                            queueEpisodes = state.queueEpisodesIds,
+                                            onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                                         )
                                         if (index != state.episodes.lastIndex) {
                                             HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
@@ -575,6 +584,9 @@ private fun LazyItemScope.Episode(
     episode: Episode,
     onEpisodeClick: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
+    queueEpisodes: List<Long>,
+    onAddEpisodeToQueue: (Episode) -> Unit,
+    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
 ) {
@@ -606,6 +618,7 @@ private fun LazyItemScope.Episode(
         }
         Column(
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             PlayPauseCompactButton(
                 isSelected = currentlyPlayingEpisode != null && currentlyPlayingEpisode.episode.id == episode.id,
@@ -613,6 +626,15 @@ private fun LazyItemScope.Episode(
                 onPlay = { onPlay(episode) },
                 onPause = onPause,
             )
+            if (episode.id !in queueEpisodes) {
+                AddToQueueButton(
+                    onClick = { onAddEpisodeToQueue(episode) },
+                )
+            } else {
+                RemoveFromQueueButton(
+                    onClick = { onRemoveEpisodeFromQueue(episode.id) },
+                )
+            }
         }
     }
 }
@@ -633,6 +655,7 @@ fun PodcastDetailsScreenPreview(
                 episodes = Episodes.take(4),
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -640,6 +663,8 @@ fun PodcastDetailsScreenPreview(
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -666,6 +691,7 @@ fun PodcastDetailsScreenErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -673,6 +699,8 @@ fun PodcastDetailsScreenErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -699,6 +727,7 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 episodes = null,
                 isRefreshing = false,
                 refreshResult = null,
+                queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
             onSubscribe = {},
@@ -706,6 +735,8 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
             onRefresh = {},
             onPlayEpisode = {},
             onPause = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
             onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),

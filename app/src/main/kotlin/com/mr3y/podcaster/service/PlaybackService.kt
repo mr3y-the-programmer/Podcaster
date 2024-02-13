@@ -23,6 +23,7 @@ import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.ListenableFuture
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
+import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +64,6 @@ class PlaybackService : MediaSessionService() {
         val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory, mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
-            .setPauseAtEndOfMediaItems(true)
             .build()
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(PlaybackMediaSessionCallback())
@@ -94,6 +94,12 @@ class PlaybackService : MediaSessionService() {
                     val episodeId = player?.currentMediaItem?.mediaId?.toLongOrNull() ?: break
                     val progressInSec = player.currentPosition.div(1000)
                     if (progressInSec != 0L && player.isPlaying) {
+                        currentlyPlayingEpisode.value?.let { (episode, _, _) ->
+                            if (!episode.isCompleted && episode.durationInSec?.toLong() == progressInSec) {
+                                podcastsRepository.markEpisodeAsCompleted(episode.id)
+                            }
+                        }
+
                         podcastsRepository.updateEpisodePlaybackProgress(progressInSec.toInt(), episodeId)
                     }
                     delay(1.seconds)
@@ -126,14 +132,35 @@ class PlaybackService : MediaSessionService() {
                                 }
                             }
                         }
-                        if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM) {
+
+                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+                    }
+
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO || reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
                             currentlyPlayingEpisode.value?.let { (episode, _, _) ->
                                 if (!episode.isCompleted) {
                                     podcastsRepository.markEpisodeAsCompleted(episode.id)
                                 }
                             }
                         }
-                        podcastsRepository.updateCurrentlyPlayingEpisodeStatus(playingStatus)
+
+                        if (mediaItem != null) {
+                            val nextEpisode = podcastsRepository.getEpisodeFromQueue(mediaItem.mediaId.toLong())
+                            currentlyPlayingEpisode.value?.let { (currentEpisode, playingStatus, playingSpeed) ->
+                                if (currentEpisode.id != nextEpisode.id) {
+                                    val hasReachedEndOfEpisode = nextEpisode.durationInSec != null && nextEpisode.progressInSec != null && (nextEpisode.durationInSec - nextEpisode.progressInSec) <= 1
+                                    val position = if (hasReachedEndOfEpisode) {
+                                        podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = nextEpisode.id)
+                                        0L
+                                    } else {
+                                        nextEpisode.progressInSec?.times(1000)?.toLong() ?: 0L
+                                    }
+                                    podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(nextEpisode, playingStatus, playingSpeed))
+                                    seekTo(position)
+                                }
+                            }
+                        }
                     }
 
                     override fun onPlayerError(error: PlaybackException) {
@@ -180,34 +207,37 @@ class PlaybackService : MediaSessionService() {
             controller: MediaSession.ControllerInfo,
         ): ListenableFuture<MediaItemsWithStartPosition> {
             return serviceScope.future {
-                val currentEpisode = currentlyPlayingEpisode.value
-                if (currentEpisode != null) {
-                    val episode = currentEpisode.episode
-                    val startingPosition = episode.progressInSec?.times(1000)?.toLong() ?: C.TIME_UNSET
-                    val mediaMetadata = MediaMetadata.Builder()
-                        .setTitle(episode.title)
-                        .setArtist(episode.podcastTitle)
-                        .setIsBrowsable(false)
-                        .setIsPlayable(true)
-                        .setArtworkUri(Uri.parse(episode.artworkUrl))
-                        .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+                val mediaItems = podcastsRepository.getQueueEpisodes().map { episode ->
+                    MediaItem.Builder()
+                        .setMediaId(episode.id.toString())
+                        .setMediaMetadata(buildMetadataForEpisode(episode))
+                        .setUri(Uri.Builder().encodedPath(episode.enclosureUrl).build())
                         .build()
-
-                    MediaItemsWithStartPosition(
-                        listOf(
-                            MediaItem.Builder()
-                                .setMediaId(episode.id.toString())
-                                .setMediaMetadata(mediaMetadata)
-                                .setUri(Uri.Builder().encodedPath(episode.enclosureUrl).build())
-                                .build(),
-                        ),
-                        C.INDEX_UNSET,
-                        startingPosition,
-                    )
-                } else {
-                    throw UnsupportedOperationException()
                 }
+                val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisodeNonObservable()
+
+                if (currentlyPlayingEpisode != null) {
+                    mediaSession.player.setPlaybackSpeed(currentlyPlayingEpisode.playingSpeed)
+                }
+                val startingPosition = currentlyPlayingEpisode?.episode?.progressInSec?.times(1000)?.toLong() ?: C.TIME_UNSET
+
+                MediaItemsWithStartPosition(
+                    mediaItems,
+                    C.INDEX_UNSET,
+                    startingPosition,
+                )
             }
+        }
+
+        private fun buildMetadataForEpisode(episode: Episode): MediaMetadata {
+            return MediaMetadata.Builder()
+                .setTitle(episode.title)
+                .setArtist(episode.podcastTitle)
+                .setIsBrowsable(false)
+                .setIsPlayable(true)
+                .setArtworkUri(Uri.parse(episode.artworkUrl))
+                .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+                .build()
         }
     }
 }

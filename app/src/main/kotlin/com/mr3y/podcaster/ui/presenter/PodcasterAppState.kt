@@ -60,6 +60,12 @@ class PodcasterAppState @Inject constructor(
     private val _trackProgress = MutableStateFlow(0)
     val trackProgress = _trackProgress.asStateFlow()
 
+    val canSeekToNextInQueue: Boolean
+        get() = controller?.hasNextMediaItem() ?: false
+
+    val canSeekToPreviousInQueue: Boolean
+        get() = controller?.hasPreviousMediaItem() ?: false
+
     init {
         applicationScope.launch {
             while (true) {
@@ -82,6 +88,7 @@ class PodcasterAppState @Inject constructor(
                         currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
                             setMediaItemForEpisode(episode)
                             setPlaybackSpeed(playingSpeed)
+                            maybeAddQueueEpisodes()
 
                             if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
                                 seekToAndPlay(episode.progressInSec)
@@ -104,9 +111,14 @@ class PodcasterAppState @Inject constructor(
                 return
             }
         }
+        val currentEpisodeId = currentlyPlayingEpisode.value?.episode?.id
         val playbackSpeed = currentlyPlayingEpisode.value?.playingSpeed ?: 1.0f
         _trackProgress.update { episode.progressInSec ?: 0 }
         podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, PlayingStatus.Loading, playbackSpeed))
+        podcastsRepository.addEpisodeToQueue(episode)
+        if (currentEpisodeId != null) {
+            podcastsRepository.removeEpisodeFromQueue(currentEpisodeId)
+        }
         controller?.setMediaItemForEpisode(episode)
         controller?.setPlaybackSpeed(playbackSpeed)
         seekToAndPlay(_trackProgress.value)
@@ -233,6 +245,49 @@ class PodcasterAppState @Inject constructor(
         }
     }
 
+    fun addToQueue(episode: Episode) {
+        currentlyPlayingEpisode.value?.let { (currentEpisode, _, _) ->
+            if (currentEpisode.id == episode.id || isEpisodeInQueue(episode.id)) {
+                return
+            }
+        }
+        podcastsRepository.addEpisodeToQueue(episode)
+        controller?.addMediaItemForEpisode(episode)
+    }
+
+    fun removeFromQueue(episodeId: Long) {
+        currentlyPlayingEpisode.value?.let { (currentEpisode, _, _) ->
+            if (currentEpisode.id == episodeId) {
+                return
+            }
+        }
+        val queueSize = controller?.mediaItemCount ?: return
+        for (i in 0..<queueSize) {
+            val mediaItemEpisodeId = controller?.getMediaItemAt(i)?.mediaId?.toLong() ?: break
+            if (mediaItemEpisodeId == episodeId) {
+                controller?.removeMediaItem(i)
+                podcastsRepository.removeEpisodeFromQueue(episodeId)
+                break
+            }
+        }
+    }
+
+    fun seekToNextInQueue() {
+        if (canSeekToNextInQueue) {
+            controller?.seekToNextMediaItem()
+        }
+    }
+
+    fun seekToPreviousInQueue() {
+        if (canSeekToPreviousInQueue) {
+            controller?.seekToPreviousMediaItem()
+        }
+    }
+
+    fun isEpisodeInQueue(episodeId: Long): Boolean {
+        return podcastsRepository.isEpisodeInQueue(episodeId)
+    }
+
     fun releasePlayer() {
         MediaController.releaseFuture(controllerFuture)
         currentContext = null
@@ -243,23 +298,27 @@ class PodcasterAppState @Inject constructor(
     }
 
     private fun MediaController.setMediaItemForEpisode(episode: Episode) {
-        val uri = Uri.Builder()
-            .encodedPath(episode.enclosureUrl)
-            .build()
-        val mediaMetadata = MediaMetadata.Builder()
-            .setTitle(episode.title)
-            .setArtist(episode.podcastTitle)
-            .setIsBrowsable(false)
-            .setIsPlayable(true)
-            .setArtworkUri(Uri.parse(episode.artworkUrl))
-            .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
-            .build()
-        val mediaItem = MediaItem.fromUri(uri)
+        val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
-            .setMediaMetadata(mediaMetadata)
+            .setMediaMetadata(episode.mediaMetadata())
             .build()
-        setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+
+        if (!hasPreviousMediaItem() && !hasNextMediaItem()) {
+            setMediaItem(mediaItem, episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+        } else {
+            replaceMediaItem(currentMediaItemIndex, mediaItem)
+            seekTo(episode.progressInSec?.times(1000)?.toLong() ?: 0L)
+        }
+    }
+
+    private fun MediaController.addMediaItemForEpisode(episode: Episode) {
+        val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
+            .buildUpon()
+            .setMediaId(episode.id.toString())
+            .setMediaMetadata(episode.mediaMetadata())
+            .build()
+        addMediaItem(mediaItem)
     }
 
     private fun seekToAndPlay(positionInSec: Int?) {
@@ -268,5 +327,48 @@ class PodcasterAppState @Inject constructor(
             controller?.seekTo(positionInSec * 1000L)
         }
         controller?.play()
+    }
+
+    private fun MediaController.maybeAddQueueEpisodes() {
+        // add all episodes in the app's local queue to player playlist and maintain their order.
+        val episodesQueue = podcastsRepository.getQueueEpisodes()
+
+        if (episodesQueue.isEmpty() || mediaItemCount == 0) return
+
+        // prepend all the episodes that were before the current episode in the playlist.
+        var nextQueueEpisodeIndex = 0
+        if (mediaItemCount != episodesQueue.size) {
+            currentlyPlayingEpisode.value?.episode?.let { currentEpisode ->
+                while (episodesQueue[nextQueueEpisodeIndex].id != currentEpisode.id) {
+                    addMediaItemForEpisode(episodesQueue[nextQueueEpisodeIndex])
+                    moveMediaItem(currentMediaItemIndex, currentMediaItemIndex + 1)
+                    nextQueueEpisodeIndex++
+                }
+            }
+        }
+
+        // append all the episodes that were after the current episode in the playlist.
+        if (mediaItemCount < episodesQueue.size) {
+            episodesQueue.drop(nextQueueEpisodeIndex + 1).forEach { episode ->
+                addMediaItemForEpisode(episode)
+            }
+        }
+    }
+
+    private fun Episode.mediaMetadata(): MediaMetadata {
+        return MediaMetadata.Builder()
+            .setTitle(title)
+            .setArtist(podcastTitle)
+            .setIsBrowsable(false)
+            .setIsPlayable(true)
+            .setArtworkUri(Uri.parse(artworkUrl))
+            .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+            .build()
+    }
+
+    private fun String.toUri(): Uri {
+        return Uri.Builder()
+            .encodedPath(this)
+            .build()
     }
 }
