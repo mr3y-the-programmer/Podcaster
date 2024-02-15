@@ -17,14 +17,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -343,8 +342,8 @@ fun CollapsedPlayerView(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(contentWindowInsets),
+                .padding(contentWindowInsets.asPaddingValues())
+                .fillMaxWidth(),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -399,7 +398,6 @@ fun CollapsedPlayerView(
             val progressColor = MaterialTheme.colorScheme.primaryTertiary
             Box(
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
                     .fillMaxWidth()
                     .height(8.dp)
                     .background(MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f))

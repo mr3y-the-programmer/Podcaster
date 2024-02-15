@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
@@ -157,7 +159,8 @@ fun HomeScreen(
             val density = LocalDensity.current
             val expandedPlayerViewHeight = maxHeight
             val collapsedPlayerViewHeight = 104.dp
-            val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() }
+            val collapsedPlayerViewBottomInsets = WindowInsets.navigationBars
+            val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() - collapsedPlayerViewBottomInsets.getBottom(this) }
 
             val anchors = DraggableAnchors {
                 PlayerViewState.Expanded at 0f
@@ -191,7 +194,7 @@ fun HomeScreen(
                     }
                 }
             }
-            val playerViewBottomInsets = WindowInsets.navigationBars
+
             PodcasterNavGraph(
                 navController = navController,
                 onNavDrawerClick = {
@@ -199,8 +202,8 @@ fun HomeScreen(
                 },
                 appState = appState,
                 userPreferences = userPreferences,
-                contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
-                excludedWindowInsets = if (currentlyPlayingEpisode != null) playerViewBottomInsets else null,
+                contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp) + collapsedPlayerViewBottomInsets.asPaddingValues(density),
+                excludedWindowInsets = if (currentlyPlayingEpisode != null) collapsedPlayerViewBottomInsets else null,
             )
             currentlyPlayingEpisode?.let { activeEpisode ->
                 val isCollapsed = state.targetValue == PlayerViewState.Collapsed
@@ -231,7 +234,7 @@ fun HomeScreen(
                             onResume = appState::resume,
                             onPause = appState::pause,
                             progress = trackProgress,
-                            contentWindowInsets = playerViewBottomInsets,
+                            contentWindowInsets = collapsedPlayerViewBottomInsets,
                             containerColor = containerColor,
                         )
                     } else {
