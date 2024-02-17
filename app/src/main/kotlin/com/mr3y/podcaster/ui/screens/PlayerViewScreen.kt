@@ -5,6 +5,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -119,50 +121,68 @@ fun ExpandedPlayerView(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
         ) {
-            AsyncImage(
-                model = episode.artworkUrl,
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .size(360.dp)
-                    .border(
-                        width = 1.dp,
-                        brush = Brush.horizontalGradient(
-                            0.0f to Color.Transparent,
-                            0.5f to MaterialTheme.colorScheme.tertiaryPrimary,
-                            0.6f to Color.Transparent,
-                        ),
-                        shape = RectangleShape,
-                    )
-                    .border(
-                        width = 1.dp,
-                        brush = Brush.horizontalGradient(
-                            0.0f to MaterialTheme.colorScheme.tertiaryPrimary,
-                            0.5f to Color.Transparent,
-                            0.6f to MaterialTheme.colorScheme.primaryTertiary,
-                        ),
-                        shape = RectangleShape,
-                    ),
-            )
-            Text(
-                text = episode.title,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Medium,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-            )
-            val strings = LocalStrings.current
-            Text(
-                text = if (playingStatus == PlayingStatus.Loading) {
-                    strings.buffering_playback
-                } else {
-                    episode.podcastTitle ?: ""
+            AnimatedContent(
+                targetState = episode,
+                transitionSpec = {
+                    (
+                        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                            scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                        )
+                        .togetherWith(fadeOut(animationSpec = tween(90)) + scaleOut(animationSpec = tween(90)))
                 },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleMedium,
-            )
+                contentKey = { it.id },
+                label = "Animated Episode details",
+            ) { targetEpisode ->
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AsyncImage(
+                        model = targetEpisode.artworkUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .size(360.dp)
+                            .border(
+                                width = 1.dp,
+                                brush = Brush.horizontalGradient(
+                                    0.0f to Color.Transparent,
+                                    0.5f to MaterialTheme.colorScheme.tertiaryPrimary,
+                                    0.6f to Color.Transparent,
+                                ),
+                                shape = RectangleShape,
+                            )
+                            .border(
+                                width = 1.dp,
+                                brush = Brush.horizontalGradient(
+                                    0.0f to MaterialTheme.colorScheme.tertiaryPrimary,
+                                    0.5f to Color.Transparent,
+                                    0.6f to MaterialTheme.colorScheme.primaryTertiary,
+                                ),
+                                shape = RectangleShape,
+                            ),
+                    )
+                    Text(
+                        text = targetEpisode.title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                    )
+                    val strings = LocalStrings.current
+                    Text(
+                        text = if (playingStatus == PlayingStatus.Loading) {
+                            strings.buffering_playback
+                        } else {
+                            targetEpisode.podcastTitle ?: ""
+                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
             Slider(
                 value = if (episode.durationInSec != null) {
                     progress.toFloat().div(episode.durationInSec.toFloat())
