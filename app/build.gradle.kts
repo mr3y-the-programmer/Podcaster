@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.appversioning)
+    alias(libs.plugins.play.publisher)
 }
 
 android {
@@ -130,6 +131,16 @@ appVersioning {
     }
     overrideVersionCode { _, _, _ ->
         Instant.now().epochSecond.toInt()
+    }
+}
+
+play {
+    // Enable automated publishing for CI only for now, as we don't need it locally.
+    if (System.getenv("CI").toBoolean()) {
+        defaultToAppBundles.set(true)
+        track.set("production")
+    } else {
+        enabled.set(false)
     }
 }
 
