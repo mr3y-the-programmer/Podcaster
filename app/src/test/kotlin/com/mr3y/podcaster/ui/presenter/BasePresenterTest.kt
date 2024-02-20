@@ -7,11 +7,9 @@ import com.mr3y.podcaster.core.local.di.FakeDatabaseModule
 import com.mr3y.podcaster.core.logger.TestLogger
 import com.mr3y.podcaster.core.network.di.FakeHttpClient
 import com.mr3y.podcaster.core.network.internal.DefaultPodcastIndexClient
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
-@OptIn(ExperimentalCoroutinesApi::class)
 open class BasePresenterTest<Event : Any> {
 
     protected val testDispatcher = UnconfinedTestDispatcher()

@@ -23,10 +23,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.serialization.ExperimentalSerializationApi
 import javax.inject.Inject
 
-@OptIn(ExperimentalSerializationApi::class)
 @HiltViewModel
 class EpisodeDetailsViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,

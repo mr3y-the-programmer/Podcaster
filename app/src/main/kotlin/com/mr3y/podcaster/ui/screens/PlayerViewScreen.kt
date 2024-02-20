@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
@@ -343,7 +342,6 @@ fun ExpandedPlayerView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CollapsedPlayerView(
     currentlyPlayingEpisode: CurrentlyPlayingEpisode,

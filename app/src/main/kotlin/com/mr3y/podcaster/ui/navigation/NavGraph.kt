@@ -19,9 +19,7 @@ import com.mr3y.podcaster.ui.screens.LicensesScreen
 import com.mr3y.podcaster.ui.screens.PodcastDetailsScreen
 import com.mr3y.podcaster.ui.screens.SettingsScreen
 import com.mr3y.podcaster.ui.screens.SubscriptionsScreen
-import kotlinx.serialization.ExperimentalSerializationApi
 
-@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun PodcasterNavGraph(
     navController: NavHostController,

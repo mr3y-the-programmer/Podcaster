@@ -1,7 +1,6 @@
 package com.mr3y.podcaster.ui.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -13,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PullToRefresh(
     isRefreshingDone: Boolean,

@@ -3,7 +3,6 @@ package com.mr3y.podcaster.ui.screens
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -64,9 +63,7 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.isStatusBarAppearanceLight
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 
-@OptIn(ExperimentalSerializationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     appState: PodcasterAppState,

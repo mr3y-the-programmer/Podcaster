@@ -17,14 +17,12 @@ import com.mr3y.podcaster.core.network.di.enqueueMockResponse
 import com.mr3y.podcaster.core.network.internal.DefaultPodcastIndexClient
 import com.mr3y.podcaster.ui.preview.Podcasts
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SyncDataTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()

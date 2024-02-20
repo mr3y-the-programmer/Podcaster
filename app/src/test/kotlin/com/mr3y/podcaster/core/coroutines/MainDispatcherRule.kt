@@ -1,7 +1,6 @@
 package com.mr3y.podcaster.core.coroutines
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -13,7 +12,7 @@ import org.junit.runner.Description
  * A JUnit [TestRule] that sets the Main dispatcher to [testDispatcher]
  * for the duration of the test.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
+
 class MainDispatcherRule(
     val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
 ) : TestWatcher() {

@@ -28,7 +28,6 @@ import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.ui.resources.EnStrings
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import java.io.File
 import java.lang.Exception
@@ -36,7 +35,6 @@ import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
-@ExperimentalCoroutinesApi
 class DownloadMediaService : DownloadService(
     DOWNLOAD_NOTIFICATION_ID,
     DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
