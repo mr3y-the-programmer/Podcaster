@@ -524,20 +524,22 @@ private fun LazyItemScope.Metadata(
             )
         }
     }
-    Spacer(modifier = Modifier.height(8.dp))
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        podcast.genres.forEach { genre ->
-            SuggestionChip(
-                onClick = { },
-                label = {
-                    Text(text = genre.label)
-                },
-            )
+    if (podcast.genres.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            podcast.genres.forEach { genre ->
+                SuggestionChip(
+                    onClick = { },
+                    label = {
+                        Text(text = genre.label)
+                    },
+                )
+            }
         }
     }
     Spacer(modifier = Modifier.height(8.dp))

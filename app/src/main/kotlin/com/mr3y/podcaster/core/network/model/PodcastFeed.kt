@@ -23,7 +23,7 @@ data class PodcastFeed(
     val languageCode: String,
     val episodeCount: Int,
     @SerialName("categories")
-    val genres: Map<Int, String>,
+    val genres: Map<Int, String>?,
 )
 
 @Serializable
