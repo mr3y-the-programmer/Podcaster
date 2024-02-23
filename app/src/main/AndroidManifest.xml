@@ -50,7 +50,7 @@
 
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:foregroundServiceType="dataSync"
+            android:foregroundServiceType="shortService"
             tools:node="merge" />
 
         <service android:name=".service.DownloadMediaService"

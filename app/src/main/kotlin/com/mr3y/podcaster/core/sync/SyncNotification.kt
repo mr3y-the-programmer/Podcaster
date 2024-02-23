@@ -4,7 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
 import android.content.res.Resources
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -21,7 +21,7 @@ private const val SYNC_NOTIFICATION_CHANNEL_ID = "SyncNotificationChannel"
  */
 fun Context.syncForegroundInfo(): ForegroundInfo {
     return if (Build.VERSION.SDK_INT >= 34) {
-        ForegroundInfo(SYNC_NOTIFICATION_ID, syncWorkNotification(), FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        ForegroundInfo(SYNC_NOTIFICATION_ID, syncWorkNotification(), FOREGROUND_SERVICE_TYPE_SHORT_SERVICE)
     } else {
         ForegroundInfo(SYNC_NOTIFICATION_ID, syncWorkNotification())
     }
