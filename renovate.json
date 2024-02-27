@@ -37,7 +37,8 @@
       "matchStrings": [
         "compose-compiler = \"(?<currentValue>.*?)\""
       ],
-      "depNameTemplate": "androidx.compose.compiler:compiler"
+      "depNameTemplate": "androidx.compose.compiler:compiler",
+      "datasourceTemplate": "gradle"
     }
   ]
 }
