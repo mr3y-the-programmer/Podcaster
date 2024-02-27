@@ -22,11 +22,22 @@
       "groupName": "kotlin"
     },
     {
-      "excludePackagePrefixes": ["org.xerial"]
+      "matchPackageNames": ["org.xerial:sqlite-jdbc"],
+      "allowedVersions": "<=3.18.0"
     },
     {
       "matchPackagePrefixes": ["cafe.adriel.lyricist"],
       "allowedVersions": "/^[0-9].[0-9].[0-9]$/"
+    }
+  ],
+  "regexManagers": [
+    {
+      "description": "Update Compose compiler version",
+      "fileMatch": [".toml$"],
+      "matchStrings": [
+        "compose-compiler = \"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "androidx.compose.compiler:compiler"
     }
   ]
 }
