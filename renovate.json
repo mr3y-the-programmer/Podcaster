@@ -29,16 +29,5 @@
       "matchPackagePrefixes": ["cafe.adriel.lyricist"],
       "allowedVersions": "/^[0-9].[0-9].[0-9]$/"
     }
-  ],
-  "regexManagers": [
-    {
-      "description": "Update Compose compiler version",
-      "fileMatch": [".toml$"],
-      "matchStrings": [
-        "compose-compiler = \"(?<currentValue>.*?)\""
-      ],
-      "depNameTemplate": "androidx.compose.compiler:compiler",
-      "datasourceTemplate": "gradle"
-    }
   ]
 }

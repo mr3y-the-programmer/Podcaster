@@ -51,6 +51,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+compose-compiler = { group = "androidx.compose.compiler", name = "compiler", version.ref = "compose-compiler" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-htmlconverter = { group = "be.digitalia.compose.htmlconverter", name = "htmlconverter", version.ref = "compose-htmlconverter" }
 kmpalette-core = { group = "com.kmpalette", name = "kmpalette-core", version.ref = "kmpalette" }
