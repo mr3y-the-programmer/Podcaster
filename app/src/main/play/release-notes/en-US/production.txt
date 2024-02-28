@@ -1,2 +1,1 @@
-- 🆕 Add Support for Creating playlists.
-- Fix Collapsed PlayerView UI being obscured by 3-buttons navigation bar.
+- Fix bugs & Improve Performance.
