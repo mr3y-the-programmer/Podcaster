@@ -92,7 +92,7 @@ class DownloadMediaService : DownloadService(
             val cache = buildSimpleCache(context)
             val downloadExecutor = Dispatchers.IO.limitedParallelism(4).asExecutor()
             downloadManager = DownloadManager(context, databaseProvider, cache, upStreamFactory, downloadExecutor).apply {
-                maxParallelDownloads = 1
+                maxParallelDownloads = 3
             }
         }
         return downloadManager!!
