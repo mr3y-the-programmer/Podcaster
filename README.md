@@ -36,7 +36,7 @@ the app is still a work-in-progress and there are some features that are not yet
 ## Download
 Google Play: 
 
-(Note: Due to Google Play policies, the review process of each update takes longer time than expected, So, the latest version of the app may not be always available, if you want to try the latest release consider other downloading options) 
+(Note: Due to Google Play policies, the review process of each update typically takes longer time than expected, So, the latest version of the app may take some days before you can download it.) 
 
 <a href="https://play.google.com/store/apps/details?id=com.mr3y.podcaster" target="_blank">
 <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
