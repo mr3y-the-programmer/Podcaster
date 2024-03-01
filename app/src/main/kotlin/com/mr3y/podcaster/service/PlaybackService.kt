@@ -124,8 +124,8 @@ class PlaybackService : MediaSessionService() {
                         }
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
                             val isAboutToPlay = playingStatus == PlayingStatus.Loading || playingStatus == PlayingStatus.Playing
-                            if (episode.durationInSec != null) {
-                                val hasReachedEndOfEpisode = abs((episode.durationInSec * 1000).toLong() - currentPosition) <= 1000L && episode.progressInSec == episode.durationInSec
+                            episode.durationInSec?.let {
+                                val hasReachedEndOfEpisode = abs((it * 1000).toLong() - currentPosition) <= 1000L && episode.progressInSec == episode.durationInSec
                                 if (isAboutToPlay && hasReachedEndOfEpisode) {
                                     seekTo(0L)
                                     podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = episode.id)
@@ -149,7 +149,9 @@ class PlaybackService : MediaSessionService() {
                             val nextEpisode = podcastsRepository.getEpisodeFromQueue(mediaItem.mediaId.toLong())
                             currentlyPlayingEpisode.value?.let { (currentEpisode, playingStatus, playingSpeed) ->
                                 if (currentEpisode.id != nextEpisode.id) {
-                                    val hasReachedEndOfEpisode = nextEpisode.durationInSec != null && nextEpisode.progressInSec != null && (nextEpisode.durationInSec - nextEpisode.progressInSec) <= 1
+                                    val hasReachedEndOfEpisode = nextEpisode.durationInSec?.let { dur ->
+                                        nextEpisode.progressInSec?.let { progress -> (dur - progress) <= 1 } ?: false
+                                    } ?: false
                                     val position = if (hasReachedEndOfEpisode) {
                                         podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = nextEpisode.id)
                                         0L

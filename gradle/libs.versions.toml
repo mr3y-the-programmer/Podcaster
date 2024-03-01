@@ -12,6 +12,7 @@ junit = "4.13.2"
 assertk = "0.28.0"
 turbine = "1.0.0"
 androidx-test-ext-junit = "1.1.5"
+androidx-annotations = "1.7.1"
 espresso-core = "3.5.1"
 lifecycle-runtime = "2.7.0"
 activity-compose = "1.8.2"
@@ -47,6 +48,7 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+androidx-annotations = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotations" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
@@ -109,6 +111,7 @@ aboutlibraries-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3"
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

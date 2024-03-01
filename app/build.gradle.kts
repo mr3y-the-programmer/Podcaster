@@ -171,6 +171,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.activity.compose)
 
+    implementation(projects.core.model)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
