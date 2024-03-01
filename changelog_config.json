@@ -10,7 +10,7 @@
     },
     {
       "title": "## 🔧 Chore",
-      "labels": ["dependencies"]
+      "labels": ["dependencies", "chore"]
     }
   ],
   "ignore_labels": [
