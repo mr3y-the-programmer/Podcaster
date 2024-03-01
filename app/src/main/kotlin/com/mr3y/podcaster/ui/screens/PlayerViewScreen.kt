@@ -183,14 +183,10 @@ fun ExpandedPlayerView(
                 }
             }
             Slider(
-                value = if (episode.durationInSec != null) {
-                    progress.toFloat().div(episode.durationInSec.toFloat())
-                } else {
-                    1f
-                },
+                value = episode.durationInSec?.let { progress.toFloat().div(it.toFloat()) } ?: 1f,
                 onValueChange = { updatedValue ->
-                    if (episode.durationInSec != null) {
-                        onSeeking((updatedValue * episode.durationInSec).toInt())
+                    episode.durationInSec?.let {
+                        onSeeking((updatedValue * it).toInt())
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -408,11 +404,9 @@ fun CollapsedPlayerView(
                     iconSize = 32.dp,
                 )
             }
-            val progressPercentage = if (episode.durationInSec != null) {
-                (progress.toFloat() / episode.durationInSec.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
-            } else {
-                1f
-            }
+            val progressPercentage = episode.durationInSec?.let {
+                (progress.toFloat() / it.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            } ?: 1f
             val progressColor = MaterialTheme.colorScheme.primaryTertiary
             Box(
                 modifier = Modifier
