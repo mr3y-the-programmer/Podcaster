@@ -136,6 +136,7 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.logger)
     implementation(projects.core.network)
+    implementation(projects.core.data)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
