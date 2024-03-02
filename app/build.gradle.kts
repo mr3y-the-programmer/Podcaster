@@ -30,9 +30,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        buildConfigField("String", "API_KEY", "\"${getValueOfKey("API_KEY")}\"")
-        buildConfigField("String", "API_SECRET", "\"${getValueOfKey("API_SECRET")}\"")
     }
 
     signingConfigs {
@@ -128,16 +125,6 @@ ksp {
     arg("lyricist.packageName", "com.mr3y.podcaster")
 }
 
-fun getValueOfKey(key: String): String {
-    return if (System.getenv("CI").toBoolean()) {
-        System.getenv(key)
-    } else {
-        val properties = Properties()
-        properties.load(FileInputStream(rootProject.file("local.properties")))
-        properties.getProperty(key)
-    }
-}
-
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.splashscreen)
@@ -148,6 +135,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.database)
     implementation(projects.core.logger)
+    implementation(projects.core.network)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
@@ -162,10 +150,6 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.molecule)
     implementation(libs.coil)
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.okhttp)
-    implementation(libs.ktor.content.negotation)
-    implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.result)
 
     implementation(libs.kotlinx.serialization)
@@ -199,6 +183,7 @@ dependencies {
     kspTest(libs.hilt.compiler)
     testImplementation(projects.core.databaseTestFixtures)
     testImplementation(projects.core.loggerTestFixtures)
+    testImplementation(projects.core.networkTestFixtures)
     testImplementation(libs.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
