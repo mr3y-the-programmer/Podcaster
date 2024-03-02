@@ -1,7 +1,7 @@
 package com.mr3y.podcaster.core.network.di
 
 import android.content.Context
-import com.mr3y.podcaster.BuildConfig
+import com.mr3y.podcaster.core.network.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
