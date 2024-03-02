@@ -10,8 +10,8 @@ import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.PlayingStatus
-import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
-import com.mr3y.podcaster.ui.preview.Episodes
+import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
+import com.mr3y.podcaster.core.sampledata.Episodes
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

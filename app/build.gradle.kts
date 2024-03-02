@@ -1,5 +1,3 @@
-import app.cash.sqldelight.core.capitalize
-import app.cash.sqldelight.gradle.SqlDelightTask
 import java.io.FileInputStream
 import java.time.Instant
 import java.util.Properties
@@ -12,7 +10,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.sqldelight)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.aboutlibraries)
@@ -93,29 +90,6 @@ android {
     }
 }
 
-androidComponents {
-    onVariants(selector().all()) { variant ->
-        // TODO: find a way to get rid of the obscure `afterEvaluate` here
-        afterEvaluate {
-            val sqlDelightTask = this.project.tasks.named("generate${variant.name.capitalize()}PodcasterDatabaseInterface").get() as SqlDelightTask
-
-            project.tasks.getByName("ksp" + variant.name.capitalize() + "Kotlin") {
-                (this as org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>).setSource(sqlDelightTask.outputDirectory)
-            }
-        }
-    }
-}
-
-sqldelight {
-    databases {
-        create("PodcasterDatabase") {
-            packageName.set("com.mr3y.podcaster")
-            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
-            verifyMigrations.set(true)
-        }
-    }
-}
-
 ktlint {
     filter {
         exclude("**/generated/**")
@@ -172,6 +146,7 @@ dependencies {
     implementation(libs.activity.compose)
 
     implementation(projects.core.model)
+    implementation(projects.core.database)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
@@ -221,19 +196,12 @@ dependencies {
 
     implementation(libs.workmanager.core)
 
-    implementation(libs.sqldelight.driver)
-    implementation(libs.sqldelight.flowext)
-    implementation(libs.sqldelight.primitiveadapters)
-
     kspTest(libs.hilt.compiler)
+    testImplementation(projects.core.databaseTestFixtures)
     testImplementation(libs.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine)
-    testImplementation(libs.sqldelight.sqlitedriver)
-    testImplementation(libs.sqlite.jdbc) {
-        version { strictly(libs.versions.sqlite.jdbc.get()) }
-    }
     testImplementation(libs.ktor.client.mock)
 
     kspAndroidTest(libs.hilt.compiler)
