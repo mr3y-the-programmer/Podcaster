@@ -32,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += listOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+        )
     }
     buildFeatures {
         compose = false
@@ -58,5 +61,14 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network)
     implementation(projects.core.database)
+    implementation(projects.core.logger)
     implementation(libs.result)
+
+    testImplementation(projects.core.networkTestFixtures)
+    testImplementation(projects.core.databaseTestFixtures)
+    testImplementation(projects.core.loggerTestFixtures)
+    testImplementation(libs.junit)
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.ktor.client.mock)
 }
