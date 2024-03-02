@@ -96,10 +96,10 @@ import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.ui.preview.Episodes
-import com.mr3y.podcaster.ui.preview.EpisodesWithDownloadMetadata
+import com.mr3y.podcaster.core.sampledata.Episodes
+import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
-import com.mr3y.podcaster.ui.preview.Podcasts
+import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary

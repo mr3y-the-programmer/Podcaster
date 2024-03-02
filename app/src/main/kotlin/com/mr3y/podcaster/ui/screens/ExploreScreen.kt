@@ -86,7 +86,7 @@ import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
 import com.mr3y.podcaster.ui.presenter.explore.SearchResult
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
-import com.mr3y.podcaster.ui.preview.Podcasts
+import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.primaryTertiary

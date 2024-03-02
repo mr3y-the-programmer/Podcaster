@@ -12,7 +12,7 @@ import assertk.assertions.isTrue
 import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.ui.presenter.BasePresenterTest
-import com.mr3y.podcaster.ui.preview.Episodes
+import com.mr3y.podcaster.core.sampledata.Episodes
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 

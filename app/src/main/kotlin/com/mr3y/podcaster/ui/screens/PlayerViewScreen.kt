@@ -74,7 +74,7 @@ import com.mr3y.podcaster.ui.components.MoveToNextButton
 import com.mr3y.podcaster.ui.components.MoveToPreviousButton
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.ui.preview.EpisodeWithDetails
+import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary

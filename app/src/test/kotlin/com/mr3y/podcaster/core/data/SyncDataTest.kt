@@ -15,7 +15,7 @@ import com.mr3y.podcaster.core.network.di.FakeHttpClient
 import com.mr3y.podcaster.core.network.di.doCleanup
 import com.mr3y.podcaster.core.network.di.enqueueMockResponse
 import com.mr3y.podcaster.core.network.internal.DefaultPodcastIndexClient
-import com.mr3y.podcaster.ui.preview.Podcasts
+import com.mr3y.podcaster.core.sampledata.Podcasts
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest

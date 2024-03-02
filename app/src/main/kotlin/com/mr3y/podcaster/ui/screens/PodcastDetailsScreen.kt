@@ -102,8 +102,8 @@ import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIState
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsViewModel
 import com.mr3y.podcaster.ui.presenter.podcastdetails.SubscriptionState
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.ui.preview.Episodes
-import com.mr3y.podcaster.ui.preview.PodcastWithDetails
+import com.mr3y.podcaster.core.sampledata.Episodes
+import com.mr3y.podcaster.core.sampledata.PodcastWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
