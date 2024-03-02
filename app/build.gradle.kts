@@ -1,5 +1,3 @@
-import app.cash.sqldelight.core.capitalize
-import app.cash.sqldelight.gradle.SqlDelightTask
 import java.io.FileInputStream
 import java.time.Instant
 import java.util.Properties
