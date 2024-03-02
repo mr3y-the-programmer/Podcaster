@@ -147,6 +147,7 @@ dependencies {
 
     implementation(projects.core.model)
     implementation(projects.core.database)
+    implementation(projects.core.logger)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
@@ -166,8 +167,7 @@ dependencies {
     implementation(libs.ktor.content.negotation)
     implementation(libs.ktor.kotlinx.serialization)
     implementation(libs.result)
-    implementation(libs.kermit)
-    implementation(libs.kermit.crashlytics)
+
     implementation(libs.kotlinx.serialization)
 
     implementation(platform(libs.firebase.bom))
@@ -198,6 +198,7 @@ dependencies {
 
     kspTest(libs.hilt.compiler)
     testImplementation(projects.core.databaseTestFixtures)
+    testImplementation(projects.core.loggerTestFixtures)
     testImplementation(libs.junit)
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
