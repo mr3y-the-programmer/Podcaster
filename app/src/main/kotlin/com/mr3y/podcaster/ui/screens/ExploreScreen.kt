@@ -78,6 +78,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Podcast
+import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.plus
@@ -86,7 +87,6 @@ import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
 import com.mr3y.podcaster.ui.presenter.explore.SearchResult
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
-import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.primaryTertiary

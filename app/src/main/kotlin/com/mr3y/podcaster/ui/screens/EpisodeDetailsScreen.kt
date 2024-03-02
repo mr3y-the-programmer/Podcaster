@@ -66,6 +66,8 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
+import com.mr3y.podcaster.core.sampledata.DownloadMetadata
+import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
@@ -78,9 +80,7 @@ import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsViewModel
-import com.mr3y.podcaster.core.sampledata.DownloadMetadata
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme

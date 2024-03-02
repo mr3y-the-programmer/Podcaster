@@ -9,9 +9,9 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import com.mr3y.podcaster.ui.presenter.BasePresenterTest
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.Podcasts
+import com.mr3y.podcaster.ui.presenter.BasePresenterTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 

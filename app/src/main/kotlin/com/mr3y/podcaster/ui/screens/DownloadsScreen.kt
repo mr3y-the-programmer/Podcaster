@@ -49,6 +49,7 @@ import coil.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
+import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
@@ -56,7 +57,6 @@ import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.downloads.DownloadsUIState
 import com.mr3y.podcaster.ui.presenter.downloads.DownloadsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark

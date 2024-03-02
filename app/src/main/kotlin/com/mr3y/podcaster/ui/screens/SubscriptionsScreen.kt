@@ -83,6 +83,9 @@ import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.model.dateTimePublished
+import com.mr3y.podcaster.core.sampledata.Episodes
+import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
+import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
@@ -96,10 +99,7 @@ import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
-import com.mr3y.podcaster.core.sampledata.Episodes
-import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
-import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
