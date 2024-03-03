@@ -121,6 +121,10 @@ play {
     }
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
 ksp {
     arg("lyricist.packageName", "com.mr3y.podcaster")
 }
