@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mr3y.podcaster.core.data"
+    namespace = "com.mr3y.podcaster.core.sync"
     compileSdk = 34
 
     defaultConfig {
@@ -32,9 +32,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        )
     }
     buildFeatures {
         compose = false
@@ -55,20 +52,12 @@ ktlint {
 }
 
 dependencies {
-
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.runtime)
     implementation(projects.core.model)
-    implementation(projects.core.network)
-    implementation(projects.core.database)
-    implementation(projects.core.logger)
-    implementation(libs.result)
-
-    testImplementation(projects.core.networkTestFixtures)
-    testImplementation(projects.core.databaseTestFixtures)
-    testImplementation(projects.core.loggerTestFixtures)
-    testImplementation(libs.junit)
-    testImplementation(libs.assertk)
-    testImplementation(libs.coroutines.test)
-    testImplementation(libs.ktor.client.mock)
+    implementation(projects.core.data)
+    ksp(libs.hilt.compiler)
+    ksp(libs.hilt.androidx.compiler)
+    implementation(libs.hilt.common)
+    implementation(libs.hilt.runtime)
+    implementation(libs.hilt.workmanager)
+    implementation(libs.workmanager.core)
 }

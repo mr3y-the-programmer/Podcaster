@@ -137,6 +137,7 @@ dependencies {
     implementation(projects.core.logger)
     implementation(projects.core.network)
     implementation(projects.core.data)
+    implementation(projects.core.sync)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
@@ -168,8 +169,6 @@ dependencies {
 
     ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)
-    ksp(libs.hilt.androidx.compiler)
-    implementation(libs.hilt.common)
     implementation(libs.hilt.runtime)
     implementation(libs.hilt.workmanager)
 
@@ -178,8 +177,6 @@ dependencies {
     implementation(libs.media3.session)
     implementation(libs.media3.exoplayer.workmanager)
     implementation(libs.coroutines.guava)
-
-    implementation(libs.workmanager.core)
 
     kspTest(libs.hilt.compiler)
     testImplementation(projects.core.databaseTestFixtures)
