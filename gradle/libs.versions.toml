@@ -31,6 +31,7 @@ workmanager = "2.9.0"
 coil = "2.6.0"
 ktor = "2.3.8"
 result = "1.1.18"
+xmlutil = "0.86.3"
 kermit = "2.0.3"
 sqldelight = "2.0.1"
 sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
@@ -107,6 +108,8 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 datastore-pref = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 aboutlibraries-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
+xmlutil-core = { group = "io.github.pdvrieze.xmlutil", name = "core", version.ref = "xmlutil" }
+xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serialization", version.ref = "xmlutil" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

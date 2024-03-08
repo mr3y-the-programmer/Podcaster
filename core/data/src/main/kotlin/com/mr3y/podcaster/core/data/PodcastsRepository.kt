@@ -28,6 +28,8 @@ interface PodcastsRepository {
 
     fun isPodcastFromSubscriptions(podcastId: Long): Flow<Boolean>
 
+    fun isPodcastFromSubscriptionsNonObservable(podcastId: Long): Boolean
+
     fun hasSubscriptions(): Flow<Boolean>
 
     fun hasDownloads(): Flow<Boolean>
