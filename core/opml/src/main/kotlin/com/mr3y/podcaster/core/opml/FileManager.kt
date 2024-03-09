@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FileManager @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
 ) {
 
     private val application = context as Application
@@ -38,7 +38,7 @@ class FileManager @Inject constructor(
 
     suspend fun read(): String? {
         openDocumentLauncher.launch(
-            arrayOf("application/xml", "application/octet-stream", "text/xml", "text/x-opml")
+            arrayOf("application/xml", "application/octet-stream", "text/xml", "text/x-opml"),
         )
         return result.receiveAsFlow().first()
     }
@@ -75,15 +75,15 @@ class FileManager @Inject constructor(
 
     private fun registerDocumentCreateActivityResult(activity: ComponentActivity) {
         createDocumentLauncher = activity.registerForActivityResult(
-                ActivityResultContracts.CreateDocument("application/xml")
-            ) { uri ->
-                if (uri == null) return@registerForActivityResult
+            ActivityResultContracts.CreateDocument("application/xml"),
+        ) { uri ->
+            if (uri == null) return@registerForActivityResult
 
-                val outputStream = application.contentResolver.openOutputStream(uri)
-                outputStream?.use { it.write(content?.toByteArray()) }
+            val outputStream = application.contentResolver.openOutputStream(uri)
+            outputStream?.use { it.write(content?.toByteArray()) }
 
-                content = null
-            }
+            content = null
+        }
     }
 
     private fun registerDocumentOpenActivityResult(activity: ComponentActivity) {

@@ -9,7 +9,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 internal data class Opml(
     @XmlElement(value = false) val version: String?,
     @XmlElement(value = false) val head: Head?,
-    val body: Body
+    val body: Body,
 )
 
 @Serializable
@@ -28,5 +28,5 @@ internal data class Outline(
     @XmlElement(value = false) val type: String?,
     @XmlElement(value = false) val xmlUrl: String?,
     @XmlElement(value = false) val htmlUrl: String?,
-    @XmlSerialName("outline") val outlines: List<Outline>?
+    @XmlSerialName("outline") val outlines: List<Outline>?,
 )

@@ -69,5 +69,5 @@ val EnStrings = PodcasterStrings(
     import_network_error = "Importing collection failed! make sure you're connected to the internet.",
     import_empty_file_error = "Empty file! nothing to import",
     import_corrupted_file_error = "File may be corrupted! process failed.",
-    import_unknown_error = "Sorry, Something went wrong"
+    import_unknown_error = "Sorry, Something went wrong",
 )

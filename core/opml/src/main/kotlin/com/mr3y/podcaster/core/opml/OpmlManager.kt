@@ -10,7 +10,6 @@ import com.mr3y.podcaster.core.opml.model.OpmlResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +26,7 @@ class OpmlManager @Inject constructor(
     private val fileManager: FileManager,
     private val repository: PodcastsRepository,
     @IODispatcher private val coroutineDispatcher: CoroutineDispatcher,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
 
     private val job = SupervisorJob() + coroutineDispatcher
@@ -49,7 +48,7 @@ class OpmlManager @Inject constructor(
                             },
                             failure = {
                                 _result.emit(OpmlResult.Error.DecodingError)
-                            }
+                            },
                         )
                 } else {
                     _result.emit(OpmlResult.Error.NoContentInOpmlFile)
@@ -78,7 +77,7 @@ class OpmlManager @Inject constructor(
                         },
                         failure = {
                             _result.emit(OpmlResult.Error.EncodingError)
-                        }
+                        },
                     )
             }
         } catch (ex: Exception) {
@@ -112,7 +111,7 @@ class OpmlManager @Inject constructor(
                                 },
                                 failure = {
                                     _result.emit(OpmlResult.Error.NetworkError)
-                                }
+                                },
                             )
                         }
                     }
@@ -126,7 +125,7 @@ class OpmlManager @Inject constructor(
                     },
                     failure = {
                         _result.emit(OpmlResult.Error.NetworkError)
-                    }
+                    },
                 )
             }
         }

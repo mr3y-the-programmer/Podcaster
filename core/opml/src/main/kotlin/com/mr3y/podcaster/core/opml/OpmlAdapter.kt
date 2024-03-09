@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class OpmlAdapter @Inject constructor(
     private val xmlInstance: XML,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
 
     fun decode(content: String): Result<List<OpmlPodcast>, Any> {
@@ -50,7 +50,7 @@ class OpmlAdapter @Inject constructor(
             val opml = Opml(
                 version = "2.0",
                 head = Head("Podcaster Subscriptions", dateCreated = null),
-                body = Body(outlines = podcasts.map(::mapPodcastToOutline))
+                body = Body(outlines = podcasts.map(::mapPodcastToOutline)),
             )
 
             val xmlString = xmlInstance.encodeToString(serializer<Opml>(), opml)

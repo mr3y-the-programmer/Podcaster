@@ -1,6 +1,5 @@
 package com.mr3y.podcaster.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,19 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
@@ -73,7 +69,7 @@ fun ImportExportScreen(
         onConsumeResult = viewModel::consumeResult,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -86,7 +82,7 @@ fun ImportExportScreen(
     onConsumeResult: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val isDarkTheme = isAppThemeDark()
@@ -129,7 +125,7 @@ fun ImportExportScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(16.dp))
             if (result is OpmlResult.Loading) {
@@ -137,7 +133,7 @@ fun ImportExportScreen(
             }
             LaunchedEffect(result) {
                 if (result is OpmlResult.Error) {
-                    val message = when(result) {
+                    val message = when (result) {
                         is OpmlResult.Error.NoContentInOpmlFile -> strings.import_empty_file_error
                         is OpmlResult.Error.NetworkError -> strings.import_network_error
                         is OpmlResult.Error.EncodingError, is OpmlResult.Error.DecodingError -> strings.import_corrupted_file_error
@@ -181,7 +177,7 @@ private fun ImportExportTopAppBar(
 private fun ImportOrExportButton(
     label: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ElevatedButton(
         onClick = onClick,
@@ -190,7 +186,7 @@ private fun ImportOrExportButton(
             containerColor = MaterialTheme.colorScheme.primaryTertiary,
             contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
         ),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(
             text = label,
