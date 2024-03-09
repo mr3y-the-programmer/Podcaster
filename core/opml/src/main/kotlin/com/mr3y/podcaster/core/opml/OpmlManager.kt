@@ -51,8 +51,6 @@ class OpmlManager @Inject constructor(
                                 _result.emit(OpmlResult.Error.DecodingError)
                             }
                         )
-
-                    _result.emit(OpmlResult.Idle)
                 } else {
                     _result.emit(OpmlResult.Error.NoContentInOpmlFile)
                 }
@@ -82,8 +80,6 @@ class OpmlManager @Inject constructor(
                             _result.emit(OpmlResult.Error.EncodingError)
                         }
                     )
-
-                _result.emit(OpmlResult.Idle)
             }
         } catch (ex: Exception) {
             if (ex !is CancellationException) {
@@ -95,8 +91,12 @@ class OpmlManager @Inject constructor(
         }
     }
 
-    suspend fun cancelCurrentRunningTask() {
+    fun cancelCurrentRunningTask() {
         job.cancelChildren()
+        _result.tryEmit(OpmlResult.Idle)
+    }
+
+    suspend fun resetResultState() {
         _result.emit(OpmlResult.Idle)
     }
 
