@@ -52,4 +52,12 @@ data class PodcasterStrings(
     val feedback_and_issues_label: String,
     val privacy_policy_label: String,
     val powered_by_label: AnnotatedString,
+    val import_export_label: String,
+    val import_label: String,
+    val export_label: String,
+    val import_notice: String,
+    val import_network_error: String,
+    val import_empty_file_error: String,
+    val import_corrupted_file_error: String,
+    val import_unknown_error: String,
 )
