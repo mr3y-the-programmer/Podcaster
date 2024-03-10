@@ -1,1 +1,3 @@
-- Fix bugs & Improve Performance.
+- 🆕 Support Importing/Exporting Opml files.
+- Support downloading up to 3 episodes concurrently at the same time.
+- Fix bugs & Improve performance.
