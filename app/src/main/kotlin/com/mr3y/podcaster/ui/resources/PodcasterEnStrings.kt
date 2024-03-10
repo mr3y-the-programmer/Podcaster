@@ -66,6 +66,7 @@ val EnStrings = PodcasterStrings(
     import_label = "Import",
     export_label = "Export",
     import_notice = "If you're importing subscriptions collection make sure you're connected to the internet or the importing will fail",
+    import_succeeded = "Importing subscriptions collection completed successfully!",
     import_network_error = "Importing collection failed! make sure you're connected to the internet.",
     import_empty_file_error = "Empty file! nothing to import",
     import_corrupted_file_error = "File may be corrupted! process failed.",

@@ -132,12 +132,14 @@ fun ImportExportScreen(
                 LoadingIndicator(modifier = Modifier.fillMaxWidth())
             }
             LaunchedEffect(result) {
-                if (result is OpmlResult.Error) {
+                if (result is OpmlResult.Error || result is OpmlResult.Success) {
                     val message = when (result) {
+                        is OpmlResult.Success -> strings.import_succeeded
                         is OpmlResult.Error.NoContentInOpmlFile -> strings.import_empty_file_error
                         is OpmlResult.Error.NetworkError -> strings.import_network_error
                         is OpmlResult.Error.EncodingError, is OpmlResult.Error.DecodingError -> strings.import_corrupted_file_error
                         is OpmlResult.Error.UnknownFailure -> strings.import_unknown_error
+                        else -> "" // Not reachable, but when can't infer that yet (see https://youtrack.jetbrains.com/issue/KT-8781/Consider-making-smart-casts-smart-enough-to-handle-exhaustive-value-sets)
                     }
                     snackBarHostState.showSnackbar(message)
                     onConsumeResult()

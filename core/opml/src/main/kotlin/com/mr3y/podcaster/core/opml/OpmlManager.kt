@@ -45,6 +45,9 @@ class OpmlManager @Inject constructor(
                         .mapBoth(
                             success = {
                                 addOpmlPodcasts(it)
+                                if (_result.value !is OpmlResult.Error) {
+                                    _result.emit(OpmlResult.Success)
+                                }
                             },
                             failure = {
                                 _result.emit(OpmlResult.Error.DecodingError)
@@ -74,6 +77,7 @@ class OpmlManager @Inject constructor(
                     .mapBoth(
                         success = {
                             fileManager.save(OpmlFileName, it)
+                            _result.emit(OpmlResult.Idle)
                         },
                         failure = {
                             _result.emit(OpmlResult.Error.EncodingError)

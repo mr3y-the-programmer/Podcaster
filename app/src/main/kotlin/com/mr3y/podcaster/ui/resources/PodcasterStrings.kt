@@ -56,6 +56,7 @@ data class PodcasterStrings(
     val import_label: String,
     val export_label: String,
     val import_notice: String,
+    val import_succeeded: String,
     val import_network_error: String,
     val import_empty_file_error: String,
     val import_corrupted_file_error: String,

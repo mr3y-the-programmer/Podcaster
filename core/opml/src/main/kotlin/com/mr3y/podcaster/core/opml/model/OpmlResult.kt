@@ -5,6 +5,8 @@ sealed interface OpmlResult {
 
     data object Loading : OpmlResult
 
+    data object Success : OpmlResult
+
     sealed interface Error : OpmlResult {
         data object NoContentInOpmlFile : Error
 
