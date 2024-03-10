@@ -26,7 +26,7 @@ the app is still a work-in-progress and there are some features that are not yet
 - ✅ Support for playlists (Queue feature)
 - ✅ Continue playing episodes from where you left off.
 - ✅ Material 3 dynamic theming & light/dark theme.
-- ❌ Import/Export your subscriptions from/to OPML.
+- ✅ Import/Export your subscriptions from/to OPML.
 - ❌ Improving support for RTL languages & adding more translations.
 - ❌ History feature.
 
