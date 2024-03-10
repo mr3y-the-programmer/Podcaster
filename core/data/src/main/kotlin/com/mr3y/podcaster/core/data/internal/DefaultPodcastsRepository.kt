@@ -69,6 +69,10 @@ class DefaultPodcastsRepository @Inject constructor(
         return podcastsDao.isPodcastAvailable(podcastId)
     }
 
+    override fun isPodcastFromSubscriptionsNonObservable(podcastId: Long): Boolean {
+        return podcastsDao.isPodcastAvailableNonObservable(podcastId)
+    }
+
     override fun hasSubscriptions(): Flow<Boolean> = podcastsDao.hasPodcasts()
 
     override fun hasDownloads(): Flow<Boolean> = podcastsDao.hasDownloads()

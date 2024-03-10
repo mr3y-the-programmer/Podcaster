@@ -142,6 +142,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.data)
     implementation(projects.core.sync)
+    implementation(projects.core.opml)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)

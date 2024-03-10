@@ -15,6 +15,7 @@ import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.DownloadsScreen
 import com.mr3y.podcaster.ui.screens.EpisodeDetailsScreen
 import com.mr3y.podcaster.ui.screens.ExploreScreen
+import com.mr3y.podcaster.ui.screens.ImportExportScreen
 import com.mr3y.podcaster.ui.screens.LicensesScreen
 import com.mr3y.podcaster.ui.screens.PodcastDetailsScreen
 import com.mr3y.podcaster.ui.screens.SettingsScreen
@@ -94,6 +95,13 @@ fun PodcasterNavGraph(
             LicensesScreen(
                 onNavigateUp = navController::navigateUpOnce,
                 externalContentPadding = contentPadding,
+                excludedWindowInsets = excludedWindowInsets,
+            )
+        }
+        composable<Destinations.ImportExport> {
+            ImportExportScreen(
+                onNavDrawerClick = onNavDrawerClick,
+                contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )
         }

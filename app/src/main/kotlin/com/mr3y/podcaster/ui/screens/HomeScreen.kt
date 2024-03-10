@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.ImportExport
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -103,6 +104,12 @@ fun HomeScreen(
             Icons.Outlined.Search,
             createRoutePattern<Destinations.Explore>(),
             Destinations.Explore,
+        ),
+        DrawerTab(
+            strings.import_export_label,
+            Icons.Outlined.ImportExport,
+            createRoutePattern<Destinations.ImportExport>(),
+            Destinations.ImportExport,
         ),
         DrawerTab(
             strings.tab_downloads_label,

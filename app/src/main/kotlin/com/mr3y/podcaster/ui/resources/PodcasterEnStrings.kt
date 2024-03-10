@@ -19,7 +19,7 @@ val EnStrings = PodcasterStrings(
     icon_theme_content_description = "Toggle App Theme",
     subscriptions_label = "Subscriptions",
     subscriptions_empty_list = "You aren't subscribed to any podcast.\nYour subscriptions will show up here.",
-    subscriptions_episodes_empty_list = "Start subscribing podcasts by clicking on ☰ icon -> then Explore.",
+    subscriptions_episodes_empty_list = "Start subscribing podcasts by\n • Clicking on ☰ icon -> then Explore\n • Or import your existing subscriptions collection from ☰ icon -> then Import/Export.",
     generic_error_message = "Sorry, Something went wrong",
     retry_label = "Retry",
     currently_playing = "Currently Playing",
@@ -62,4 +62,13 @@ val EnStrings = PodcasterStrings(
             append("PodcastIndex.org")
         }
     },
+    import_export_label = "Import/Export Opml",
+    import_label = "Import",
+    export_label = "Export",
+    import_notice = "If you're importing subscriptions collection make sure you're connected to the internet or the importing will fail",
+    import_succeeded = "Importing subscriptions collection completed successfully!",
+    import_network_error = "Importing collection failed! make sure you're connected to the internet.",
+    import_empty_file_error = "Empty file! nothing to import",
+    import_corrupted_file_error = "File may be corrupted! process failed.",
+    import_unknown_error = "Sorry, Something went wrong",
 )
