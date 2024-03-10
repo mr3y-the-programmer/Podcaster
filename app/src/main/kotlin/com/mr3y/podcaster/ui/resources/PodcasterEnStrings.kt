@@ -62,7 +62,7 @@ val EnStrings = PodcasterStrings(
             append("PodcastIndex.org")
         }
     },
-    import_export_label = "Import/Export",
+    import_export_label = "Import/Export Opml",
     import_label = "Import",
     export_label = "Export",
     import_notice = "If you're importing subscriptions collection make sure you're connected to the internet or the importing will fail",

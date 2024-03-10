@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.opml.model.OpmlResult
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.presenter.opml.OpmlViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
@@ -110,7 +111,7 @@ fun ImportExportScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(contentPadding)
+                .padding(contentPadding + externalContentPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
                 .padding(top = 56.dp),
