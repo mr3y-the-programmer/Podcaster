@@ -20,7 +20,7 @@ fun NetworkEpisodes.mapToEpisodes(podcastTitle: String?, podcastArtworkUrl: Stri
 
 fun PodcastFeed.mapToPodcast() = Podcast(
     id = id,
-    guid = guid,
+    guid = guid ?: "",
     title = title,
     description = description,
     podcastUrl = podcastUrl,

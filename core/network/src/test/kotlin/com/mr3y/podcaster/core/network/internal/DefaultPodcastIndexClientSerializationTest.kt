@@ -7,6 +7,7 @@ import assertk.assertions.isInstanceOf
 import com.github.michaelbull.result.Ok
 import com.mr3y.podcaster.core.logger.TestLogger
 import com.mr3y.podcaster.core.network.AndroidSearchQueryResponse
+import com.mr3y.podcaster.core.network.PodcastSearchQueryResponse
 import com.mr3y.podcaster.core.network.TechnologySearchQueryResponse
 import com.mr3y.podcaster.core.network.di.FakeHttpClient
 import com.mr3y.podcaster.core.network.di.doCleanup
@@ -48,6 +49,19 @@ class DefaultPodcastIndexClientSerializationTest {
         httpClient.enqueueMockResponse(TechnologySearchQueryResponse, HttpStatusCode.OK)
 
         searchResult = sut.searchForPodcastsByTerm("technology")
+        assertThat(searchResult).all {
+            isInstanceOf<Ok<NetworkPodcasts>>()
+            val responseSize = (searchResult as Ok<NetworkPodcasts>).value.count
+            assertThat(responseSize).isEqualTo(60)
+        }
+
+        // Reset
+        httpClient.doCleanup()
+
+        // Repeat the same steps but on a different search query.
+        httpClient.enqueueMockResponse(PodcastSearchQueryResponse, HttpStatusCode.OK)
+
+        searchResult = sut.searchForPodcastsByTerm("podcast")
         assertThat(searchResult).all {
             isInstanceOf<Ok<NetworkPodcasts>>()
             val responseSize = (searchResult as Ok<NetworkPodcasts>).value.count

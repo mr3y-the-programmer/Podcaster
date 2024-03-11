@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class PodcastFeed(
     val id: Long,
     @SerialName("podcastGuid")
-    val guid: String,
+    val guid: String?,
     val title: String,
     val description: String,
     @SerialName("url")
