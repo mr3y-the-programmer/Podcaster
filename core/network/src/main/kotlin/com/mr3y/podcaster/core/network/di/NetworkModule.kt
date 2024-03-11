@@ -56,7 +56,7 @@ object NetworkModule {
         val requestAuthenticationPlugin = createClientPlugin("requestAuthenticatorPlugin") {
             onRequest { request, _ ->
                 request.headers {
-                    val epoch = System.currentTimeMillis() / 1000
+                    val epoch = (System.currentTimeMillis() / 1000).let { if (BuildConfig.DEBUG) it - 150 else it }
                     append("User-Agent", "Podcaster/1.0")
                     append("X-Auth-Date", epoch.toString())
                     append("X-Auth-Key", BuildConfig.API_KEY)
