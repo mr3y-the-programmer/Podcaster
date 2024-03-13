@@ -11,5 +11,4 @@ abstract class BaseMoleculeViewModel<Event : Any> : ViewModel() {
     protected val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
 
     protected val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
-
 }
