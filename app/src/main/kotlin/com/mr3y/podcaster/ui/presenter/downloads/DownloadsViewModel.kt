@@ -9,14 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
+import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -25,9 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DownloadsViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
-) : ViewModel() {
-
-    private val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+) : BaseMoleculeViewModel<Nothing>() {
 
     val state = moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
         DownloadsPresenter(repository = podcastsRepository)

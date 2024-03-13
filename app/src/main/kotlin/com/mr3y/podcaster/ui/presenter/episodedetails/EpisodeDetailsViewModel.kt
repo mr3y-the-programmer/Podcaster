@@ -9,31 +9,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.kiwi.navigationcompose.typed.decodeArguments
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.ui.navigation.Destinations
+import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class EpisodeDetailsViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
     private val savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-
-    private val events = MutableSharedFlow<EpisodeDetailsUIEvent>(extraBufferCapacity = 20)
-
-    private val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+) : BaseMoleculeViewModel<EpisodeDetailsUIEvent>() {
 
     private val navArguments = savedStateHandle.decodeArguments<Destinations.EpisodeDetails>()
 

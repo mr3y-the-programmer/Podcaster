@@ -9,27 +9,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.github.michaelbull.result.mapBoth
 import com.mr3y.podcaster.core.data.PodcastsRepository
+import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
-) : ViewModel() {
-
-    private val events = MutableSharedFlow<ExploreUIEvent>(extraBufferCapacity = 20)
-
-    private val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+) : BaseMoleculeViewModel<ExploreUIEvent>() {
 
     val state = moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
         ExplorePresenter(repository = podcastsRepository, events = events)
