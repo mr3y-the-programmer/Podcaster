@@ -22,18 +22,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +69,7 @@ import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
+import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -211,18 +206,21 @@ fun EpisodeDetailsScreen(
     ) {
         Scaffold(
             topBar = {
-                EpisodeDetailsTopAppBar(
-                    onNavigateUp = onNavigateUp,
-                    containerColor = if (state.isLoading || state.episode == null) {
-                        MaterialTheme.colorScheme.surface
-                    } else {
-                        dominantColorState.color
-                    },
-                    contentColor = if (state.isLoading || state.episode == null) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        dominantColorState.onColor
-                    },
+                TopBar(
+                    isTopLevelScreen = false,
+                    onNavIconClick = onNavigateUp,
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = if (state.isLoading || state.episode == null) {
+                            MaterialTheme.colorScheme.surface
+                        } else {
+                            dominantColorState.color
+                        },
+                        navigationIconContentColor = if (state.isLoading || state.episode == null) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            dominantColorState.onColor
+                        },
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                 )
             },
@@ -286,36 +284,6 @@ fun EpisodeDetailsScreen(
             }
         }
     }
-}
-
-@Composable
-private fun EpisodeDetailsTopAppBar(
-    onNavigateUp: () -> Unit,
-    containerColor: Color,
-    contentColor: Color,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = onNavigateUp,
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = contentColor),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = strings.icon_navigate_up_content_description,
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = containerColor,
-            navigationIconContentColor = contentColor,
-        ),
-        title = { },
-        actions = {},
-        modifier = modifier,
-    )
 }
 
 @Composable

@@ -13,19 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.opml.model.OpmlResult
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.presenter.opml.OpmlViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -93,8 +89,13 @@ fun ImportExportScreen(
     }
     Scaffold(
         topBar = {
-            ImportExportTopAppBar(
-                onNavDrawerClick = onNavDrawerClick,
+            TopBar(
+                isTopLevelScreen = true,
+                onNavIconClick = onNavDrawerClick,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -148,32 +149,6 @@ fun ImportExportScreen(
             }
         }
     }
-}
-
-@Composable
-private fun ImportExportTopAppBar(
-    onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = onNavDrawerClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description,
-                )
-            }
-        },
-        title = {},
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent,
-        ),
-        modifier = modifier,
-    )
 }
 
 @Composable

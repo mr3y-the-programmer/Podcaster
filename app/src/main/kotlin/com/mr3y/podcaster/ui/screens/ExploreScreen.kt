@@ -34,7 +34,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
@@ -51,7 +50,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -81,6 +79,7 @@ import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.presenter.explore.ExploreUIState
 import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
@@ -140,8 +139,13 @@ fun ExploreScreen(
     }
     Scaffold(
         topBar = {
-            ExploreTopAppBar(
-                onNavDrawerClick = onNavDrawerClick,
+            TopBar(
+                isTopLevelScreen = true,
+                onNavIconClick = onNavDrawerClick,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -220,32 +224,6 @@ fun ExploreScreen(
             }
         }
     }
-}
-
-@Composable
-private fun ExploreTopAppBar(
-    onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = onNavDrawerClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description,
-                )
-            }
-        },
-        title = {},
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent,
-        ),
-        modifier = modifier,
-    )
 }
 
 @Composable

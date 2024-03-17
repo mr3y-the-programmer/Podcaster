@@ -33,7 +33,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.NightlightRound
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WbSunny
@@ -48,7 +47,6 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +89,7 @@ import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
+import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -211,10 +210,43 @@ fun SubscriptionsScreen(
     ) {
         Scaffold(
             topBar = {
-                SubscriptionsTopAppBar(
-                    onSettingsClick = onSettingsClick,
-                    onToggleAppTheme = onToggleAppTheme,
-                    onNavDrawerClick = onNavDrawerClick,
+                TopBar(
+                    isTopLevelScreen = true,
+                    onNavIconClick = onNavDrawerClick,
+                    actions = {
+                        val darkTheme = isAppThemeDark()
+                        IconButton(
+                            onClick = { onToggleAppTheme(darkTheme) },
+                        ) {
+                            AnimatedContent(
+                                targetState = darkTheme,
+                                transitionSpec = {
+                                    (fadeIn(animationSpec = tween(400, delayMillis = 90)) + slideInHorizontally()).togetherWith(
+                                        fadeOut(animationSpec = tween(90)) + slideOutHorizontally(),
+                                    )
+                                },
+                                label = "Animated toggle theme icon",
+                            ) { isDark ->
+                                Icon(
+                                    imageVector = if (isDark) Icons.Filled.NightlightRound else Icons.Filled.WbSunny,
+                                    contentDescription = strings.icon_theme_content_description,
+                                )
+                            }
+                        }
+                        IconButton(
+                            onClick = onSettingsClick,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = strings.icon_settings_content_description,
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                 )
             },
@@ -260,64 +292,6 @@ fun SubscriptionsScreen(
             }
         }
     }
-}
-
-@Composable
-private fun SubscriptionsTopAppBar(
-    onSettingsClick: () -> Unit,
-    onToggleAppTheme: (isDarkTheme: Boolean) -> Unit,
-    onNavDrawerClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = onNavDrawerClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = strings.icon_menu_content_description,
-                )
-            }
-        },
-        title = { },
-        actions = {
-            val darkTheme = isAppThemeDark()
-            IconButton(
-                onClick = { onToggleAppTheme(darkTheme) },
-            ) {
-                AnimatedContent(
-                    targetState = darkTheme,
-                    transitionSpec = {
-                        (fadeIn(animationSpec = tween(400, delayMillis = 90)) + slideInHorizontally()).togetherWith(
-                            fadeOut(animationSpec = tween(90)) + slideOutHorizontally(),
-                        )
-                    },
-                    label = "Animated toggle theme icon",
-                ) { isDark ->
-                    Icon(
-                        imageVector = if (isDark) Icons.Filled.NightlightRound else Icons.Filled.WbSunny,
-                        contentDescription = strings.icon_theme_content_description,
-                    )
-                }
-            }
-            IconButton(
-                onClick = onSettingsClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = strings.icon_settings_content_description,
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryTertiary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-        ),
-        modifier = modifier,
-    )
 }
 
 @Composable

@@ -16,28 +16,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
@@ -48,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mr3y.podcaster.BuildConfig
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.plus
 import com.mr3y.podcaster.ui.presenter.Theme
 import com.mr3y.podcaster.ui.presenter.UserPreferences
@@ -111,12 +105,26 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val isDarkTheme = isAppThemeDark()
+    val strings = LocalStrings.current
     val context = LocalContext.current
     LaunchedEffect(key1 = isDarkTheme) {
         context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
     }
     Scaffold(
-        topBar = { SettingsTopAppBar(onNavigateUp = onNavigateUp) },
+        topBar = {
+            TopBar(
+                isTopLevelScreen = false,
+                onNavIconClick = onNavigateUp,
+                title = {
+                    Text(
+                        text = strings.settings_label,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Normal,
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
         contentWindowInsets = if (excludedWindowInsets != null) ScaffoldDefaults.contentWindowInsets.exclude(excludedWindowInsets) else ScaffoldDefaults.contentWindowInsets,
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier,
@@ -127,7 +135,6 @@ fun SettingsScreen(
                 .padding(contentPadding + externalContentPadding)
                 .fillMaxSize(),
         ) {
-            val strings = LocalStrings.current
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -185,36 +192,6 @@ fun SettingsScreen(
             )
         }
     }
-}
-
-@Composable
-private fun SettingsTopAppBar(
-    onNavigateUp: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = onNavigateUp,
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-        title = {
-            Text(
-                text = strings.settings_label,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Normal,
-            )
-        },
-        actions = {},
-        modifier = modifier.fillMaxWidth(),
-    )
 }
 
 @Composable
