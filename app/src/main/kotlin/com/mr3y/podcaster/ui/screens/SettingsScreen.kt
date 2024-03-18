@@ -160,8 +160,8 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(
-                            onClick = { clipboardManager.setText(AnnotatedString(BuildConfig.VERSION_NAME)) }
-                        )
+                            onClick = { clipboardManager.setText(AnnotatedString(BuildConfig.VERSION_NAME)) },
+                        ),
                 ) {
                     Heading(
                         text = strings.version_label,
