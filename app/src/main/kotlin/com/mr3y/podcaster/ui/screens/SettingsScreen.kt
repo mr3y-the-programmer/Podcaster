@@ -31,9 +31,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -153,20 +155,30 @@ fun SettingsScreen(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-                Heading(
-                    text = strings.version_label,
+                val clipboardManager = LocalClipboardManager.current
+                Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp),
-                )
-                Text(
-                    text = BuildConfig.VERSION_NAME,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 8.dp),
-                )
+                        .fillMaxWidth()
+                        .clickable(
+                            onClick = { clipboardManager.setText(AnnotatedString(BuildConfig.VERSION_NAME)) }
+                        )
+                ) {
+                    Heading(
+                        text = strings.version_label,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp),
+                    )
+                    Text(
+                        text = BuildConfig.VERSION_NAME,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 8.dp),
+                    )
+                }
+
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 SettingsTextButton(
                     text = strings.feedback_and_issues_label,
