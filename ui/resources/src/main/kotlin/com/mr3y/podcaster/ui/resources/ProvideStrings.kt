@@ -5,7 +5,7 @@ import com.mr3y.podcaster.ProvideStrings
 
 @Composable
 fun ProvideAppStrings(
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     ProvideStrings(content = content)
 }
