@@ -125,10 +125,6 @@ hilt {
     enableAggregatingTask = true
 }
 
-ksp {
-    arg("lyricist.packageName", "com.mr3y.podcaster")
-}
-
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.splashscreen)
@@ -143,10 +139,10 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.sync)
     implementation(projects.core.opml)
+    implementation(projects.ui.resources)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
-    implementation(libs.lyricist)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
@@ -172,7 +168,6 @@ dependencies {
     implementation(libs.datastore.pref)
     implementation(libs.aboutlibraries.m3)
 
-    ksp(libs.lyricist.processor)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
     implementation(libs.hilt.workmanager)
