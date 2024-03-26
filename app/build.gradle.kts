@@ -140,6 +140,7 @@ dependencies {
     implementation(projects.core.sync)
     implementation(projects.core.opml)
     implementation(projects.ui.resources)
+    implementation(projects.ui.preview)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.htmlconverter)
     implementation(libs.kmpalette.core)
