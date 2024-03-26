@@ -2,8 +2,7 @@ package com.mr3y.podcaster.core.opml
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
-import com.github.michaelbull.result.Ok
+import assertk.assertions.isTrue
 import com.mr3y.podcaster.core.logger.TestLogger
 import com.mr3y.podcaster.core.opml.model.OpmlPodcast
 import com.mr3y.podcaster.core.sampledata.Podcasts
@@ -52,8 +51,7 @@ class OpmlAdapterTest {
         )
 
         var result = sut.decode(pocketCastsExportedOpml)
-        assertThat(result).isInstanceOf<Ok<List<OpmlPodcast>>>()
-        result as Ok<List<OpmlPodcast>>
+        assertThat(result.isOk).isTrue()
         assertThat(result.value.toSet()).isEqualTo(expectedPocketCastsFeeds)
 
         val antennaPodExportedOpml = """
@@ -73,8 +71,7 @@ class OpmlAdapterTest {
         )
 
         result = sut.decode(antennaPodExportedOpml)
-        assertThat(result).isInstanceOf<Ok<List<OpmlPodcast>>>()
-        result as Ok<List<OpmlPodcast>>
+        assertThat(result.isOk).isTrue()
         assertThat(result.value.toSet()).isEqualTo(expectedAntennaPodFeeds)
     }
 
@@ -96,8 +93,7 @@ class OpmlAdapterTest {
         """.trimIndent()
 
         val result = sut.encode(subscriptions)
-        assertThat(result).isInstanceOf<Ok<String>>()
-        result as Ok<String>
+        assertThat(result.isOk).isTrue()
         assertThat(result.value).isEqualTo(expectedExportedResult)
     }
 }
