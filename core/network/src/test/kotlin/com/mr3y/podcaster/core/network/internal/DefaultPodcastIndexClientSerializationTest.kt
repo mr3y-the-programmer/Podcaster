@@ -3,8 +3,7 @@ package com.mr3y.podcaster.core.network.internal
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
-import com.github.michaelbull.result.Ok
+import assertk.assertions.isTrue
 import com.mr3y.podcaster.core.logger.TestLogger
 import com.mr3y.podcaster.core.network.AndroidSearchQueryResponse
 import com.mr3y.podcaster.core.network.PodcastSearchQueryResponse
@@ -12,7 +11,6 @@ import com.mr3y.podcaster.core.network.TechnologySearchQueryResponse
 import com.mr3y.podcaster.core.network.di.FakeHttpClient
 import com.mr3y.podcaster.core.network.di.doCleanup
 import com.mr3y.podcaster.core.network.di.enqueueMockResponse
-import com.mr3y.podcaster.core.network.model.NetworkPodcasts
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -38,8 +36,8 @@ class DefaultPodcastIndexClientSerializationTest {
 
         // then the response should be deserialized successfully.
         assertThat(searchResult).all {
-            isInstanceOf<Ok<NetworkPodcasts>>()
-            val responseSize = (searchResult as Ok<NetworkPodcasts>).value.count
+            assertThat(searchResult.isOk).isTrue()
+            val responseSize = searchResult.value.count
             assertThat(responseSize).isEqualTo(60)
         }
         // Reset
@@ -50,8 +48,8 @@ class DefaultPodcastIndexClientSerializationTest {
 
         searchResult = sut.searchForPodcastsByTerm("technology")
         assertThat(searchResult).all {
-            isInstanceOf<Ok<NetworkPodcasts>>()
-            val responseSize = (searchResult as Ok<NetworkPodcasts>).value.count
+            assertThat(searchResult.isOk).isTrue()
+            val responseSize = searchResult.value.count
             assertThat(responseSize).isEqualTo(60)
         }
 
@@ -63,8 +61,8 @@ class DefaultPodcastIndexClientSerializationTest {
 
         searchResult = sut.searchForPodcastsByTerm("podcast")
         assertThat(searchResult).all {
-            isInstanceOf<Ok<NetworkPodcasts>>()
-            val responseSize = (searchResult as Ok<NetworkPodcasts>).value.count
+            assertThat(searchResult.isOk).isTrue()
+            val responseSize = searchResult.value.count
             assertThat(responseSize).isEqualTo(60)
         }
     }
