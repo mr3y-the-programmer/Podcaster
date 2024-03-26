@@ -13,8 +13,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
-import com.mr3y.podcaster.ProvideStrings
 import com.mr3y.podcaster.ui.presenter.Theme
+import com.mr3y.podcaster.ui.resources.ProvideAppStrings
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -154,7 +154,7 @@ fun PodcasterTheme(
         else -> LightColors
     }
 
-    ProvideStrings {
+    ProvideAppStrings {
         CompositionLocalProvider(LocalAppTheme provides theme) {
             MaterialTheme(
                 colorScheme = colorScheme,
