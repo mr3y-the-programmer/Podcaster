@@ -14,6 +14,10 @@ import com.mr3y.podcaster.core.local.GenresColumnAdapter
 object FakeDatabaseModule {
 
     fun provideInMemoryDatabaseInstance(): PodcasterDatabase {
+        // Some tests may fail complaining that sqlite-jdbc jar isn't on the classpath whilst it is already on the classpath.
+        // so, this line fixes it until we find a better solution or better understand the root cause exactly.
+        Class.forName("org.sqlite.JDBC")
+
         val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
         PodcasterDatabase.Schema.create(driver)
         return PodcasterDatabase(
