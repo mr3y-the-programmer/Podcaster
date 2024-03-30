@@ -7,8 +7,6 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.RenderersFactory
@@ -22,23 +20,14 @@ import androidx.media3.session.MediaSession.MediaItemsWithStartPosition
 import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.ListenableFuture
 import com.mr3y.podcaster.core.data.PodcastsRepository
-import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
-import com.mr3y.podcaster.core.model.PlayingStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.guava.future
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.abs
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
@@ -76,7 +65,6 @@ class PlaybackService : MediaSessionService() {
         mediaPlayer.startListeningForUpdatesIn(serviceScope)
         return super.onStartCommand(intent, flags, startId)
     }
-
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         val player = mediaSession?.player ?: return

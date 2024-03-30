@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
  * Encapsulate media session's player operations to make it testable & isolated from Service class.
  */
 @OptIn(UnstableApi::class)
-class ServiceMediaPlayer (
+class ServiceMediaPlayer(
     private val player: Player,
     private val podcastsRepository: PodcastsRepository,
 ) : ForwardingPlayer(player) {
@@ -133,5 +133,4 @@ class ServiceMediaPlayer (
             )
         }
     }
-
 }

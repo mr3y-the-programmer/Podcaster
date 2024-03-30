@@ -97,7 +97,7 @@ class ServiceMediaPlayerTest {
 
     private val mediaPlayer = ServiceMediaPlayer(
         player = internalPlayer,
-        podcastsRepository = podcastsRepo
+        podcastsRepository = podcastsRepo,
     )
 
     @Before
@@ -223,7 +223,7 @@ class ServiceMediaPlayerTest {
                     .setIsPlayable(true)
                     .setArtworkUri(Uri.parse(Episodes[0].artworkUrl))
                     .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
-                    .build()
+                    .build(),
             )
             .build()
 
