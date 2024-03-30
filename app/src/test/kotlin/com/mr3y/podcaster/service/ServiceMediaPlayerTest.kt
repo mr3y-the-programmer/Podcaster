@@ -44,7 +44,7 @@ import org.robolectric.annotation.Config
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
-/*@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4::class)
 @Config(sdk = [34], manifest = Config.NONE)
 class ServiceMediaPlayerTest {
 
@@ -55,27 +55,27 @@ class ServiceMediaPlayerTest {
                     FakeMediaSource(
                         FakeTimeline(
                             FakeTimeline.TimelineWindowDefinition(
-                                *//* periodCount = *//*
+                                /* periodCount = */
                                 1,
-                                *//* id = *//*
+                                /* id = */
                                 SampleMediaItem.mediaId,
-                                *//* isSeekable = *//*
+                                /* isSeekable = */
                                 true,
-                                *//* isDynamic = *//*
+                                /* isDynamic = */
                                 false,
-                                *//* isLive = *//*
+                                /* isLive = */
                                 false,
-                                *//* isPlaceholder = *//*
+                                /* isPlaceholder = */
                                 false,
-                                *//* durationUs = *//*
+                                /* durationUs = */
                                 TimeUnit.SECONDS.toMicros(CorrectEpisodeDurationInSec.toLong()),
-                                *//* defaultPositionUs = *//*
+                                /* defaultPositionUs = */
                                 0,
-                                *//* windowOffsetInFirstPeriodUs = *//*
+                                /* windowOffsetInFirstPeriodUs = */
                                 0,
-                                *//* adPlaybackStates = *//*
+                                /* adPlaybackStates = */
                                 listOf(AdPlaybackState.NONE),
-                                *//* mediaItem = *//*
+                                /* mediaItem = */
                                 SampleMediaItem,
                             ),
                         ),
@@ -232,4 +232,4 @@ class ServiceMediaPlayerTest {
 
         val Tolerance: Int = 1
     }
-}*/
+}
