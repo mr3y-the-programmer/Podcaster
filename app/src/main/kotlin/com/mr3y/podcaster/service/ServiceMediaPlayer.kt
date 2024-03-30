@@ -51,7 +51,9 @@ class ServiceMediaPlayer (
                     val progressInSec = player.currentPosition.div(1000)
                     if (progressInSec != 0L && player.isPlaying) {
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
-                            if (!episode.isCompleted && episode.durationInSec?.toLong() == progressInSec) {
+                            if (episode.durationInSec == null) return@let
+
+                            if (!episode.isCompleted && abs(episode.durationInSec!!.toLong() - progressInSec) <= 1) {
                                 podcastsRepository.markEpisodeAsCompleted(episode.id)
                             }
                         }
@@ -81,7 +83,9 @@ class ServiceMediaPlayer (
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
                             val isAboutToPlay = playingStatus == PlayingStatus.Loading || playingStatus == PlayingStatus.Playing
                             episode.durationInSec?.let {
-                                val hasReachedEndOfEpisode = abs((it * 1000).toLong() - currentPosition) <= 1000L && episode.progressInSec == episode.durationInSec
+                                if (episode.progressInSec == null) return@let
+
+                                val hasReachedEndOfEpisode = abs((it * 1000).toLong() - currentPosition) <= 1000L && abs(episode.progressInSec!! - it) <= 1
                                 if (isAboutToPlay && hasReachedEndOfEpisode) {
                                     seekTo(0L)
                                     podcastsRepository.updateEpisodePlaybackProgress(progressInSec = 0, episodeId = episode.id)
