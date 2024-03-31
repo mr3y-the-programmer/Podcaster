@@ -66,8 +66,6 @@ dependencies {
     testImplementation(projects.core.networkTestFixtures)
     testImplementation(projects.core.databaseTestFixtures)
     testImplementation(projects.core.loggerTestFixtures)
-    testImplementation(libs.junit)
-    testImplementation(libs.assertk)
-    testImplementation(libs.coroutines.test)
+    testImplementation(libs.bundles.unit.testing)
     testImplementation(libs.ktor.client.mock)
 }

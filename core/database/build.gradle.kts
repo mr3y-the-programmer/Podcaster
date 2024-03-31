@@ -92,9 +92,6 @@ dependencies {
 
     kspTest(libs.hilt.compiler)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.assertk)
-    testImplementation(libs.coroutines.test)
-    testImplementation(libs.turbine)
+    testImplementation(libs.bundles.unit.testing)
     testImplementation(projects.core.databaseTestFixtures)
 }
