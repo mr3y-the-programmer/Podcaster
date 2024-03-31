@@ -51,9 +51,7 @@ ktlint {
 
 dependencies {
 
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.content.negotation)
-    implementation(libs.ktor.kotlinx.serialization)
+    implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization)
     implementation(libs.ktor.client.mock)
 }

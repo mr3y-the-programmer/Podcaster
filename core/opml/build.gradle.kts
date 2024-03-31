@@ -61,13 +61,9 @@ dependencies {
     implementation(projects.core.logger)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
-    implementation(libs.xmlutil.core)
-    implementation(libs.xmlutil.serialization)
-    implementation(libs.kotlinx.serialization)
+    implementation(libs.bundles.serialization)
     implementation(libs.result)
 
     testImplementation(projects.core.loggerTestFixtures)
-    testImplementation(libs.junit)
-    testImplementation(libs.assertk)
-    testImplementation(libs.coroutines.test)
+    testImplementation(libs.bundles.unit.testing)
 }

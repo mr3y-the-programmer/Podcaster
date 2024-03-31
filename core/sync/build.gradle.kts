@@ -55,8 +55,6 @@ dependencies {
     implementation(projects.core.data)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.androidx.compiler)
-    implementation(libs.hilt.common)
+    implementation(libs.bundles.workmanager)
     implementation(libs.hilt.runtime)
-    implementation(libs.hilt.workmanager)
-    implementation(libs.workmanager.core)
 }

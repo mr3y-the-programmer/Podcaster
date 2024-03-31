@@ -138,4 +138,61 @@ appversioning = { id = "io.github.reactivecircus.app-versioning", version.ref = 
 play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
 
 [bundles]
-
+androidx-core = [
+    "core-ktx",
+    "splashscreen",
+    "activity-compose",
+    "lifecycle-runtime-compose",
+    "lifecycle-runtime-ktx"
+]
+compose = [
+    "ui",
+    "ui-graphics",
+    "ui-tooling-preview",
+    "material3",
+    "material-icons-extended",
+    "coil",
+    "kmpalette-core",
+    "aboutlibraries-m3",
+    "compose-htmlconverter"
+]
+navigation = [
+    "navigation",
+    "navigation-typed",
+    "hilt-navigation-compose"
+]
+media3 = [
+    "media3-exoplayer",
+    "media3-common",
+    "media3-session",
+    "media3-exoplayer-workmanager",
+    "coroutines-guava"
+]
+android-test = [
+    "androidx-test-ext-junit",
+    "androidx-test-runner",
+    "androidx-test-core"
+]
+ktor = [
+    "ktor-core",
+    "ktor-okhttp",
+    "ktor-content-negotation",
+    "ktor-kotlinx-serialization"
+]
+serialization = [
+    "xmlutil-core",
+    "xmlutil-serialization",
+    "kotlinx-serialization"
+]
+workmanager = [
+    "hilt-common",
+    "hilt-workmanager",
+    "workmanager-core"
+]
+unit-testing = [
+    "junit",
+    "assertk",
+    "coroutines-test",
+    "turbine",
+    "mockk"
+]

@@ -77,16 +77,11 @@ dependencies {
     implementation(libs.hilt.runtime)
     implementation(projects.core.model)
     implementation(projects.core.logger)
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.okhttp)
-    implementation(libs.ktor.content.negotation)
-    implementation(libs.ktor.kotlinx.serialization)
+    implementation(libs.bundles.ktor)
     implementation(libs.result)
     implementation(libs.kotlinx.serialization)
 
     testImplementation(projects.core.networkTestFixtures)
     testImplementation(projects.core.loggerTestFixtures)
-    testImplementation(libs.junit)
-    testImplementation(libs.assertk)
-    testImplementation(libs.coroutines.test)
+    testImplementation(libs.bundles.unit.testing)
 }
