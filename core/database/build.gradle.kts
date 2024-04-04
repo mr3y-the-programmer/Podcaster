@@ -2,52 +2,13 @@ import app.cash.sqldelight.core.capitalize
 import app.cash.sqldelight.gradle.SqlDelightTask
 
 plugins {
-    alias(libs.plugins.com.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ktlint)
+    alias(libs.plugins.podcaster.android.lib)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
 }
 
 android {
     namespace = "com.mr3y.podcaster.core.local"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        )
-    }
-    buildFeatures {
-        compose = false
-        buildConfig = false
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 androidComponents {
@@ -70,13 +31,6 @@ sqldelight {
             schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
             verifyMigrations.set(true)
         }
-    }
-}
-
-ktlint {
-    filter {
-        exclude("**/generated/**")
-        exclude("**/build/**")
     }
 }
 
