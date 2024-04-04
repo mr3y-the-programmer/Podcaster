@@ -1,4 +1,7 @@
 [versions]
+minSdk = "26"
+targetSdk = "34"
+compileSdk = "34"
 agp = "8.3.1"
 kotlin = "1.9.23"
 ksp = "1.9.23-1.0.19"
@@ -121,6 +124,11 @@ aboutlibraries-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3"
 xmlutil-core = { group = "io.github.pdvrieze.xmlutil", name = "core", version.ref = "xmlutil" }
 xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serialization", version.ref = "xmlutil" }
 
+# Convention plugins dependencies
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
+
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
@@ -136,6 +144,9 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 appversioning = { id = "io.github.reactivecircus.app-versioning", version.ref = "appversioning" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
+podcaster-android-app = { id = "podcaster.android.application", version = "unspecified" }
+podcaster-android-lib = { id = "podcaster.android.library", version = "unspecified" }
+podcaster-jvm-lib = { id = "podcaster.jvm.library", version = "unspecified" }
 
 [bundles]
 androidx-core = [
