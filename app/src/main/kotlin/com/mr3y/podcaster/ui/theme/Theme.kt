@@ -13,7 +13,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
-import com.mr3y.podcaster.ui.presenter.Theme
 import com.mr3y.podcaster.ui.resources.ProvideAppStrings
 
 private val LightColors = lightColorScheme(
@@ -109,6 +108,12 @@ val ColorScheme.onPrimaryTertiaryContainer
     @Composable
     @ReadOnlyComposable
     get() = if (isAppThemeLight()) onPrimaryContainer else onTertiaryContainer
+
+enum class Theme {
+    Light,
+    Dark,
+    SystemDefault,
+}
 
 val LocalAppTheme = staticCompositionLocalOf<Theme> {
     error("AppTheme not provided")
