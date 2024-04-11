@@ -42,7 +42,9 @@ Google Play:
 <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
 </a>
 
-Or from [github releases](https://github.com/mr3y-the-programmer/Podcaster/releases)
+Github:
+    
+<a href="https://github.com/mr3y-the-programmer/Podcaster/releases/latest"><img src="https://raw.githubusercontent.com/andOTP/andOTP/master/assets/badges/get-it-on-github.png" height="80"></a>
 
 ## Tech Stack
 |                 |                                                |
