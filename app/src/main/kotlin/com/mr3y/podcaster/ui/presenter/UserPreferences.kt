@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mr3y.podcaster.ui.presenter.di.ApplicationScope
+import com.mr3y.podcaster.ui.theme.Theme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,10 +68,4 @@ class UserPreferences @Inject constructor(
         private val SelectedThemeKey = stringPreferencesKey("selected_theme")
         private val DynamicColorKey = booleanPreferencesKey("dynamic_color")
     }
-}
-
-enum class Theme {
-    Light,
-    Dark,
-    SystemDefault,
 }
