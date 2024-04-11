@@ -19,10 +19,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
-import com.mr3y.podcaster.ui.theme.Theme
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.HomeScreen
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.Theme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject

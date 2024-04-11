@@ -45,11 +45,11 @@ import com.mr3y.podcaster.BuildConfig
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.plus
-import com.mr3y.podcaster.ui.theme.Theme
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
+import com.mr3y.podcaster.ui.theme.Theme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
