@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
@@ -297,7 +298,7 @@ class PodcasterAppState @Inject constructor(
         podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Paused)
     }
 
-    private fun MediaController.setMediaItemForEpisode(episode: Episode) {
+    internal fun Player.setMediaItemForEpisode(episode: Episode) {
         val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
@@ -312,7 +313,7 @@ class PodcasterAppState @Inject constructor(
         }
     }
 
-    private fun MediaController.addMediaItemForEpisode(episode: Episode) {
+    private fun Player.addMediaItemForEpisode(episode: Episode) {
         val mediaItem = MediaItem.fromUri(episode.enclosureUrl.toUri())
             .buildUpon()
             .setMediaId(episode.id.toString())
@@ -329,7 +330,7 @@ class PodcasterAppState @Inject constructor(
         controller?.play()
     }
 
-    private fun MediaController.maybeAddQueueEpisodes() {
+    internal fun Player.maybeAddQueueEpisodes() {
         // add all episodes in the app's local queue to player playlist and maintain their order.
         val episodesQueue = podcastsRepository.getQueueEpisodes()
 
