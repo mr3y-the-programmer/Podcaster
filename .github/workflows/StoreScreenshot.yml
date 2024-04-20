@@ -11,6 +11,10 @@ on:
       - '**.txt'
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 env:
@@ -46,7 +50,7 @@ jobs:
         id: record-test
         run: |
           # Use --rerun-tasks to disable cache for test task
-          ./gradlew recordRoborazziDebug --stacktrace --rerun-tasks
+          ./gradlew recordRoborazziDebug --stacktrace --rerun-tasks -Pscreenshot
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}

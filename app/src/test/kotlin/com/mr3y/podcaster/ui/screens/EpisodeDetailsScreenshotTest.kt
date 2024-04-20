@@ -11,10 +11,12 @@ import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
+@Category(ScreenshotTests::class)
 class EpisodeDetailsScreenshotTest : BaseScreenshotTest() {
 
     @Test

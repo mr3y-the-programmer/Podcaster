@@ -50,8 +50,17 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
-        unitTests.isIncludeAndroidResources = true
+        unitTests {
+            isReturnDefaultValues = true
+            isIncludeAndroidResources = true
+            all {
+                it.useJUnit {
+                    if (project.hasProperty("screenshot")) {
+                        includeCategories("com.mr3y.podcaster.ui.screens.ScreenshotTests")
+                    }
+                }
+            }
+        }
     }
 }
 

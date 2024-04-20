@@ -46,3 +46,8 @@ open class BaseScreenshotTest {
         BitmapDrawable(context.resources, BitmapFactory.decodeStream(this.inputStream()))
     }
 }
+
+/**
+ * Used to filter ScreenshotTests using -Pscreenshot parameter
+ */
+interface ScreenshotTests
