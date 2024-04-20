@@ -4,12 +4,17 @@ import android.app.Application
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import coil.Coil
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.test.FakeImageLoaderEngine
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
+import com.github.takahirom.roborazzi.RoborazziOptions
+import com.github.takahirom.roborazzi.ThresholdValidator
+import com.github.takahirom.roborazzi.captureRoboImage
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
@@ -25,11 +30,24 @@ open class BaseScreenshotTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    var tolerance = 0.01f
+
     protected val context = ApplicationProvider.getApplicationContext<Application>()
 
     @Before
     fun setup() {
         Coil.setImageLoader(provideFakeImageLoader())
+    }
+
+    @OptIn(ExperimentalRoborazziApi::class)
+    protected fun takeScreenshot() {
+        composeRule.onRoot().captureRoboImage(
+            roborazziOptions = RoborazziOptions(
+                compareOptions = RoborazziOptions.CompareOptions(
+                    resultValidator = ThresholdValidator(tolerance)
+                )
+            )
+        )
     }
 
     @OptIn(ExperimentalCoilApi::class)
