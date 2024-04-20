@@ -44,9 +44,9 @@ open class BaseScreenshotTest {
         composeRule.onRoot().captureRoboImage(
             roborazziOptions = RoborazziOptions(
                 compareOptions = RoborazziOptions.CompareOptions(
-                    resultValidator = ThresholdValidator(tolerance)
-                )
-            )
+                    resultValidator = ThresholdValidator(tolerance),
+                ),
+            ),
         )
     }
 
