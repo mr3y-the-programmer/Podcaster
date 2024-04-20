@@ -1,0 +1,77 @@
+name: StoreScreenshot
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - 'v*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+env:
+  API_KEY: ${{ secrets.API_KEY }}
+  API_SECRET: ${{ secrets.API_SECRET }}
+
+jobs:
+  store-screenshot-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read # for clone
+      actions: write # for upload-artifact
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # Better than caching and/or extensions of actions/setup-java
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: wrapper
+
+      - name: record screenshot
+        id: record-test
+        run: |
+          # Use --rerun-tasks to disable cache for test task
+          ./gradlew recordRoborazziDebug --stacktrace --rerun-tasks -Pscreenshot
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: screenshot
+          path: |
+            **/build/outputs/roborazzi
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: screenshot-reports
+          path: |
+            **/build/reports
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: screenshot-test-results
+          path: |
+            **/build/test-results
+          retention-days: 30

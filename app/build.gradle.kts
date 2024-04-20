@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.appversioning)
     alias(libs.plugins.play.publisher)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -49,7 +50,19 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        unitTests {
+            isReturnDefaultValues = true
+            isIncludeAndroidResources = true
+            all {
+                it.useJUnit {
+                    if (project.hasProperty("screenshot")) {
+                        includeCategories("com.mr3y.podcaster.ui.screens.ScreenshotTests")
+                    } else {
+                        excludeCategories("com.mr3y.podcaster.ui.screens.ScreenshotTests")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -128,6 +141,9 @@ dependencies {
     testImplementation(libs.bundles.unit.testing)
     testImplementation(libs.bundles.android.test)
     testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.rule)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.media3.testUtils.core)
     testImplementation(libs.media3.testUtils.robolectric)
