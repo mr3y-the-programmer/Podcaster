@@ -57,6 +57,8 @@ android {
                 it.useJUnit {
                     if (project.hasProperty("screenshot")) {
                         includeCategories("com.mr3y.podcaster.ui.screens.ScreenshotTests")
+                    } else {
+                        excludeCategories("com.mr3y.podcaster.ui.screens.ScreenshotTests")
                     }
                 }
             }
