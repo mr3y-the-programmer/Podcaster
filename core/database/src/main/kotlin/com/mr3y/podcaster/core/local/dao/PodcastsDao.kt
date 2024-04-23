@@ -103,6 +103,8 @@ interface PodcastsDao {
 
     fun addEpisodeToQueue(episode: Episode)
 
+    fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)
+
     fun removeEpisodeFromQueue(episodeId: Long)
 
     fun isEpisodeInQueue(episodeId: Long): Boolean
@@ -359,6 +361,18 @@ class DefaultPodcastsDao @Inject constructor(
         database.episodeEntityQueries.transaction {
             database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
             database.queueEntityQueries.insertNewQueueEpisode(episode.id)
+        }
+    }
+
+    override fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long) {
+        if (isEpisodeAvailableNonObservable(newEpisode.id)) {
+            database.queueEntityQueries.replaceQueueEpisode(newEpisode.id, oldEpisodeId)
+            return
+        }
+
+        database.episodeEntityQueries.transaction {
+            database.episodeEntityQueries.insertEpisode(newEpisode.toEpisodeEntity())
+            database.queueEntityQueries.replaceQueueEpisode(newEpisode.id, oldEpisodeId)
         }
     }
 

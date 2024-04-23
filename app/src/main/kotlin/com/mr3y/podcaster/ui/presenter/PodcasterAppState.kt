@@ -116,9 +116,10 @@ class PodcasterAppState @Inject constructor(
         val playbackSpeed = currentlyPlayingEpisode.value?.playingSpeed ?: 1.0f
         _trackProgress.update { episode.progressInSec ?: 0 }
         podcastsRepository.setCurrentlyPlayingEpisode(CurrentlyPlayingEpisode(episode, PlayingStatus.Loading, playbackSpeed))
-        podcastsRepository.addEpisodeToQueue(episode)
         if (currentEpisodeId != null) {
-            podcastsRepository.removeEpisodeFromQueue(currentEpisodeId)
+            podcastsRepository.replaceEpisodeInQueue(episode, currentEpisodeId)
+        } else {
+            podcastsRepository.addEpisodeToQueue(episode)
         }
         controller?.setMediaItemForEpisode(episode)
         controller?.setPlaybackSpeed(playbackSpeed)

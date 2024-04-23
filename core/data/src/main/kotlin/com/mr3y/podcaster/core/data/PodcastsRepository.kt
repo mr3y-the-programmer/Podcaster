@@ -66,6 +66,8 @@ interface PodcastsRepository {
 
     fun addEpisodeToQueue(episode: Episode)
 
+    fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)
+
     fun removeEpisodeFromQueue(episodeId: Long)
 
     fun isEpisodeInQueue(episodeId: Long): Boolean

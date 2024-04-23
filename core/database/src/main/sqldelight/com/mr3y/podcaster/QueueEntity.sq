@@ -18,6 +18,9 @@ ORDER BY datetime(qe.added_at) ASC;
 insertNewQueueEpisode:
 INSERT OR REPLACE INTO queueEntity (episodeId) VALUES (:episodeId);
 
+replaceQueueEpisode:
+UPDATE queueEntity SET episodeId = :newEpisodeId WHERE episodeId = :oldEpisodeId;
+
 deleteEpisodeFromQueue:
 DELETE FROM queueEntity WHERE episodeId = :episodeId;
 
