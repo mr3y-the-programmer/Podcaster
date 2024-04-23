@@ -54,6 +54,7 @@ Github:
 | 📦 Presenters   | [Molecule](https://github.com/cashapp/molecule)                                   |
 | 🛢 Database     | [Sqldelight](https://github.com/cashapp/sqldelight) |
 | 🌐 Networking   | [Ktor](https://github.com/ktorio/ktor) |
+| 📷 Screenshot testing | [Roborazzi](https://github.com/takahirom/roborazzi) |
 
 ### Powered By [Podcast Index.org](https://podcastindex.org/)
 
