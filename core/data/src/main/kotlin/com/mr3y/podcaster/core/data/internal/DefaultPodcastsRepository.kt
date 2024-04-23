@@ -149,6 +149,10 @@ class DefaultPodcastsRepository @Inject constructor(
         podcastsDao.addEpisodeToQueue(episode)
     }
 
+    override fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long) {
+        podcastsDao.replaceEpisodeInQueue(newEpisode, oldEpisodeId)
+    }
+
     override fun removeEpisodeFromQueue(episodeId: Long) {
         podcastsDao.removeEpisodeFromQueue(episodeId)
     }
