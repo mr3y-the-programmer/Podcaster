@@ -15,7 +15,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,14 +24,12 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,7 +69,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -269,36 +265,33 @@ fun PodcastDetailsScreen(
                         Error(onRetry = onRetry, modifier = Modifier.fillMaxSize())
                     }
                     else -> {
-                        Header(
-                            artworkUrl = state.podcast.artworkUrl,
-                            onState = { state ->
-                                when (state) {
-                                    is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
-                                    else -> {}
-                                }
-                            },
-                            dominantColor = dominantColorState.color,
-                            subscriptionState = state.subscriptionState,
-                            isSubscriptionInEditMode = state.isSubscriptionStateInEditMode,
-                            onSubscribe = onSubscribe,
-                            onUnsubscribe = onUnsubscribe,
-                        )
                         LazyColumn(
-                            modifier = Modifier
-                                .padding(top = 96.dp)
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surface)
-                                .padding(horizontal = 16.dp, vertical = 4.dp)
-                                .padding(top = 64.dp)
-                                .zIndex(1f),
+                            modifier = Modifier.fillMaxSize().padding(bottom = 4.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = externalContentPadding,
                         ) {
                             item {
+                                Header(
+                                    artworkUrl = state.podcast.artworkUrl,
+                                    onState = { state ->
+                                        when (state) {
+                                            is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
+                                            else -> {}
+                                        }
+                                    },
+                                    dominantColor = dominantColorState.color,
+                                    subscriptionState = state.subscriptionState,
+                                    isSubscriptionInEditMode = state.isSubscriptionStateInEditMode,
+                                    onSubscribe = onSubscribe,
+                                    onUnsubscribe = onUnsubscribe,
+                                )
+                            }
+                            item {
                                 val urlHandler = LocalUriHandler.current
-                                Metadata(
+                                Info(
                                     podcast = state.podcast,
                                     onUrlClick = { url -> urlHandler.openUri(url) },
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
 
@@ -307,6 +300,7 @@ fun PodcastDetailsScreen(
                                     item {
                                         LoadingIndicator(
                                             modifier = Modifier
+                                                .padding(horizontal = 16.dp)
                                                 .fillParentMaxWidth()
                                                 .height(144.dp),
                                         )
@@ -317,6 +311,7 @@ fun PodcastDetailsScreen(
                                         Error(
                                             onRetry = onRetry,
                                             modifier = Modifier
+                                                .padding(horizontal = 16.dp)
                                                 .fillParentMaxWidth()
                                                 .height(144.dp),
                                         )
@@ -336,9 +331,10 @@ fun PodcastDetailsScreen(
                                             queueEpisodes = state.queueEpisodesIds,
                                             onAddEpisodeToQueue = onAddEpisodeToQueue,
                                             onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                                            modifier = Modifier.padding(horizontal = 16.dp)
                                         )
                                         if (index != state.episodes.lastIndex) {
-                                            HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
+                                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp).padding(top = 4.dp))
                                         }
                                     }
                                 }
@@ -352,7 +348,7 @@ fun PodcastDetailsScreen(
 }
 
 @Composable
-private fun BoxScope.Header(
+private fun Header(
     artworkUrl: String,
     onState: ((AsyncImagePainter.State) -> Unit)?,
     dominantColor: Color,
@@ -360,197 +356,198 @@ private fun BoxScope.Header(
     isSubscriptionInEditMode: Boolean,
     onSubscribe: () -> Unit,
     onUnsubscribe: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    Box(
-        Modifier
-            .height(96.dp)
-            .background(dominantColor)
-            .fillMaxWidth(),
-    )
+   Box(
+       modifier = modifier.fillMaxWidth()
+   ) {
+       val imageSize = 128
+       val context = LocalContext.current
+       Box(
+           Modifier
+               .height((imageSize * 3f / 4f).dp)
+               .fillMaxWidth()
+               .background(dominantColor),
+       )
 
-    AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(artworkUrl)
-            .size(128)
-            .scale(Scale.FILL)
-            .allowHardware(false)
-            .memoryCacheKey("$artworkUrl.palette")
-            .build(),
-        onState = onState,
-        contentDescription = null,
-        contentScale = ContentScale.FillBounds,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = 32.dp)
-            .size(128.dp)
-            .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-            .zIndex(3f),
-    )
+       AsyncImage(
+           model = ImageRequest.Builder(context)
+               .data(artworkUrl)
+               .size(imageSize)
+               .scale(Scale.FILL)
+               .allowHardware(false)
+               .memoryCacheKey("$artworkUrl.palette")
+               .build(),
+           onState = onState,
+           contentDescription = null,
+           contentScale = ContentScale.FillBounds,
+           modifier = Modifier
+               .padding(horizontal = 16.dp)
+               .padding(top = (imageSize * 1f / 4f).dp)
+               .size(imageSize.dp)
+               .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp)),
+       )
 
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = (32 + 64).dp)
-            .fillMaxWidth()
-            .heightIn(min = 64.dp)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(top = 8.dp)
-            .zIndex(2f),
-        horizontalArrangement = Arrangement.End,
-    ) {
-        val strings = LocalStrings.current
-        AnimatedContent(
-            targetState = subscriptionState,
-            transitionSpec = {
-                (
-                    fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                        scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
-                    )
-                    .togetherWith(fadeOut(animationSpec = tween(90)))
-                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(600) }))
-            },
-            label = "Toggle Subscription state",
-            modifier = Modifier.padding(vertical = 4.dp),
-        ) { targetState ->
-            when (targetState) {
-                SubscriptionState.Subscribed -> {
-                    OutlinedButton(
-                        onClick = onUnsubscribe,
-                        enabled = !isSubscriptionInEditMode,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primaryTertiary,
-                        ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryTertiary),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = strings.unsubscribe_label,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                }
-                SubscriptionState.NotSubscribed -> {
-                    ElevatedButton(
-                        onClick = onSubscribe,
-                        enabled = !isSubscriptionInEditMode,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                        ),
-                    ) {
-                        Text(
-                            text = strings.subscribe_label,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                }
-            }
-        }
-    }
+       val strings = LocalStrings.current
+       AnimatedContent(
+           targetState = subscriptionState,
+           transitionSpec = {
+               (
+                       fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                               scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                       )
+                   .togetherWith(fadeOut(animationSpec = tween(90)))
+                   .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(600) }))
+           },
+           label = "Toggle Subscription state",
+           modifier = Modifier
+               .align(Alignment.BottomEnd)
+               .padding(vertical = 4.dp, horizontal = 16.dp)
+               .padding(top = 8.dp),
+       ) { targetState ->
+           when (targetState) {
+               SubscriptionState.Subscribed -> {
+                   OutlinedButton(
+                       onClick = onUnsubscribe,
+                       enabled = !isSubscriptionInEditMode,
+                       shape = RoundedCornerShape(16.dp),
+                       colors = ButtonDefaults.outlinedButtonColors(
+                           contentColor = MaterialTheme.colorScheme.primaryTertiary,
+                       ),
+                       border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryTertiary),
+                   ) {
+                       Icon(
+                           imageVector = Icons.Filled.Check,
+                           contentDescription = null,
+                       )
+                       Spacer(modifier = Modifier.width(8.dp))
+                       Text(
+                           text = strings.unsubscribe_label,
+                           style = MaterialTheme.typography.labelLarge,
+                       )
+                   }
+               }
+               SubscriptionState.NotSubscribed -> {
+                   ElevatedButton(
+                       onClick = onSubscribe,
+                       enabled = !isSubscriptionInEditMode,
+                       shape = RoundedCornerShape(16.dp),
+                       colors = ButtonDefaults.elevatedButtonColors(
+                           containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                           contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                       ),
+                   ) {
+                       Text(
+                           text = strings.subscribe_label,
+                           style = MaterialTheme.typography.labelLarge,
+                       )
+                   }
+               }
+           }
+       }
+   }
 }
 
 @Composable
-private fun LazyItemScope.Metadata(
+private fun Info(
     podcast: Podcast,
     onUrlClick: (url: String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Text(
-        text = podcast.title,
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Medium,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(),
+    Column(
+        modifier = modifier
     ) {
         Text(
-            text = podcast.author,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .widthIn(max = 232.dp)
-                .basicMarquee(initialDelayMillis = 300),
+            text = podcast.title,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Medium,
         )
-        IconButton(
-            onClick = { onUrlClick(podcast.website) },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.inverseSurface,
-            ),
-            modifier = Modifier.requiredSize(48.dp),
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.world_wide_web),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.inverseSurface,
-            )
-        }
-    }
-    if (podcast.genres.isNotEmpty()) {
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            podcast.genres.forEach { genre ->
-                SuggestionChip(
-                    onClick = { },
-                    label = {
-                        Text(text = genre.label)
-                    },
+            Text(
+                text = podcast.author,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .widthIn(max = 232.dp)
+                    .basicMarquee(initialDelayMillis = 300),
+            )
+            IconButton(
+                onClick = { onUrlClick(podcast.website) },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.inverseSurface,
+                ),
+                modifier = Modifier.requiredSize(48.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.world_wide_web),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.inverseSurface,
                 )
             }
         }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-    val strings = LocalStrings.current
-    Text(
-        text = strings.about_label,
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.SemiBold,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = podcast.description,
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.bodyLarge,
-    )
-    Spacer(modifier = Modifier.height(24.dp))
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+        if (podcast.genres.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                podcast.genres.forEach { genre ->
+                    SuggestionChip(
+                        onClick = { },
+                        label = {
+                            Text(text = genre.label)
+                        },
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        val strings = LocalStrings.current
         Text(
-            text = strings.episodes_label,
+            text = strings.about_label,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = podcast.episodeCount.toString(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Medium,
+            text = podcast.description,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyLarge,
         )
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                text = strings.episodes_label,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = podcast.episodeCount.toString(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }
 
 @Composable
-private fun LazyItemScope.Episode(
+private fun Episode(
     episode: Episode,
     onEpisodeClick: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
@@ -559,11 +556,12 @@ private fun LazyItemScope.Episode(
     onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     onPlay: (Episode) -> Unit,
     onPause: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = { onEpisodeClick(episode.id) }),
     ) {

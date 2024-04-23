@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -47,7 +46,6 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -253,32 +251,36 @@ fun EpisodeDetailsScreen(
                     }
                     else -> {
                         val urlHandler = LocalUriHandler.current
-                        Header(
-                            episode = state.episode,
-                            downloadMetadata = state.downloadMetadata,
-                            onPlay = onPlayEpisode,
-                            onPause = onPause,
-                            queueEpisodes = state.queueEpisodesIds,
-                            onAddEpisodeToQueue = onAddEpisodeToQueue,
-                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
-                            onDownloadingEpisode = onDownloadingEpisode,
-                            onResumeDownloadingEpisode = onResumeDownloadingEpisode,
-                            onPauseDownloadingEpisode = onPauseDownloadingEpisode,
-                            isSelected = isSelected,
-                            playingStatus = playingStatus,
-                            dominantColor = dominantColorState.color,
-                            onState = { state ->
-                                when (state) {
-                                    is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
-                                    else -> {}
-                                }
-                            },
-                        )
-                        Details(
-                            episode = state.episode,
-                            externalContentPadding = externalContentPadding,
-                            onUrlClick = urlHandler::openUri,
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Header(
+                                episode = state.episode,
+                                downloadMetadata = state.downloadMetadata,
+                                onPlay = onPlayEpisode,
+                                onPause = onPause,
+                                queueEpisodes = state.queueEpisodesIds,
+                                onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                                onDownloadingEpisode = onDownloadingEpisode,
+                                onResumeDownloadingEpisode = onResumeDownloadingEpisode,
+                                onPauseDownloadingEpisode = onPauseDownloadingEpisode,
+                                isSelected = isSelected,
+                                playingStatus = playingStatus,
+                                dominantColor = dominantColorState.color,
+                                onState = { state ->
+                                    when (state) {
+                                        is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
+                                        else -> {}
+                                    }
+                                },
+                            )
+                            Details(
+                                episode = state.episode,
+                                externalContentPadding = externalContentPadding,
+                                onUrlClick = urlHandler::openUri,
+                            )
+                        }
                     }
                 }
             }
@@ -287,7 +289,7 @@ fun EpisodeDetailsScreen(
 }
 
 @Composable
-private fun BoxScope.Header(
+private fun Header(
     episode: Episode,
     downloadMetadata: EpisodeDownloadMetadata?,
     onPlay: (Episode) -> Unit,
@@ -302,92 +304,92 @@ private fun BoxScope.Header(
     playingStatus: PlayingStatus?,
     dominantColor: Color,
     onState: ((AsyncImagePainter.State) -> Unit)?,
+    modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     Box(
-        Modifier
-            .height(96.dp)
-            .background(dominantColor)
-            .fillMaxWidth(),
-    )
-
-    AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(episode.artworkUrl)
-            .size(128)
-            .scale(Scale.FILL)
-            .allowHardware(false)
-            .memoryCacheKey("${episode.artworkUrl}.palette")
-            .build(),
-        onState = onState,
-        contentDescription = null,
-        contentScale = ContentScale.FillBounds,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = 32.dp)
-            .size(128.dp)
-            .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-            .zIndex(3f),
-    )
-
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = (32 + 64).dp)
-            .fillMaxWidth()
-            .heightIn(min = 64.dp)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(top = 8.dp)
-            .zIndex(2f),
-        horizontalArrangement = Arrangement.End,
+        modifier = modifier.fillMaxWidth()
     ) {
-        PlayPauseCompactButton(
-            isSelected = isSelected,
-            playingStatus = playingStatus,
-            onPlay = { onPlay(episode) },
-            onPause = onPause,
-            containerColor = MaterialTheme.colorScheme.primaryTertiary,
-            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+        val imageSize = 128
+        val context = LocalContext.current
+
+        Box(
+            Modifier
+                .height((imageSize * 3f / 4f).dp)
+                .fillMaxWidth()
+                .background(dominantColor),
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        if (episode.id !in queueEpisodes) {
-            AddToQueueButton(
-                onClick = { onAddEpisodeToQueue(episode) },
-                contentColor = MaterialTheme.colorScheme.primaryTertiary,
+
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(episode.artworkUrl)
+                .size(imageSize)
+                .scale(Scale.FILL)
+                .allowHardware(false)
+                .memoryCacheKey("${episode.artworkUrl}.palette")
+                .build(),
+            onState = onState,
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = (imageSize * 1f / 4f).dp)
+                .size(imageSize.dp)
+                .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp)),
+        )
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(horizontal = 16.dp)
+                .heightIn(min = 64.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+        ) {
+            PlayPauseCompactButton(
+                isSelected = isSelected,
+                playingStatus = playingStatus,
+                onPlay = { onPlay(episode) },
+                onPause = onPause,
+                containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
             )
-        } else {
-            RemoveFromQueueButton(
-                onClick = { onRemoveEpisodeFromQueue(episode.id) },
+            Spacer(modifier = Modifier.width(8.dp))
+            if (episode.id !in queueEpisodes) {
+                AddToQueueButton(
+                    onClick = { onAddEpisodeToQueue(episode) },
+                    contentColor = MaterialTheme.colorScheme.primaryTertiary,
+                )
+            } else {
+                RemoveFromQueueButton(
+                    onClick = { onRemoveEpisodeFromQueue(episode.id) },
+                    contentColor = MaterialTheme.colorScheme.primaryTertiary,
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            DownloadButton(
+                downloadMetadata = downloadMetadata,
+                onDownload = { onDownloadingEpisode(episode) },
+                onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
+                onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
                 contentColor = MaterialTheme.colorScheme.primaryTertiary,
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        DownloadButton(
-            downloadMetadata = downloadMetadata,
-            onDownload = { onDownloadingEpisode(episode) },
-            onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
-            onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
-            contentColor = MaterialTheme.colorScheme.primaryTertiary,
-        )
     }
 }
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-private fun BoxScope.Details(
+private fun Details(
     episode: Episode,
     externalContentPadding: PaddingValues,
     onUrlClick: (url: String) -> Unit,
 ) {
     Column(
         modifier = Modifier
-            .padding(top = 96.dp)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .padding(top = 64.dp)
-            .padding(externalContentPadding)
-            .zIndex(1f),
+            .padding(externalContentPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
