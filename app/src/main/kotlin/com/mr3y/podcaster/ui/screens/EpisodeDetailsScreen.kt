@@ -252,7 +252,7 @@ fun EpisodeDetailsScreen(
                     else -> {
                         val urlHandler = LocalUriHandler.current
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
                         ) {
                             Header(
                                 episode = state.episode,
@@ -304,10 +304,10 @@ private fun Header(
     playingStatus: PlayingStatus?,
     dominantColor: Color,
     onState: ((AsyncImagePainter.State) -> Unit)?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         val imageSize = 128
         val context = LocalContext.current
