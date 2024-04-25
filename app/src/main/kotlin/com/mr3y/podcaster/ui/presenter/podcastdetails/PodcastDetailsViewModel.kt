@@ -169,6 +169,7 @@ internal fun PodcastDetailsPresenter(
                         isEpisodesLoading = false
                     }
                 }
+                else -> {}
             }
         }
     }

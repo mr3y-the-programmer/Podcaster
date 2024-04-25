@@ -32,4 +32,14 @@ sealed interface PodcastDetailsUIEvent {
     data object RefreshResultConsumed : PodcastDetailsUIEvent
 
     data object Retry : PodcastDetailsUIEvent
+
+    data class PlayEpisode(val episode: Episode) : PodcastDetailsUIEvent
+
+    data object Pause : PodcastDetailsUIEvent
+
+    data class AddEpisodeToQueue(val episode: Episode) : PodcastDetailsUIEvent
+
+    data class RemoveEpisodeFromQueue(val episodeId: Long) : PodcastDetailsUIEvent
+
+    data object ErrorPlayingStatusConsumed : PodcastDetailsUIEvent
 }
