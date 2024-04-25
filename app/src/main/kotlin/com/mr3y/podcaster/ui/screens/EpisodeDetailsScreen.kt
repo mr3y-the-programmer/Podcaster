@@ -71,6 +71,7 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
+import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIEvent
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -99,21 +100,25 @@ fun EpisodeDetailsScreen(
     EpisodeDetailsScreen(
         state = state,
         onNavigateUp = onNavigateUp,
-        onRetry = viewModel::retry,
-        onRefresh = viewModel::refresh,
-        onPlayEpisode = appState::play,
-        onPause = appState::pause,
-        onAddEpisodeToQueue = appState::addToQueue,
-        onRemoveEpisodeFromQueue = appState::removeFromQueue,
-        onDownloadingEpisode = appState::downloadEpisode,
-        onResumeDownloadingEpisode = appState::resumeDownloading,
-        onPauseDownloadingEpisode = appState::pauseDownloading,
         isSelected = state.episode?.id == currentlyPlayingEpisode?.episode?.id,
         playingStatus = currentlyPlayingEpisode?.playingStatus,
-        onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        onConsumeResult = viewModel::consumeRefreshResult,
+        eventSink = { event ->
+            when(event) {
+                is EpisodeDetailsUIEvent.Refresh -> viewModel.refresh()
+                is EpisodeDetailsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
+                is EpisodeDetailsUIEvent.Retry -> viewModel.retry()
+                is EpisodeDetailsUIEvent.PlayEpisode -> appState.play(event.episode)
+                is EpisodeDetailsUIEvent.Pause -> appState.pause()
+                is EpisodeDetailsUIEvent.DownloadEpisode -> appState.downloadEpisode(event.episode)
+                is EpisodeDetailsUIEvent.ResumeDownloading -> appState.resumeDownloading(event.episodeId)
+                is EpisodeDetailsUIEvent.PauseDownloading -> appState.pauseDownloading(event.episodeId)
+                is EpisodeDetailsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
+                is EpisodeDetailsUIEvent.RemoveEpisodeFromQueue -> appState.removeFromQueue(event.episodeId)
+                is EpisodeDetailsUIEvent.ErrorPlayingStatusConsumed -> appState.consumeErrorPlayingStatus()
+            }
+        },
         modifier = modifier,
     )
 }
@@ -122,21 +127,11 @@ fun EpisodeDetailsScreen(
 fun EpisodeDetailsScreen(
     state: EpisodeDetailsUIState,
     onNavigateUp: () -> Unit,
-    onRetry: () -> Unit,
-    onRefresh: () -> Unit,
-    onPlayEpisode: (Episode) -> Unit,
-    onPause: () -> Unit,
-    onAddEpisodeToQueue: (Episode) -> Unit,
-    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
-    onDownloadingEpisode: (Episode) -> Unit,
-    onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
-    onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
-    onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onConsumeResult: () -> Unit,
+    eventSink: (EpisodeDetailsUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -149,13 +144,13 @@ fun EpisodeDetailsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.episode_details_refresh_result_error,
                 )
-                onConsumeResult()
+                eventSink(EpisodeDetailsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
                     message = strings.episode_details_refresh_result_mixed,
                 )
-                onConsumeResult()
+                eventSink(EpisodeDetailsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Ok, null -> {}
         }
@@ -164,7 +159,7 @@ fun EpisodeDetailsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.generic_error_message,
                 )
-                onConsumeErrorPlayingStatus()
+                eventSink(EpisodeDetailsUIEvent.ErrorPlayingStatusConsumed)
             }
             else -> {}
         }
@@ -200,7 +195,7 @@ fun EpisodeDetailsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh,
+        onRefresh = { eventSink(EpisodeDetailsUIEvent.Refresh) },
     ) {
         Scaffold(
             topBar = {
@@ -243,7 +238,7 @@ fun EpisodeDetailsScreen(
                     }
                     state.episode == null -> {
                         Error(
-                            onRetry = onRetry,
+                            onRetry = { eventSink(EpisodeDetailsUIEvent.Retry) },
                             modifier = Modifier
                                 .fillMaxSize()
                                 .align(Alignment.Center),
@@ -257,14 +252,14 @@ fun EpisodeDetailsScreen(
                             Header(
                                 episode = state.episode,
                                 downloadMetadata = state.downloadMetadata,
-                                onPlay = onPlayEpisode,
-                                onPause = onPause,
+                                onPlay = { eventSink(EpisodeDetailsUIEvent.PlayEpisode(it)) },
+                                onPause = { eventSink(EpisodeDetailsUIEvent.Pause) },
                                 queueEpisodes = state.queueEpisodesIds,
-                                onAddEpisodeToQueue = onAddEpisodeToQueue,
-                                onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
-                                onDownloadingEpisode = onDownloadingEpisode,
-                                onResumeDownloadingEpisode = onResumeDownloadingEpisode,
-                                onPauseDownloadingEpisode = onPauseDownloadingEpisode,
+                                onAddEpisodeToQueue = { eventSink(EpisodeDetailsUIEvent.AddEpisodeToQueue(it)) },
+                                onRemoveEpisodeFromQueue = { eventSink(EpisodeDetailsUIEvent.RemoveEpisodeFromQueue(it)) },
+                                onDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.DownloadEpisode(it)) },
+                                onResumeDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.ResumeDownloading(it)) },
+                                onPauseDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.PauseDownloading(it)) },
                                 isSelected = isSelected,
                                 playingStatus = playingStatus,
                                 dominantColor = dominantColorState.color,
@@ -432,21 +427,11 @@ fun EpisodeDetailsScreenPreview(
                 downloadMetadata = DownloadMetadata,
             ),
             onNavigateUp = {},
-            onRetry = {},
-            onRefresh = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
-            onDownloadingEpisode = {},
-            onResumeDownloadingEpisode = {},
-            onPauseDownloadingEpisode = {},
             isSelected = false,
             playingStatus = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            onConsumeResult = {},
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -466,21 +451,11 @@ fun EpisodeDetailsErrorPreview() {
                 downloadMetadata = null,
             ),
             onNavigateUp = {},
-            onRetry = {},
-            onRefresh = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
-            onDownloadingEpisode = {},
-            onResumeDownloadingEpisode = {},
-            onPauseDownloadingEpisode = {},
             isSelected = false,
             playingStatus = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            onConsumeResult = {},
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
