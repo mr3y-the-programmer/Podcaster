@@ -94,6 +94,7 @@ import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.UserPreferences
+import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
@@ -128,24 +129,28 @@ fun SubscriptionsScreen(
         onPodcastClick = onPodcastClick,
         onEpisodeClick = onEpisodeClick,
         onSettingsClick = onSettingsClick,
-        onToggleAppTheme = { isDark ->
-            if (isDark) {
-                userPreferences.setAppTheme(Theme.Light)
-            } else {
-                userPreferences.setAppTheme(Theme.Dark)
-            }
-        },
         onNavDrawerClick = onNavDrawerClick,
-        onRefresh = viewModel::refresh,
-        onRefreshResultConsumed = viewModel::consumeRefreshResult,
-        onPlayEpisode = appState::play,
-        onPause = appState::pause,
-        onAddEpisodeToQueue = appState::addToQueue,
-        onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
-        onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
+        eventSink = { event ->
+            when(event) {
+                is SubscriptionsUIEvent.Refresh -> viewModel.refresh()
+                is SubscriptionsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
+                is SubscriptionsUIEvent.ToggleAppTheme -> {
+                    if (event.isDark) {
+                        userPreferences.setAppTheme(Theme.Light)
+                    } else {
+                        userPreferences.setAppTheme(Theme.Dark)
+                    }
+                }
+                is SubscriptionsUIEvent.PlayEpisode -> appState.play(event.episode)
+                is SubscriptionsUIEvent.Pause -> appState.pause()
+                is SubscriptionsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
+                is SubscriptionsUIEvent.RemoveEpisodeFromQueue -> appState.removeFromQueue(event.episodeId)
+                is SubscriptionsUIEvent.ErrorPlayingStatusConsumed -> appState.consumeErrorPlayingStatus()
+            }
+        },
         modifier = modifier,
     )
 }
@@ -155,19 +160,12 @@ fun SubscriptionsScreen(
     state: SubscriptionsUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onToggleAppTheme: (isDarkTheme: Boolean) -> Unit,
     onSettingsClick: () -> Unit,
     onNavDrawerClick: () -> Unit,
-    onPlayEpisode: (Episode) -> Unit,
-    onPause: () -> Unit,
-    onAddEpisodeToQueue: (Episode) -> Unit,
-    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
-    onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onRefresh: () -> Unit,
-    onRefreshResultConsumed: () -> Unit,
+    eventSink: (SubscriptionsUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -181,13 +179,13 @@ fun SubscriptionsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.subscriptions_refresh_result_error,
                 )
-                onRefreshResultConsumed()
+                eventSink(SubscriptionsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
                     message = strings.subscriptions_refresh_result_mixed,
                 )
-                onRefreshResultConsumed()
+                eventSink(SubscriptionsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Ok, null -> {}
         }
@@ -196,7 +194,7 @@ fun SubscriptionsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.generic_error_message,
                 )
-                onConsumeErrorPlayingStatus()
+                eventSink(SubscriptionsUIEvent.ErrorPlayingStatusConsumed)
             }
             else -> {}
         }
@@ -206,7 +204,7 @@ fun SubscriptionsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh,
+        onRefresh = { eventSink(SubscriptionsUIEvent.Refresh) },
     ) {
         Scaffold(
             topBar = {
@@ -216,7 +214,7 @@ fun SubscriptionsScreen(
                     actions = {
                         val darkTheme = isAppThemeDark()
                         IconButton(
-                            onClick = { onToggleAppTheme(darkTheme) },
+                            onClick = { eventSink(SubscriptionsUIEvent.ToggleAppTheme(darkTheme)) },
                         ) {
                             AnimatedContent(
                                 targetState = darkTheme,
@@ -281,11 +279,11 @@ fun SubscriptionsScreen(
                         episodes = state.episodes,
                         contentPadding = externalContentPadding,
                         onEpisodeClick = onEpisodeClick,
-                        onPlayEpisode = onPlayEpisode,
-                        onPause = onPause,
+                        onPlayEpisode = { eventSink(SubscriptionsUIEvent.PlayEpisode(it)) },
+                        onPause = { eventSink(SubscriptionsUIEvent.Pause) },
                         queueEpisodes = state.queueEpisodesIds,
-                        onAddEpisodeToQueue = onAddEpisodeToQueue,
-                        onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                        onAddEpisodeToQueue = { eventSink(SubscriptionsUIEvent.AddEpisodeToQueue(it)) },
+                        onRemoveEpisodeFromQueue = { eventSink(SubscriptionsUIEvent.RemoveEpisodeFromQueue(it)) },
                         currentlyPlayingEpisode = currentlyPlayingEpisode,
                     )
                 }
@@ -537,18 +535,11 @@ fun SubscriptionsScreenPreview(
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
-            onToggleAppTheme = {},
             onNavDrawerClick = {},
-            onRefresh = {},
-            onRefreshResultConsumed = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -576,18 +567,11 @@ fun EmptySubscriptionsScreenPreview() {
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
             onSettingsClick = {},
-            onToggleAppTheme = {},
             onNavDrawerClick = {},
-            onRefresh = {},
-            onRefreshResultConsumed = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,
-            onConsumeErrorPlayingStatus = {},
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
