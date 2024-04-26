@@ -134,7 +134,7 @@ fun SubscriptionsScreen(
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
         eventSink = { event ->
-            when(event) {
+            when (event) {
                 is SubscriptionsUIEvent.Refresh -> viewModel.refresh()
                 is SubscriptionsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
                 is SubscriptionsUIEvent.ToggleAppTheme -> {

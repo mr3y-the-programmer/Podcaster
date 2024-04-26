@@ -105,7 +105,7 @@ fun EpisodeDetailsScreen(
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
         eventSink = { event ->
-            when(event) {
+            when (event) {
                 is EpisodeDetailsUIEvent.Refresh -> viewModel.refresh()
                 is EpisodeDetailsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
                 is EpisodeDetailsUIEvent.Retry -> viewModel.retry()

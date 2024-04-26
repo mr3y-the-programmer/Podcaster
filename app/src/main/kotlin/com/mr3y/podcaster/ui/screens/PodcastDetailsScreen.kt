@@ -131,7 +131,7 @@ fun PodcastDetailsScreen(
         excludedWindowInsets = excludedWindowInsets,
         onEpisodeClick = onEpisodeClick,
         eventSink = { event ->
-            when(event) {
+            when (event) {
                 is PodcastDetailsUIEvent.Subscribe -> viewModel.subscribe()
                 is PodcastDetailsUIEvent.UnSubscribe -> viewModel.unsubscribe()
                 is PodcastDetailsUIEvent.Refresh -> viewModel.refresh()

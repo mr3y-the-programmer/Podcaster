@@ -108,7 +108,7 @@ fun ExploreScreen(
         onPodcastClick = onPodcastClick,
         onNavDrawerClick = onNavDrawerClick,
         eventSink = { event ->
-            when(event) {
+            when (event) {
                 is ExploreUIEvent.Search -> viewModel.search()
                 is ExploreUIEvent.UpdateSearchQuery -> viewModel.updateSearchQuery(event.newSearchQuery)
                 is ExploreUIEvent.DeleteSearchQuery -> viewModel.deleteSearchQuery(event.searchQuery)
