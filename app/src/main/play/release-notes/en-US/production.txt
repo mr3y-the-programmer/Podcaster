@@ -1,2 +1,1 @@
-- Improve parsing network responses.
-- Fix bugs & Improve performance.
+- Fix messing up the order of episodes in the playlist bug.
