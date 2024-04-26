@@ -81,6 +81,7 @@ import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.plus
+import com.mr3y.podcaster.ui.presenter.explore.ExploreUIEvent
 import com.mr3y.podcaster.ui.presenter.explore.ExploreUIState
 import com.mr3y.podcaster.ui.presenter.explore.ExploreViewModel
 import com.mr3y.podcaster.ui.presenter.explore.SearchResult
@@ -104,13 +105,17 @@ fun ExploreScreen(
     val exploreState by viewModel.state.collectAsStateWithLifecycle()
     ExploreScreen(
         state = exploreState,
-        onSearchQueryChange = viewModel::updateSearchQuery,
-        onCommittingSearch = viewModel::search,
-        onDeleteRecentSearchQuery = viewModel::deleteSearchQuery,
-        onRetry = viewModel::retry,
-        onConsumeResult = viewModel::consumeResult,
         onPodcastClick = onPodcastClick,
         onNavDrawerClick = onNavDrawerClick,
+        eventSink = { event ->
+            when(event) {
+                is ExploreUIEvent.Search -> viewModel.search()
+                is ExploreUIEvent.UpdateSearchQuery -> viewModel.updateSearchQuery(event.newSearchQuery)
+                is ExploreUIEvent.DeleteSearchQuery -> viewModel.deleteSearchQuery(event.searchQuery)
+                is ExploreUIEvent.Retry -> viewModel.retry()
+                is ExploreUIEvent.ResultConsumed -> viewModel.consumeResult()
+            }
+        },
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
         modifier = modifier,
@@ -120,13 +125,9 @@ fun ExploreScreen(
 @Composable
 fun ExploreScreen(
     state: ExploreUIState,
-    onSearchQueryChange: (TextFieldValue) -> Unit,
-    onCommittingSearch: () -> Unit,
-    onDeleteRecentSearchQuery: (String) -> Unit,
-    onRetry: () -> Unit,
-    onConsumeResult: () -> Unit,
     onPodcastClick: (podcastId: Long) -> Unit,
     onNavDrawerClick: () -> Unit,
+    eventSink: (ExploreUIEvent) -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -168,11 +169,11 @@ fun ExploreScreen(
         ) {
             ExploreSearchBar(
                 searchQuery = state.searchQuery,
-                onSearchQueryChange = onSearchQueryChange,
+                onSearchQueryChange = { eventSink(ExploreUIEvent.UpdateSearchQuery(it)) },
                 interactionSource = searchBarInteractionSource,
                 showConfirmButton = isSearchBarFocused && state.searchQuery.text.isNotBlank(),
                 onConfirmButtonClick = {
-                    onCommittingSearch()
+                    eventSink(ExploreUIEvent.Search)
                     focusManager.clearFocus()
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -183,10 +184,10 @@ fun ExploreScreen(
                 isVisible = isSearchBarFocused && recentSearches.isNotEmpty(),
                 onSearchQueryClick = { recentSearchQuery ->
                     focusManager.clearFocus()
-                    onSearchQueryChange(TextFieldValue(recentSearchQuery))
-                    onCommittingSearch()
+                    eventSink(ExploreUIEvent.UpdateSearchQuery(TextFieldValue(recentSearchQuery)))
+                    eventSink(ExploreUIEvent.Search)
                 },
-                onDeleteSearchQuery = onDeleteRecentSearchQuery,
+                onDeleteSearchQuery = { eventSink(ExploreUIEvent.DeleteSearchQuery(it)) },
                 contentPadding = externalContentPadding,
                 onCloseClick = {
                     focusManager.clearFocus()
@@ -208,17 +209,17 @@ fun ExploreScreen(
                     )
                 }
                 if (state.searchResult is SearchResult.Error && !state.searchResult.isFeedUrl) {
-                    Error(onRetry = onRetry, modifier = contentModifier)
+                    Error(onRetry = { eventSink(ExploreUIEvent.Retry) }, modifier = contentModifier)
                 }
                 val strings = LocalStrings.current
                 LaunchedEffect(state.searchResult) {
                     if (state.searchResult is SearchResult.SearchByUrlSuccess) {
-                        onConsumeResult()
+                        eventSink(ExploreUIEvent.ResultConsumed)
                         onPodcastClick(state.searchResult.podcast.id)
                     }
                     if (state.searchResult is SearchResult.Error && state.searchResult.isFeedUrl) {
                         snackBarHostState.showSnackbar(strings.feed_url_incorrect_message)
-                        onConsumeResult()
+                        eventSink(ExploreUIEvent.ResultConsumed)
                     }
                 }
             }
@@ -496,13 +497,9 @@ fun ExploreScreenInitialPreview(
         }
         ExploreScreen(
             state = state,
-            onSearchQueryChange = {},
-            onCommittingSearch = {},
             onPodcastClick = {},
             onNavDrawerClick = {},
-            onRetry = {},
-            onDeleteRecentSearchQuery = {},
-            onConsumeResult = {},
+            eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize(),
@@ -525,13 +522,9 @@ fun ExploreScreenPodcastsListPreview() {
         }
         ExploreScreen(
             state = state,
-            onSearchQueryChange = {},
-            onCommittingSearch = {},
             onPodcastClick = {},
             onNavDrawerClick = {},
-            onRetry = {},
-            onDeleteRecentSearchQuery = {},
-            onConsumeResult = {},
+            eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize(),
@@ -554,13 +547,9 @@ fun ExploreScreenErrorPreview() {
         }
         ExploreScreen(
             state = state,
-            onSearchQueryChange = {},
-            onCommittingSearch = {},
             onPodcastClick = {},
             onNavDrawerClick = {},
-            onRetry = {},
-            onDeleteRecentSearchQuery = {},
-            onConsumeResult = {},
+            eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize(),

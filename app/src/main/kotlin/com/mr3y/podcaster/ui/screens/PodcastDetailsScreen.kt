@@ -95,6 +95,7 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
+import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIEvent
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIState
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsViewModel
 import com.mr3y.podcaster.ui.presenter.podcastdetails.SubscriptionState
@@ -125,20 +126,24 @@ fun PodcastDetailsScreen(
     PodcastDetailsScreen(
         state = podcastDetailsState,
         onNavigateUp = onNavigateUp,
-        onSubscribe = viewModel::subscribe,
-        onUnsubscribe = viewModel::unsubscribe,
-        onRefresh = viewModel::refresh,
-        onPlayEpisode = appState::play,
-        onPause = appState::pause,
-        onAddEpisodeToQueue = appState::addToQueue,
-        onRemoveEpisodeFromQueue = appState::removeFromQueue,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
-        onConsumeErrorPlayingStatus = appState::consumeErrorPlayingStatus,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
-        onConsumeResult = viewModel::consumeRefreshResult,
-        onRetry = viewModel::retry,
         onEpisodeClick = onEpisodeClick,
+        eventSink = { event ->
+            when(event) {
+                is PodcastDetailsUIEvent.Subscribe -> viewModel.subscribe()
+                is PodcastDetailsUIEvent.UnSubscribe -> viewModel.unsubscribe()
+                is PodcastDetailsUIEvent.Refresh -> viewModel.refresh()
+                is PodcastDetailsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
+                is PodcastDetailsUIEvent.Retry -> viewModel.retry()
+                is PodcastDetailsUIEvent.PlayEpisode -> appState.play(event.episode)
+                is PodcastDetailsUIEvent.Pause -> appState.pause()
+                is PodcastDetailsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
+                is PodcastDetailsUIEvent.RemoveEpisodeFromQueue -> appState.removeFromQueue(event.episodeId)
+                is PodcastDetailsUIEvent.ErrorPlayingStatusConsumed -> appState.consumeErrorPlayingStatus()
+            }
+        },
         modifier = modifier,
     )
 }
@@ -147,20 +152,11 @@ fun PodcastDetailsScreen(
 fun PodcastDetailsScreen(
     state: PodcastDetailsUIState,
     onNavigateUp: () -> Unit,
-    onSubscribe: () -> Unit,
-    onUnsubscribe: () -> Unit,
-    onRefresh: () -> Unit,
-    onPlayEpisode: (Episode) -> Unit,
-    onPause: () -> Unit,
-    onAddEpisodeToQueue: (Episode) -> Unit,
-    onRemoveEpisodeFromQueue: (episodeId: Long) -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
-    onConsumeErrorPlayingStatus: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onConsumeResult: () -> Unit,
-    onRetry: () -> Unit,
     onEpisodeClick: (episodeId: Long, podcastArtworkUrl: String) -> Unit,
+    eventSink: (PodcastDetailsUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -174,13 +170,13 @@ fun PodcastDetailsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.podcast_details_refresh_result_error,
                 )
-                onConsumeResult()
+                eventSink(PodcastDetailsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Mixed -> {
                 snackBarHostState.showSnackbar(
                     message = strings.podcast_details_refresh_result_mixed,
                 )
-                onConsumeResult()
+                eventSink(PodcastDetailsUIEvent.RefreshResultConsumed)
             }
             is RefreshResult.Ok, null -> {}
         }
@@ -189,7 +185,7 @@ fun PodcastDetailsScreen(
                 snackBarHostState.showSnackbar(
                     message = strings.generic_error_message,
                 )
-                onConsumeErrorPlayingStatus()
+                eventSink(PodcastDetailsUIEvent.ErrorPlayingStatusConsumed)
             }
             else -> {}
         }
@@ -225,7 +221,7 @@ fun PodcastDetailsScreen(
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
-        onRefresh = onRefresh,
+        onRefresh = { eventSink(PodcastDetailsUIEvent.Refresh) },
     ) {
         Scaffold(
             topBar = {
@@ -262,7 +258,7 @@ fun PodcastDetailsScreen(
                         LoadingIndicator(modifier = Modifier.fillMaxSize())
                     }
                     state.podcast == null -> {
-                        Error(onRetry = onRetry, modifier = Modifier.fillMaxSize())
+                        Error(onRetry = { eventSink(PodcastDetailsUIEvent.Retry) }, modifier = Modifier.fillMaxSize())
                     }
                     else -> {
                         LazyColumn(
@@ -282,8 +278,8 @@ fun PodcastDetailsScreen(
                                     dominantColor = dominantColorState.color,
                                     subscriptionState = state.subscriptionState,
                                     isSubscriptionInEditMode = state.isSubscriptionStateInEditMode,
-                                    onSubscribe = onSubscribe,
-                                    onUnsubscribe = onUnsubscribe,
+                                    onSubscribe = { eventSink(PodcastDetailsUIEvent.Subscribe) },
+                                    onUnsubscribe = { eventSink(PodcastDetailsUIEvent.UnSubscribe) },
                                 )
                             }
                             item {
@@ -309,7 +305,7 @@ fun PodcastDetailsScreen(
                                 state.episodes == null -> {
                                     item {
                                         Error(
-                                            onRetry = onRetry,
+                                            onRetry = { eventSink(PodcastDetailsUIEvent.Retry) },
                                             modifier = Modifier
                                                 .padding(horizontal = 16.dp)
                                                 .fillParentMaxWidth()
@@ -326,11 +322,11 @@ fun PodcastDetailsScreen(
                                             episode = episode,
                                             onEpisodeClick = { episodeId -> onEpisodeClick(episodeId, state.podcast.artworkUrl) },
                                             currentlyPlayingEpisode = currentlyPlayingEpisode,
-                                            onPlay = onPlayEpisode,
-                                            onPause = onPause,
+                                            onPlay = { eventSink(PodcastDetailsUIEvent.PlayEpisode(it)) },
+                                            onPause = { eventSink(PodcastDetailsUIEvent.Pause) },
                                             queueEpisodes = state.queueEpisodesIds,
-                                            onAddEpisodeToQueue = onAddEpisodeToQueue,
-                                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                                            onAddEpisodeToQueue = { eventSink(PodcastDetailsUIEvent.AddEpisodeToQueue(it)) },
+                                            onRemoveEpisodeFromQueue = { eventSink(PodcastDetailsUIEvent.RemoveEpisodeFromQueue(it)) },
                                             modifier = Modifier.padding(horizontal = 16.dp),
                                         )
                                         if (index != state.episodes.lastIndex) {
@@ -626,20 +622,11 @@ fun PodcastDetailsScreenPreview(
                 queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
-            onSubscribe = {},
-            onUnsubscribe = {},
-            onRefresh = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            onConsumeResult = {},
-            onRetry = {},
             onEpisodeClick = { _, _ -> },
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -662,20 +649,11 @@ fun PodcastDetailsScreenErrorPreview() {
                 queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
-            onSubscribe = {},
-            onUnsubscribe = {},
-            onRefresh = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            onConsumeResult = {},
-            onRetry = {},
             onEpisodeClick = { _, _ -> },
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -698,20 +676,11 @@ fun PodcastDetailsScreenEpisodesErrorPreview() {
                 queueEpisodesIds = Episodes.take(1).map { it.id },
             ),
             onNavigateUp = {},
-            onSubscribe = {},
-            onUnsubscribe = {},
-            onRefresh = {},
-            onPlayEpisode = {},
-            onPause = {},
-            onAddEpisodeToQueue = {},
-            onRemoveEpisodeFromQueue = {},
             currentlyPlayingEpisode = null,
-            onConsumeErrorPlayingStatus = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
-            onConsumeResult = {},
-            onRetry = {},
             onEpisodeClick = { _, _ -> },
+            eventSink = {},
             modifier = Modifier.fillMaxSize(),
         )
     }

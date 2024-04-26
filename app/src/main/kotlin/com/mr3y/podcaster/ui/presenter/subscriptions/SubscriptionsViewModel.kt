@@ -103,6 +103,7 @@ internal fun SubscriptionsPresenter(
                     }
                 }
                 is SubscriptionsUIEvent.RefreshResultConsumed -> refreshResult = null
+                else -> {}
             }
         }
     }

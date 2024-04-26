@@ -96,6 +96,7 @@ internal fun EpisodeDetailsPresenter(
                     }
                 }
                 EpisodeDetailsUIEvent.RefreshResultConsumed -> refreshResult = null
+                else -> {}
             }
         }
     }

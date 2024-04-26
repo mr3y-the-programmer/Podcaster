@@ -20,4 +20,20 @@ sealed interface EpisodeDetailsUIEvent {
     data object RefreshResultConsumed : EpisodeDetailsUIEvent
 
     data object Retry : EpisodeDetailsUIEvent
+
+    data class PlayEpisode(val episode: Episode) : EpisodeDetailsUIEvent
+
+    data object Pause : EpisodeDetailsUIEvent
+
+    data class DownloadEpisode(val episode: Episode) : EpisodeDetailsUIEvent
+
+    data class ResumeDownloading(val episodeId: Long) : EpisodeDetailsUIEvent
+
+    data class PauseDownloading(val episodeId: Long) : EpisodeDetailsUIEvent
+
+    data class AddEpisodeToQueue(val episode: Episode) : EpisodeDetailsUIEvent
+
+    data class RemoveEpisodeFromQueue(val episodeId: Long) : EpisodeDetailsUIEvent
+
+    data object ErrorPlayingStatusConsumed : EpisodeDetailsUIEvent
 }
