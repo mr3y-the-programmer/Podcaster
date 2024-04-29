@@ -67,23 +67,29 @@ class PlaybackService : MediaSessionService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
         val player = mediaSession?.player ?: return
-        if (!player.playWhenReady || player.mediaItemCount == 0) {
+        if (!player.playWhenReady) {
+            release()
             stopSelf()
         }
     }
 
     override fun onDestroy() {
+        release()
+        super.onDestroy()
+    }
+
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
+
+    private fun release() {
         mediaSession?.run {
             player.release()
             release()
             mediaSession = null
         }
         serviceScope.cancel()
-        super.onDestroy()
     }
-
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
 
     private inner class PlaybackMediaSessionCallback : MediaSession.Callback {
         override fun onConnect(
