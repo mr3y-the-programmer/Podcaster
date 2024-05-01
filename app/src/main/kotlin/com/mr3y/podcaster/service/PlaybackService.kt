@@ -123,7 +123,7 @@ class PlaybackService : MediaSessionService() {
 
                 MediaItemsWithStartPosition(
                     mediaItems,
-                    C.INDEX_UNSET,
+                    mediaItems.indexOfFirst { it.mediaId.toLong() == currentlyPlayingEpisode?.episode?.id },
                     startingPosition,
                 )
             }
