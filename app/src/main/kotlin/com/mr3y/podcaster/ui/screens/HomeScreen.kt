@@ -3,6 +3,7 @@ package com.mr3y.podcaster.ui.screens
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -175,7 +176,8 @@ fun HomeScreen(
                     initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
                     anchors = anchors,
                     positionalThreshold = { distance: Float -> distance * 0.1f },
-                    animationSpec = spring(),
+                    snapAnimationSpec = spring(),
+                    decayAnimationSpec = splineBasedDecay(density),
                     velocityThreshold = { with(density) { 80.dp.toPx() } },
                 )
             }
