@@ -19,7 +19,7 @@ ksp {
 }
 
 dependencies {
-    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.compose.bom.alpha))
     implementation(libs.ui)
     ksp(libs.lyricist.processor)
     implementation(libs.lyricist)

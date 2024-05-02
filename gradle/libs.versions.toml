@@ -30,7 +30,6 @@ compose-bom-alpha = "2024.05.00-alpha01"
 compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
-material3 = "1.2.1"
 compose-compiler = "1.5.11"
 navigation = "2.7.7"
 navigation-typed = "0.10.0"
@@ -88,7 +87,7 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+material3 = { group = "androidx.compose.material3", name = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 navigation-typed = { group = "com.kiwi.navigation-compose.typed", name = "core", version.ref = "navigation-typed" }
