@@ -110,7 +110,7 @@ dependencies {
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)
-    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.compose.bom.alpha))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
     implementation(libs.molecule)
