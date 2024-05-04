@@ -154,25 +154,7 @@ fun ExpandedPlayerView(
                                 animatedVisibilityScope = animatedVisibilityScope,
                                 state = this@with?.rememberSharedContentState(key = SharedTransitionElementKey.Artwork)
                             )
-                                .size(360.dp)
-                                .border(
-                                    width = 1.dp,
-                                    brush = Brush.horizontalGradient(
-                                        0.0f to Color.Transparent,
-                                        0.5f to MaterialTheme.colorScheme.tertiaryPrimary,
-                                        0.6f to Color.Transparent,
-                                    ),
-                                    shape = RectangleShape,
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    brush = Brush.horizontalGradient(
-                                        0.0f to MaterialTheme.colorScheme.tertiaryPrimary,
-                                        0.5f to Color.Transparent,
-                                        0.6f to MaterialTheme.colorScheme.primaryTertiary,
-                                    ),
-                                    shape = RectangleShape,
-                                ),
+                                .size(360.dp),
                         )
                         Text(
                             text = targetEpisode.title,
