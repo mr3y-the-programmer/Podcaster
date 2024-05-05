@@ -14,7 +14,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,16 +58,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
@@ -81,7 +80,6 @@ import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
-import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 import java.text.DecimalFormat
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -116,7 +114,7 @@ fun ExpandedPlayerView(
             modifier = modifier.sharedBoundsIfNotNull(
                 sharedTransitionScope = this,
                 animatedVisibilityScope = animatedVisibilityScope,
-                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.Bounds)
+                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.RootBounds)
             ),
         ) { contentPadding ->
             Column(
@@ -145,15 +143,21 @@ fun ExpandedPlayerView(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+                        val sharedArtworkTransitionKey = SharedTransitionElementKey.Artwork(targetEpisode.id).hashCode().toString()
                         AsyncImage(
-                            model = targetEpisode.artworkUrl,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(targetEpisode.artworkUrl)
+                                .placeholderMemoryCacheKey(sharedArtworkTransitionKey)
+                                .memoryCacheKey(sharedArtworkTransitionKey)
+                                .build(),
                             contentDescription = null,
                             contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.sharedElementIfNotNull(
-                                sharedTransitionScope = this@with,
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                state = this@with?.rememberSharedContentState(key = SharedTransitionElementKey.Artwork)
-                            )
+                            modifier = Modifier
+                                .sharedElementIfNotNull(
+                                    sharedTransitionScope = this@with,
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    state = this@with?.rememberSharedContentState(key = sharedArtworkTransitionKey)
+                                )
                                 .size(360.dp),
                         )
                         Text(
@@ -356,7 +360,7 @@ fun CollapsedPlayerView(
             modifier = modifier.sharedBoundsIfNotNull(
                 sharedTransitionScope = this,
                 animatedVisibilityScope = animatedVisibilityScope,
-                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.Bounds)
+                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.RootBounds)
             ),
         ) {
             Column(
@@ -371,39 +375,45 @@ fun CollapsedPlayerView(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
-                        AsyncImage(
-                            model = episode.artworkUrl,
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.sharedElementIfNotNull(
+                    val sharedArtworkTransitionKey = SharedTransitionElementKey.Artwork(episode.id).hashCode().toString()
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(episode.artworkUrl)
+                            .placeholderMemoryCacheKey(sharedArtworkTransitionKey)
+                            .memoryCacheKey(sharedArtworkTransitionKey)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .sharedElementIfNotNull(
                                 sharedTransitionScope = this@with,
                                 animatedVisibilityScope = animatedVisibilityScope,
-                                state = this@with?.rememberSharedContentState(key = SharedTransitionElementKey.Artwork)
+                                state = this@with?.rememberSharedContentState(key = sharedArtworkTransitionKey)
                             )
-                                .clip(MaterialTheme.shapes.small)
-                                .size(64.dp),
+                            .clip(MaterialTheme.shapes.small)
+                            .size(64.dp),
+                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        val strings = LocalStrings.current
+                        Text(
+                            text = strings.currently_playing,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Medium,
                         )
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            val strings = LocalStrings.current
-                            Text(
-                                text = strings.currently_playing,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Medium,
-                            )
-                            Text(
-                                text = episode.title,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Normal,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                            )
-                        }
+                        Text(
+                            text = episode.title,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                        )
+                    }
 
                     PlayPauseCompactButton(
                         isSelected = true,
@@ -473,8 +483,11 @@ private fun Modifier.skipToLookaheadSizeIfNotNull(
         }
 }
 
-private enum class SharedTransitionElementKey {
-    Artwork, Bounds
+private sealed interface SharedTransitionElementKey {
+
+    data object RootBounds : SharedTransitionElementKey
+
+    data class Artwork(val episodeId: Long) : SharedTransitionElementKey
 }
 
 private fun Int?.formatAsDuration(): String {
