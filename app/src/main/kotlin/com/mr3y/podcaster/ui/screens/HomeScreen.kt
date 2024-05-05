@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -178,7 +179,7 @@ fun HomeScreen(
                     AnchoredDraggableState(
                         initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
                         anchors = anchors,
-                        positionalThreshold = { distance: Float -> distance * 0.1f },
+                        positionalThreshold = { distance: Float -> distance * 0.15f },
                         snapAnimationSpec = spring(),
                         decayAnimationSpec = splineBasedDecay(density),
                         velocityThreshold = { with(density) { 80.dp.toPx() } },
@@ -215,7 +216,7 @@ fun HomeScreen(
                     excludedWindowInsets = if (currentlyPlayingEpisode != null) collapsedPlayerViewBottomInsets else null,
                 )
                 currentlyPlayingEpisode?.let { activeEpisode ->
-                    val isCollapsed = state.targetValue == PlayerViewState.Collapsed
+                    val isCollapsed by derivedStateOf { state.requireOffset() >= (collapsedPlayerViewOffset * 0.85f) }
                     val containerColor by animateColorAsState(
                         targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
                         label = "PlayerViewColorAnimation",
