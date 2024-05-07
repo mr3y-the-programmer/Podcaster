@@ -99,7 +99,6 @@ class PodcasterAppState @Inject constructor(
                         }
                     }
                 }
-
             },
             MoreExecutors.directExecutor(),
         )
