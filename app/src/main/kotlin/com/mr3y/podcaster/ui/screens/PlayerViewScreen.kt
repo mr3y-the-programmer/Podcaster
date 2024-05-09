@@ -195,6 +195,7 @@ fun ExpandedPlayerView(
                         thumbColor = MaterialTheme.colorScheme.primaryTertiary,
                         activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
                         activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
+                        inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f)
                     ),
                 )
                 Row(
