@@ -2,6 +2,7 @@ package com.mr3y.podcaster.ui.presenter
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -99,6 +100,7 @@ class PodcasterAppState @Inject constructor(
                         }
                     }
                 }
+                context.startService(Intent(context, PlaybackService::class.java))
             },
             MoreExecutors.directExecutor(),
         )
