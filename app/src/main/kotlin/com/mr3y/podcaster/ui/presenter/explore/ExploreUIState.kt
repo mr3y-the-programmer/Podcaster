@@ -26,6 +26,8 @@ sealed interface ExploreUIEvent {
 
     data class DeleteSearchQuery(val searchQuery: String) : ExploreUIEvent
 
+    data object ClearSearchQuery : ExploreUIEvent
+
     data object Retry : ExploreUIEvent
 
     data object ResultConsumed : ExploreUIEvent
