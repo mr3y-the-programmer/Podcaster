@@ -33,6 +33,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
@@ -112,6 +113,7 @@ fun ExploreScreen(
                 is ExploreUIEvent.Search -> viewModel.search()
                 is ExploreUIEvent.UpdateSearchQuery -> viewModel.updateSearchQuery(event.newSearchQuery)
                 is ExploreUIEvent.DeleteSearchQuery -> viewModel.deleteSearchQuery(event.searchQuery)
+                is ExploreUIEvent.ClearSearchQuery -> viewModel.clearSearchQuery()
                 is ExploreUIEvent.Retry -> viewModel.retry()
                 is ExploreUIEvent.ResultConsumed -> viewModel.consumeResult()
             }
@@ -172,10 +174,12 @@ fun ExploreScreen(
                 onSearchQueryChange = { eventSink(ExploreUIEvent.UpdateSearchQuery(it)) },
                 interactionSource = searchBarInteractionSource,
                 showConfirmButton = isSearchBarFocused && state.searchQuery.text.isNotBlank(),
+                showClearButton = state.searchQuery.text.isNotBlank(),
                 onConfirmButtonClick = {
                     eventSink(ExploreUIEvent.Search)
                     focusManager.clearFocus()
                 },
+                onClearButtonClick = { eventSink(ExploreUIEvent.ClearSearchQuery) },
                 modifier = Modifier.fillMaxWidth(),
             )
             val recentSearches = state.previousSearchQueries
@@ -233,10 +237,24 @@ private fun ExploreSearchBar(
     onSearchQueryChange: (TextFieldValue) -> Unit,
     interactionSource: MutableInteractionSource,
     showConfirmButton: Boolean,
+    showClearButton: Boolean,
     onConfirmButtonClick: () -> Unit,
+    onClearButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
+    val clearButton = @Composable {
+        IconButton(
+            onClick = onClearButtonClick,
+            modifier = Modifier.clearAndSetSemantics { },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Clear,
+                contentDescription = null,
+                modifier = Modifier.fillMaxHeight(),
+            )
+        }
+    }
     OutlinedTextField(
         value = searchQuery,
         onValueChange = onSearchQueryChange,
@@ -274,6 +292,13 @@ private fun ExploreSearchBar(
                         )
                     }
                 }
+            } else if (showClearButton) {
+                clearButton()
+            }
+        },
+        suffix = {
+            if (showConfirmButton && showClearButton) {
+                clearButton()
             }
         },
         interactionSource = interactionSource,
