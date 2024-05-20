@@ -1,3 +1,2 @@
-- Fix a bug that caused PlayerView UI to be not responding sometimes when navigating through playlist.
-- Fix playback interruption bug.
-- Handle background playback more efficiently.
+- Provide clearing search text option instead of removing it char by char.
+- Fix failing to update/search for content bug.
