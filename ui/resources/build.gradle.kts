@@ -1,17 +1,10 @@
 plugins {
-    alias(libs.plugins.podcaster.android.lib)
+    alias(libs.plugins.podcaster.compose.android.lib)
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.mr3y.podcaster.ui.resources"
-
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
 }
 
 ksp {

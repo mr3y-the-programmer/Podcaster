@@ -1,16 +1,9 @@
 plugins {
-    alias(libs.plugins.podcaster.android.lib)
+    alias(libs.plugins.podcaster.compose.android.lib)
 }
 
 android {
     namespace = "com.mr3y.podcaster.ui.preview"
-
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
 }
 
 dependencies {

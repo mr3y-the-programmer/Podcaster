@@ -1,53 +1,53 @@
 package com.mr3y.podcaster.gradle
 
-import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
-class AndroidApplicationConventionPlugin : Plugin<Project> {
+class AndroidComposeLibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("com.android.application")
+            pluginManager.apply("com.android.library")
             pluginManager.apply("org.jetbrains.kotlin.android")
             pluginManager.apply("org.jlleitschuh.gradle.ktlint")
             pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
-            val applicationExtension = extensions.getByType<ApplicationExtension>()
+            val extension = extensions.getByType<LibraryExtension>()
             val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
-            configureAndroidApplicationExtension(applicationExtension, composeExtension)
+            configureAndroidComposeLibraryExtension(extension, composeExtension)
         }
     }
 
-
-    private fun Project.configureAndroidApplicationExtension(
-        applicationExtension: ApplicationExtension,
+    private fun Project.configureAndroidComposeLibraryExtension(
+        libraryExtension: LibraryExtension,
         composeExtension: ComposeCompilerGradlePluginExtension,
     ) {
-        applicationExtension.apply {
+        libraryExtension.apply {
             compileSdk = libs.findVersion("compileSdk").get().toString().toInt()
 
             defaultConfig {
                 minSdk = libs.findVersion("minSdk").get().toString().toInt()
-                targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
 
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                vectorDrawables {
-                    useSupportLibrary = true
-                }
+                consumerProguardFiles("consumer-rules.pro")
             }
 
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
+            buildTypes {
+                release {
+                    isMinifyEnabled = true
+                    proguardFiles(
+                        getDefaultProguardFile("proguard-android-optimize.txt"),
+                        "proguard-rules.pro",
+                    )
+                }
             }
 
             buildFeatures {
                 compose = true
-                buildConfig = true
             }
 
             composeExtension.apply {
@@ -55,12 +55,14 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
             }
 
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+
             packaging {
                 resources {
                     excludes += "/META-INF/{AL2.0,LGPL2.1}"
-                }
-                jniLibs {
-                    excludes += "**/libdatastore_shared_counter.so"
                 }
             }
         }

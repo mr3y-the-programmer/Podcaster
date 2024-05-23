@@ -3,8 +3,8 @@ minSdk = "26"
 targetSdk = "34"
 compileSdk = "34"
 agp = "8.4.1"
-kotlin = "1.9.24"
-ksp = "1.9.24-1.0.20"
+kotlin = "2.0.0"
+ksp = "2.0.0-1.0.21"
 ktlint = "12.1.1"
 kotlinx-serialization = "1.6.3"
 hilt = "2.51.1"
@@ -30,7 +30,6 @@ compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
 material3 = "1.2.1"
-compose-compiler = "1.5.14"
 navigation = "2.7.7"
 navigation-typed = "0.10.0"
 molecule = "1.4.2"
@@ -71,7 +70,6 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-compose-compiler = { group = "androidx.compose.compiler", name = "compiler", version.ref = "compose-compiler" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-htmlconverter = { group = "be.digitalia.compose.htmlconverter", name = "htmlconverter", version.ref = "compose-htmlconverter" }
 kmpalette-core = { group = "com.kmpalette", name = "kmpalette-core", version.ref = "kmpalette" }
@@ -134,11 +132,13 @@ xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serializ
 # Convention plugins dependencies
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-compiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -154,6 +154,7 @@ play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 podcaster-android-app = { id = "podcaster.android.application", version = "unspecified" }
 podcaster-android-lib = { id = "podcaster.android.library", version = "unspecified" }
+podcaster-compose-android-lib = { id = "podcaster.android.compose.library", version = "unspecified" }
 podcaster-jvm-lib = { id = "podcaster.jvm.library", version = "unspecified" }
 
 [bundles]
