@@ -18,6 +18,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.request.crossfade
+import coil3.util.DebugLogger
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.screens.HomeScreen
@@ -75,6 +80,9 @@ class MainActivity : ComponentActivity() {
                     theme = selectedTheme!!,
                     dynamicColor = isDynamicColorOn,
                 ) {
+                    setSingletonImageLoaderFactory { context ->
+                        createAsyncImageLoader(context)
+                    }
                     HomeScreen(
                         appState = podcasterAppState,
                         userPreferences = userPreferences,
@@ -115,5 +123,16 @@ class MainActivity : ComponentActivity() {
             Theme.Dark -> false
             Theme.SystemDefault -> !isSystemInDarkTheme()
         }
+    }
+
+    private fun createAsyncImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context)
+            .crossfade(true)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    logger(DebugLogger())
+                }
+            }
+            .build()
     }
 }
