@@ -36,7 +36,7 @@ molecule = "1.4.2"
 media3 = "1.3.1"
 coroutines = "1.8.1"
 workmanager = "2.9.0"
-coil = "2.6.0"
+coil = "3.0.0-alpha06"
 ktor = "2.3.11"
 result = "2.0.0"
 xmlutil = "0.86.3"
@@ -98,8 +98,8 @@ media3-testUtils-robolectric = { module = "androidx.media3:media3-test-utils-rob
 coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutines" }
 workmanager-core = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
 workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager" }
-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-coil-test = { group = "io.coil-kt", name = "coil-test", version.ref = "coil" }
+coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-test = { group = "io.coil-kt.coil3", name = "coil-test", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }

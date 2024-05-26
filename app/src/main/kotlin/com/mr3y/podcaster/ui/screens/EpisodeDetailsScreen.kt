@@ -49,10 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Scale
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.size.Scale
 import com.kmpalette.rememberDominantColorState
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
@@ -265,7 +266,7 @@ fun EpisodeDetailsScreen(
                                 dominantColor = dominantColorState.color,
                                 onState = { state ->
                                     when (state) {
-                                        is AsyncImagePainter.State.Success -> bitmap = state.result.drawable.toBitmap().asImageBitmap()
+                                        is AsyncImagePainter.State.Success -> bitmap = state.result.image.asDrawable(context.resources).toBitmap().asImageBitmap()
                                         else -> {}
                                     }
                                 },
