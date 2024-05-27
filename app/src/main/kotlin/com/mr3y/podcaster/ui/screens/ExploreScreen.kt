@@ -74,7 +74,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.sampledata.Podcasts
