@@ -1,2 +1,1 @@
-- Provide clearing search text option instead of removing it char by char.
-- Fix failing to update/search for content bug.
+- Fix bugs & Improve performance.
