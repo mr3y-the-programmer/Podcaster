@@ -56,7 +56,7 @@ object NetworkModule {
         val requestAuthenticationPlugin = createClientPlugin("requestAuthenticatorPlugin") {
             onRequest { request, _ ->
                 request.headers {
-                    val epoch = (System.currentTimeMillis() / 1000).let { if (BuildConfig.DEBUG) it - 150 else it }
+                    val epoch = (System.currentTimeMillis() / 1000)
                     append("User-Agent", "Podcaster/1.0")
                     append("X-Auth-Date", epoch.toString())
                     append("X-Auth-Key", BuildConfig.API_KEY)
@@ -72,10 +72,19 @@ object NetworkModule {
                 }
             }
             install(HttpRequestRetry) {
+                modifyRequest { request ->
+                    // The server expects the auth date to be within a 3 minutes time window around the server time
+                    // but sometimes the request time/auth date is off by a few seconds/milliseconds, therefore,
+                    // to solve this, retry the request with a 1.5 minutes offset.
+                    val epoch = (System.currentTimeMillis() / 1000) - 150
+                    request.headers["X-Auth-Date"] = epoch.toString()
+                    request.headers["Authorization"] = authHeader(epoch)
+                }
                 retryIf(3) { _, httpResponse ->
                     when {
                         httpResponse.status.value in 500..599 -> true
                         httpResponse.status == HttpStatusCode.TooManyRequests -> true
+                        httpResponse.status == HttpStatusCode.Unauthorized -> true
                         else -> false
                     }
                 }

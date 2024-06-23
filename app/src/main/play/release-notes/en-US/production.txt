@@ -1,1 +1,1 @@
-- Fix messing up the order of episodes in the playlist bug.
+- Fix bugs & Improve performance.

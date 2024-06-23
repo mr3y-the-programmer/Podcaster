@@ -39,6 +39,10 @@ class ExploreViewModel @Inject constructor(
         events.tryEmit(ExploreUIEvent.DeleteSearchQuery(searchQueryText))
     }
 
+    fun clearSearchQuery() {
+        events.tryEmit(ExploreUIEvent.ClearSearchQuery)
+    }
+
     fun consumeResult() {
         events.tryEmit(ExploreUIEvent.ResultConsumed)
     }
@@ -107,6 +111,9 @@ internal fun ExplorePresenter(
                 }
                 is ExploreUIEvent.DeleteSearchQuery -> {
                     repository.deleteSearchQuery(event.searchQuery)
+                }
+                is ExploreUIEvent.ClearSearchQuery -> {
+                    searchQuery = searchQuery.copy(text = "")
                 }
                 is ExploreUIEvent.Retry -> {
                     if (searchResult is SearchResult.Error) {

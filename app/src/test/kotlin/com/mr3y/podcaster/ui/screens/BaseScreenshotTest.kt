@@ -6,10 +6,10 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
-import coil.Coil
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.test.FakeImageLoaderEngine
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.test.FakeImageLoaderEngine
+import coil3.test.intercept
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziOptions
@@ -36,7 +36,7 @@ open class BaseScreenshotTest {
 
     @Before
     fun setup() {
-        Coil.setImageLoader(provideFakeImageLoader())
+        SingletonImageLoader.setSafe(provideFakeImageLoader())
     }
 
     @OptIn(ExperimentalRoborazziApi::class)
@@ -50,14 +50,15 @@ open class BaseScreenshotTest {
         )
     }
 
-    @OptIn(ExperimentalCoilApi::class)
-    private fun provideFakeImageLoader(): ImageLoader {
-        val engine = FakeImageLoaderEngine.Builder()
-            .intercept({ it is String }, loadTestBitmap("adb_test_image.png".toPath()))
-            .build()
-        return ImageLoader.Builder(context)
-            .components { add(engine) }
-            .build()
+    private fun provideFakeImageLoader(): SingletonImageLoader.Factory {
+        return SingletonImageLoader.Factory {
+            val engine = FakeImageLoaderEngine.Builder()
+                .intercept({ it is String }, loadTestBitmap("adb_test_image.png".toPath()))
+                .build()
+            ImageLoader.Builder(context)
+                .components { add(engine) }
+                .build()
+        }
     }
 
     private fun loadTestBitmap(path: Path): BitmapDrawable = FileSystem.RESOURCES.read(path) {

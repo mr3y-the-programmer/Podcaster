@@ -20,6 +20,7 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.compose.compiler.gradlePlugin)
     compileOnly(libs.ktlint.gradlePlugin)
 }
 
@@ -32,6 +33,10 @@ gradlePlugin {
         register("androidLibrary") {
             id = "podcaster.android.library"
             implementationClass = "com.mr3y.podcaster.gradle.AndroidLibraryConventionPlugin"
+        }
+        register("androidComposeLibrary") {
+            id = "podcaster.android.compose.library"
+            implementationClass = "com.mr3y.podcaster.gradle.AndroidComposeLibraryConventionPlugin"
         }
         register("jvmLibrary") {
             id = "podcaster.jvm.library"

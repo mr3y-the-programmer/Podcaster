@@ -2,56 +2,55 @@
 minSdk = "26"
 targetSdk = "34"
 compileSdk = "34"
-agp = "8.4.0"
-kotlin = "1.9.23"
-ksp = "1.9.23-1.0.19"
-ktlint = "12.1.0"
-kotlinx-serialization = "1.6.3"
+agp = "8.5.0"
+kotlin = "2.0.0"
+ksp = "2.0.0-1.0.22"
+ktlint = "12.1.1"
+kotlinx-serialization = "1.7.0"
 hilt = "2.51.1"
 hilt-androidx = "1.2.0"
-core-ktx = "1.13.0"
+core-ktx = "1.13.1"
 splashscreen = "1.0.1"
 junit = "4.13.2"
-robolectric = "4.12.1"
-roborazzi = "1.12.0"
+robolectric = "4.12.2"
+roborazzi = "1.20.0"
 okio = "3.9.0"
-mockk = "1.13.10"
+mockk = "1.13.11"
 assertk = "0.28.1"
 turbine = "1.1.0"
 androidx-test-ext-junit = "1.1.5"
 androidx-test-runner = "1.5.2"
 androidx-test-core = "1.5.0"
-androidx-annotations = "1.7.1"
+androidx-annotations = "1.8.0"
 espresso-core = "3.5.1"
 lifecycle-runtime = "2.7.0"
 activity-compose = "1.9.0"
-compose-bom = "2024.04.01"
+compose-bom = "2024.06.00"
 compose-bom-alpha = "2024.05.00-alpha01"
 compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
-compose-compiler = "1.5.11"
 navigation = "2.7.7"
 navigation-typed = "0.10.0"
-molecule = "1.4.2"
+molecule = "2.0.0"
 media3 = "1.3.1"
-coroutines = "1.8.0"
+coroutines = "1.8.1"
 workmanager = "2.9.0"
-coil = "2.6.0"
-ktor = "2.3.10"
+coil = "3.0.0-alpha06"
+ktor = "2.3.11"
 result = "2.0.0"
-xmlutil = "0.86.3"
-kermit = "2.0.3"
+xmlutil = "0.90.1"
+kermit = "2.0.4"
 sqldelight = "2.0.2"
 sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
-google-services = "4.4.1"
-firebase-bom = "32.8.1"
-crashlytics = "2.9.9"
-leakcanary = "3.0-alpha-1"
-datastore = "1.1.0"
-aboutlibraries = "11.1.3"
+google-services = "4.4.2"
+firebase-bom = "33.1.0"
+crashlytics = "3.0.1"
+leakcanary = "3.0-alpha-8"
+datastore = "1.1.1"
+aboutlibraries = "11.2.1"
 appversioning = "1.3.2"
-gpp = "3.9.1"
+gpp = "3.10.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -71,7 +70,6 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-compose-compiler = { group = "androidx.compose.compiler", name = "compiler", version.ref = "compose-compiler" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-bom-alpha = { group = "dev.chrisbanes.compose", name = "compose-bom", version.ref = "compose-bom-alpha" }
 compose-htmlconverter = { group = "be.digitalia.compose.htmlconverter", name = "htmlconverter", version.ref = "compose-htmlconverter" }
@@ -101,8 +99,10 @@ media3-testUtils-robolectric = { module = "androidx.media3:media3-test-utils-rob
 coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutines" }
 workmanager-core = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
 workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager" }
-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-coil-test = { group = "io.coil-kt", name = "coil-test", version.ref = "coil" }
+coil-mp = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
+coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor", version.ref = "coil" }
+coil-test = { group = "io.coil-kt.coil3", name = "coil-test", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
@@ -135,11 +135,13 @@ xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serializ
 # Convention plugins dependencies
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-compiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -155,6 +157,7 @@ play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 podcaster-android-app = { id = "podcaster.android.application", version = "unspecified" }
 podcaster-android-lib = { id = "podcaster.android.library", version = "unspecified" }
+podcaster-compose-android-lib = { id = "podcaster.android.compose.library", version = "unspecified" }
 podcaster-jvm-lib = { id = "podcaster.jvm.library", version = "unspecified" }
 
 [bundles]
@@ -171,7 +174,9 @@ compose = [
     "ui-tooling-preview",
     "material3",
     "material-icons-extended",
+    "coil-mp",
     "coil",
+    "coil-network-ktor",
     "kmpalette-core",
     "aboutlibraries-m3",
     "compose-htmlconverter"

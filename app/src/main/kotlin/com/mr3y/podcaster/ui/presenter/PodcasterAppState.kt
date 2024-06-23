@@ -2,6 +2,7 @@ package com.mr3y.podcaster.ui.presenter
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -85,20 +86,21 @@ class PodcasterAppState @Inject constructor(
         controllerFuture.addListener(
             {
                 controller = controllerFuture.get()
-                    .apply {
-                        currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
-                            setMediaItemForEpisode(episode)
-                            setPlaybackSpeed(playingSpeed)
-                            maybeAddQueueEpisodes()
+                controller?.apply {
+                    currentlyPlayingEpisode.value?.let { (episode, episodePlayingStatus, playingSpeed) ->
+                        setMediaItemForEpisode(episode)
+                        setPlaybackSpeed(playingSpeed)
+                        maybeAddQueueEpisodes()
 
-                            if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
-                                seekToAndPlay(episode.progressInSec)
-                                if (episodePlayingStatus == PlayingStatus.Loading) {
-                                    podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
-                                }
+                        if ((episodePlayingStatus == PlayingStatus.Playing || episodePlayingStatus == PlayingStatus.Loading) && !isPlaying) {
+                            seekToAndPlay(episode.progressInSec)
+                            if (episodePlayingStatus == PlayingStatus.Loading) {
+                                podcastsRepository.updateCurrentlyPlayingEpisodeStatus(PlayingStatus.Playing)
                             }
                         }
                     }
+                }
+                context.startService(Intent(context, PlaybackService::class.java))
             },
             MoreExecutors.directExecutor(),
         )

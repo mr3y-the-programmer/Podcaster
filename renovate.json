@@ -15,7 +15,6 @@
   "packageRules": [
     {
       "matchPackagePrefixes": [
-        "androidx.compose.compiler",
         "com.google.devtools.ksp",
         "org.jetbrains.kotlin"
       ],
