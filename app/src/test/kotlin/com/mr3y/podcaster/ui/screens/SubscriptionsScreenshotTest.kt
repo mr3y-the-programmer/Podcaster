@@ -34,7 +34,6 @@ class SubscriptionsScreenshotTest : BaseScreenshotTest() {
                     ),
                     onPodcastClick = {},
                     onEpisodeClick = { _, _ -> },
-                    onSettingsClick = {},
                     onNavDrawerClick = {},
                     externalContentPadding = PaddingValues(0.dp),
                     excludedWindowInsets = null,
