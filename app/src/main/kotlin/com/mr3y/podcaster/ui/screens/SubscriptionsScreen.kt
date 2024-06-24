@@ -106,6 +106,7 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -394,7 +395,7 @@ private fun ColumnScope.EpisodesList(
                                         .clip(RoundedCornerShape(8.dp)),
                                     contentScale = ContentScale.FillBounds,
                                 )
-                                val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
+                                val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
                                 Text(
                                     text = formattedEpisodeDate,
                                     style = MaterialTheme.typography.bodySmall,
@@ -467,11 +468,6 @@ private fun ColumnScope.EpisodesList(
             }
         }
     }
-}
-
-private fun format(dateTime: ZonedDateTime): String {
-    val pattern = if (ZonedDateTime.now(ZoneId.systemDefault()).year != dateTime.year) "MMM d, yyyy" else "MMM d"
-    return DateTimeFormatter.ofPattern(pattern).format(dateTime.toLocalDate())
 }
 
 @PodcasterPreview
