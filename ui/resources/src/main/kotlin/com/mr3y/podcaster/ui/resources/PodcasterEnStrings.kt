@@ -10,7 +10,7 @@ import cafe.adriel.lyricist.LyricistStrings
 val EnStrings = PodcasterStrings(
     tab_subscriptions_label = "Subscriptions",
     tab_explore_label = "Explore",
-    tab_downloads_label = "Downloads",
+    tab_settings_label = "Settings",
     subscriptions_refresh_result_error = "Couldn't refresh feeds",
     subscriptions_refresh_result_mixed = "Couldn't refresh some feeds",
     icon_menu_content_description = "Tap to open Navigation drawer",
@@ -42,6 +42,7 @@ val EnStrings = PodcasterStrings(
     sync_work_notification_channel_name = "Sync",
     sync_work_notification_channel_description = "Background Refreshing tasks for Podcaster",
     download_work_notification_message = "Downloading episode/s currently in progress...",
+    downloads_label = "Downloads",
     downloads_empty_list = "You have no episodes downloaded or still downloading",
     settings_label = "Settings",
     appearance_label = "Appearance",

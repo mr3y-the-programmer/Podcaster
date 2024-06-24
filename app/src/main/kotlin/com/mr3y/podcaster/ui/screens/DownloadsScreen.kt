@@ -61,7 +61,7 @@ import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 @Composable
 fun DownloadsScreen(
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onNavDrawerClick: () -> Unit,
+    onNavigateUp: () -> Unit,
     appState: PodcasterAppState,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
@@ -72,7 +72,7 @@ fun DownloadsScreen(
     DownloadsScreen(
         state = downloadsState,
         onEpisodeClick = onEpisodeClick,
-        onNavDrawerClick = onNavDrawerClick,
+        onNavigateUp = onNavigateUp,
         onResumeDownloadingEpisode = appState::resumeDownloading,
         onPauseDownloadingEpisode = appState::pauseDownloading,
         externalContentPadding = contentPadding,
@@ -85,7 +85,7 @@ fun DownloadsScreen(
 fun DownloadsScreen(
     state: DownloadsUIState,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onNavDrawerClick: () -> Unit,
+    onNavigateUp: () -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     externalContentPadding: PaddingValues,
@@ -100,8 +100,8 @@ fun DownloadsScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = true,
-                onNavIconClick = onNavDrawerClick,
+                isTopLevelScreen = false,
+                onNavIconClick = onNavigateUp,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,
@@ -251,7 +251,7 @@ fun DownloadsScreenLoadingPreview() {
         DownloadsScreen(
             state = state,
             onEpisodeClick = { _, _ -> },
-            onNavDrawerClick = { /*TODO*/ },
+            onNavigateUp = { /*TODO*/ },
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -278,7 +278,7 @@ fun DownloadsScreenPreview(
         DownloadsScreen(
             state = state,
             onEpisodeClick = { _, _ -> },
-            onNavDrawerClick = { /*TODO*/ },
+            onNavigateUp = { /*TODO*/ },
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
@@ -303,7 +303,7 @@ fun DownloadsScreenEmptyDownloadsPreview() {
         DownloadsScreen(
             state = state,
             onEpisodeClick = { _, _ -> },
-            onNavDrawerClick = { /*TODO*/ },
+            onNavigateUp = { /*TODO*/ },
             onResumeDownloadingEpisode = {},
             onPauseDownloadingEpisode = {},
             externalContentPadding = PaddingValues(0.dp),
