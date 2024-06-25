@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.ImportExport
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -106,16 +107,10 @@ fun HomeScreen(
             Destinations.Explore,
         ),
         DrawerTab(
-            strings.import_export_label,
-            Icons.Outlined.ImportExport,
-            createRoutePattern<Destinations.ImportExport>(),
-            Destinations.ImportExport,
-        ),
-        DrawerTab(
-            strings.tab_downloads_label,
-            Icons.Outlined.FileDownload,
-            createRoutePattern<Destinations.Downloads>(),
-            Destinations.Downloads,
+            strings.tab_settings_label,
+            Icons.Outlined.Settings,
+            createRoutePattern<Destinations.Settings>(),
+            Destinations.Settings,
         ),
     )
     LaunchedEffect(key1 = drawerState.targetValue, key2 = isPlayerViewExpanded) {

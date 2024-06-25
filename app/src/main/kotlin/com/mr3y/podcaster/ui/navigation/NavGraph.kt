@@ -41,9 +41,7 @@ fun PodcasterNavGraph(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
                 onEpisodeClick = { episodeId, artworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, artworkUrl)) },
                 onNavDrawerClick = onNavDrawerClick,
-                onSettingsClick = { navController.navigate(Destinations.Settings) },
                 appState = appState,
-                userPreferences = userPreferences,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )
@@ -78,14 +76,16 @@ fun PodcasterNavGraph(
                 userPreferences = userPreferences,
                 externalContentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
-                onNavigateUp = navController::navigateUpOnce,
+                onNavDrawerClick = onNavDrawerClick,
+                onDownloadsClick = { navController.navigate(Destinations.Downloads) },
+                onImportExportClick = { navController.navigate(Destinations.ImportExport) },
                 onLicensesClick = { navController.navigate(Destinations.Licenses) },
             )
         }
         composable<Destinations.Downloads> {
             DownloadsScreen(
                 onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, podcastArtworkUrl)) },
-                onNavDrawerClick = onNavDrawerClick,
+                onNavigateUp = navController::navigateUpOnce,
                 appState = appState,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
@@ -100,7 +100,7 @@ fun PodcasterNavGraph(
         }
         composable<Destinations.ImportExport> {
             ImportExportScreen(
-                onNavDrawerClick = onNavDrawerClick,
+                onNavigateUp = navController::navigateUpOnce,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )

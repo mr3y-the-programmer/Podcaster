@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,11 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.ImportExport
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -31,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -60,7 +67,9 @@ fun SettingsScreen(
     userPreferences: UserPreferences,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onNavigateUp: () -> Unit,
+    onNavDrawerClick: () -> Unit,
+    onDownloadsClick: () -> Unit,
+    onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -78,7 +87,9 @@ fun SettingsScreen(
                 userPreferences.disableDynamicColor()
             }
         },
-        onNavigateUp = onNavigateUp,
+        onNavDrawerClick = onNavDrawerClick,
+        onDownloadsClick = onDownloadsClick,
+        onImportExportClick = onImportExportClick,
         onLicensesClick = onLicensesClick,
         onFeedbackClick = {
             urlHandler.openUri("https://github.com/mr3y-the-programmer/Podcaster/issues/new?template=bug_report.md")
@@ -98,7 +109,9 @@ fun SettingsScreen(
     onSelectingTheme: (Theme) -> Unit,
     isDynamicColorsOn: Boolean,
     onToggleDynamicColor: (Boolean) -> Unit,
-    onNavigateUp: () -> Unit,
+    onNavDrawerClick: () -> Unit,
+    onDownloadsClick: () -> Unit,
+    onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onFeedbackClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
@@ -115,8 +128,8 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = false,
-                onNavIconClick = onNavigateUp,
+                isTopLevelScreen = true,
+                onNavIconClick = onNavDrawerClick,
                 title = {
                     Text(
                         text = strings.settings_label,
@@ -149,7 +162,21 @@ fun SettingsScreen(
                     onToggleDynamicColor,
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-                SettingsTextButton(
+                SettingsButton(
+                    text = strings.downloads_label,
+                    icon = Icons.Outlined.FileDownload,
+                    onClick = onDownloadsClick,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+                SettingsButton(
+                    text = strings.import_export_label,
+                    icon = Icons.Outlined.ImportExport,
+                    onClick = onImportExportClick,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+                SettingsButton(
                     text = strings.open_source_licenses_label,
                     onClick = onLicensesClick,
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
@@ -180,13 +207,13 @@ fun SettingsScreen(
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-                SettingsTextButton(
+                SettingsButton(
                     text = strings.feedback_and_issues_label,
                     onClick = onFeedbackClick,
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-                SettingsTextButton(
+                SettingsButton(
                     text = strings.privacy_policy_label,
                     onClick = onPrivacyPolicyClick,
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
@@ -301,10 +328,11 @@ private fun AppearanceSection(
 }
 
 @Composable
-private fun SettingsTextButton(
+private fun SettingsButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -319,6 +347,13 @@ private fun SettingsTextButton(
                 onClick = onClick,
             ),
     ) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         Heading(
             text = text,
             modifier = Modifier.fillMaxWidth(),
@@ -363,6 +398,8 @@ fun SettingsScreenPreview(
             { _ -> },
             true,
             { _ -> },
+            {},
+            {},
             {},
             {},
             {},
