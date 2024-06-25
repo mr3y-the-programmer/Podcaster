@@ -1,7 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +11,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -31,14 +28,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -46,15 +38,12 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.size.Scale
-import com.kmpalette.rememberDominantColorState
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.EpisodeDownloadMetadata
@@ -77,15 +66,12 @@ import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIState
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
-import com.mr3y.podcaster.ui.theme.MinContrastRatio
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
-import com.mr3y.podcaster.ui.theme.contrastAgainst
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
-import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
-import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -165,34 +151,8 @@ fun EpisodeDetailsScreen(
             else -> {}
         }
     }
-    val dominantColorState = rememberDominantColorState(
-        defaultColor = MaterialTheme.colorScheme.primaryTertiaryContainer,
-        defaultOnColor = MaterialTheme.colorScheme.onPrimaryTertiaryContainer,
-        cacheSize = 1,
-        builder = {
-            clearFilters()
-                .maximumColorCount(8)
-        },
-    )
-    var bitmap: ImageBitmap? by remember { mutableStateOf(null) }
-    LaunchedEffect(bitmap) {
-        val temp = bitmap
-        if (temp != null) {
-            dominantColorState.updateFrom(temp)
-        }
-    }
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    LaunchedEffect(key1 = isDarkTheme, key2 = dominantColorState.onColor) {
-        if (state.isLoading || state.episode == null) {
-            context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
-        } else {
-            val contrastRatio = dominantColorState.onColor.contrastAgainst(surfaceColor)
-            if (contrastRatio >= MinContrastRatio) {
-                context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
-            } else {
-                context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
-            }
-        }
+    LaunchedEffect(key1 = isDarkTheme) {
+        context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
     }
     PullToRefresh(
         isRefreshingDone = !state.isRefreshing,
@@ -203,17 +163,17 @@ fun EpisodeDetailsScreen(
                 TopBar(
                     isTopLevelScreen = false,
                     onNavIconClick = onNavigateUp,
+                    title = {
+                        Text(
+                            text = state.episode?.podcastTitle ?: "",
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 1
+                        )
+                    },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if (state.isLoading || state.episode == null) {
-                            MaterialTheme.colorScheme.surface
-                        } else {
-                            dominantColorState.color
-                        },
-                        navigationIconContentColor = if (state.isLoading || state.episode == null) {
-                            MaterialTheme.colorScheme.onSurface
-                        } else {
-                            dominantColorState.onColor
-                        },
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -247,36 +207,22 @@ fun EpisodeDetailsScreen(
                     }
                     else -> {
                         val urlHandler = LocalUriHandler.current
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            Header(
-                                episode = state.episode,
-                                downloadMetadata = state.downloadMetadata,
-                                onPlay = { eventSink(EpisodeDetailsUIEvent.PlayEpisode(it)) },
-                                onPause = { eventSink(EpisodeDetailsUIEvent.Pause) },
-                                queueEpisodes = state.queueEpisodesIds,
-                                onAddEpisodeToQueue = { eventSink(EpisodeDetailsUIEvent.AddEpisodeToQueue(it)) },
-                                onRemoveEpisodeFromQueue = { eventSink(EpisodeDetailsUIEvent.RemoveEpisodeFromQueue(it)) },
-                                onDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.DownloadEpisode(it)) },
-                                onResumeDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.ResumeDownloading(it)) },
-                                onPauseDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.PauseDownloading(it)) },
-                                isSelected = isSelected,
-                                playingStatus = playingStatus,
-                                dominantColor = dominantColorState.color,
-                                onState = { state ->
-                                    when (state) {
-                                        is AsyncImagePainter.State.Success -> bitmap = state.result.image.asDrawable(context.resources).toBitmap().asImageBitmap()
-                                        else -> {}
-                                    }
-                                },
-                            )
-                            Details(
-                                episode = state.episode,
-                                externalContentPadding = externalContentPadding,
-                                onUrlClick = urlHandler::openUri,
-                            )
-                        }
+                        EpisodeDetails(
+                            episode = state.episode,
+                            downloadMetadata = state.downloadMetadata,
+                            onPlay = { eventSink(EpisodeDetailsUIEvent.PlayEpisode(it)) },
+                            onPause = { eventSink(EpisodeDetailsUIEvent.Pause) },
+                            queueEpisodes = state.queueEpisodesIds,
+                            onAddEpisodeToQueue = { eventSink(EpisodeDetailsUIEvent.AddEpisodeToQueue(it)) },
+                            onRemoveEpisodeFromQueue = { eventSink(EpisodeDetailsUIEvent.RemoveEpisodeFromQueue(it)) },
+                            onDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.DownloadEpisode(it)) },
+                            onResumeDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.ResumeDownloading(it)) },
+                            onPauseDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.PauseDownloading(it)) },
+                            isSelected = isSelected,
+                            playingStatus = playingStatus,
+                            externalContentPadding = externalContentPadding,
+                            onUrlClick = urlHandler::openUri,
+                        )
                     }
                 }
             }
@@ -284,8 +230,9 @@ fun EpisodeDetailsScreen(
     }
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
-private fun Header(
+private fun EpisodeDetails(
     episode: Episode,
     downloadMetadata: EpisodeDownloadMetadata?,
     onPlay: (Episode) -> Unit,
@@ -298,45 +245,50 @@ private fun Header(
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
-    dominantColor: Color,
-    onState: ((AsyncImagePainter.State) -> Unit)?,
-    modifier: Modifier = Modifier,
+    externalContentPadding: PaddingValues,
+    onUrlClick: (url: String) -> Unit,
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(externalContentPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val imageSize = 128
-        val context = LocalContext.current
-
-        Box(
-            Modifier
-                .height((imageSize * 3f / 4f).dp)
-                .fillMaxWidth()
-                .background(dominantColor),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val context = LocalContext.current
+            val imageSize = 128
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(episode.artworkUrl)
+                    .size(imageSize)
+                    .scale(Scale.FILL)
+                    .allowHardware(false)
+                    .memoryCacheKey("${episode.artworkUrl}.palette")
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.size(imageSize.dp),
+            )
+        }
+        val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
+        Text(
+            text = formattedEpisodeDate,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleMedium,
         )
-
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(episode.artworkUrl)
-                .size(imageSize)
-                .scale(Scale.FILL)
-                .allowHardware(false)
-                .memoryCacheKey("${episode.artworkUrl}.palette")
-                .build(),
-            onState = onState,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(top = (imageSize * 1f / 4f).dp)
-                .size(imageSize.dp)
-                .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp)),
+        Text(
+            text = episode.title,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Medium,
         )
-
         Row(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
                 .heightIn(min = 64.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
@@ -370,35 +322,6 @@ private fun Header(
                 contentColor = MaterialTheme.colorScheme.primaryTertiary,
             )
         }
-    }
-}
-
-@OptIn(ExperimentalTextApi::class)
-@Composable
-private fun Details(
-    episode: Episode,
-    externalContentPadding: PaddingValues,
-    onUrlClick: (url: String) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .padding(externalContentPadding),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = episode.title,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Medium,
-        )
-        Text(
-            text = episode.datePublishedFormatted,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-        )
         val styledDescription = rememberHtmlToAnnotatedString(episode.description)
         ClickableText(
             text = styledDescription,
