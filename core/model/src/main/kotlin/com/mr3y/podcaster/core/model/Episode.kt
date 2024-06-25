@@ -10,7 +10,7 @@ data class Episode(
     val datePublishedTimestamp: Long,
     @get:Deprecated(
         message = "This property is discouraged to access, as it may be inaccurate in most cases",
-        replaceWith = ReplaceWith(expression = "this.dateTimePublished", "com.mr3y.podcaster.core.model.dateTimePublished")
+        replaceWith = ReplaceWith(expression = "this.dateTimePublished", "com.mr3y.podcaster.core.model.dateTimePublished"),
     )
     val datePublishedFormatted: String,
     val durationInSec: Int? = null,

@@ -332,7 +332,7 @@ private fun SettingsButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

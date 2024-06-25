@@ -168,7 +168,7 @@ fun EpisodeDetailsScreen(
                             text = state.episode?.podcastTitle ?: "",
                             color = MaterialTheme.colorScheme.inverseSurface,
                             style = MaterialTheme.typography.titleSmall,
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -257,7 +257,7 @@ private fun EpisodeDetails(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val context = LocalContext.current
             val imageSize = 128

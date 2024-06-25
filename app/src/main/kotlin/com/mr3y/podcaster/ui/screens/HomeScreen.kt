@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.ImportExport
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue

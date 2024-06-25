@@ -1,12 +1,5 @@
 package com.mr3y.podcaster.ui.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,15 +25,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NightlightRound
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -67,7 +54,6 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -81,7 +67,6 @@ import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
-import com.mr3y.podcaster.core.model.dateTimePublished
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.Podcasts
@@ -94,22 +79,17 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
-import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
-import com.mr3y.podcaster.ui.theme.Theme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun SubscriptionsScreen(
