@@ -26,6 +26,9 @@ android {
     }
 
     signingConfigs {
+        if (System.getenv("CI").toBoolean()) {
+            named("debug") { storeFile = rootProject.file("debug.keystore") }
+        }
         create("release") {
             if (rootProject.file("keystore.properties").exists()) {
                 val keystoreProperties = Properties()
