@@ -49,7 +49,7 @@ jobs:
           API_CREDENTIALS: ${{ secrets.API_CREDENTIALS }}
 
       - name: Build debug
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --no-configuration-cache --stacktrace
 
       - name: Run local tests
         run: ./gradlew testDebug --stacktrace
