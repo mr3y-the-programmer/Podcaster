@@ -41,6 +41,13 @@ jobs:
         with:
           gradle-version: wrapper
 
+      - name: Create debug keystore file
+        run: |
+          echo "$DEBUG_KEYSTORE" > debug.keystore.b64
+          base64 -d -i debug.keystore.b64 > debug.keystore
+        env:
+          DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+
       - name: Create API credentials
         run: |
           echo "$API_CREDENTIALS" > app/bytemask.properties.b64
