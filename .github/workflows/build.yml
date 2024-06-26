@@ -15,10 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
-env:
-  API_KEY: ${{ secrets.API_KEY }}
-  API_SECRET: ${{ secrets.API_SECRET }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,6 +40,13 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Create API credentials
+        run: |
+          echo "$API_CREDENTIALS" > app/bytemask.properties.b64
+          base64 -d -i app/bytemask.properties.b64 > app/bytemask.properties
+        env:
+          API_CREDENTIALS: ${{ secrets.API_CREDENTIALS }}
 
       - name: Build debug
         run: ./gradlew assembleDebug --stacktrace

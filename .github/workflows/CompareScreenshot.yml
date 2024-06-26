@@ -17,10 +17,6 @@ concurrency:
 
 permissions: {}
 
-env:
-  API_KEY: ${{ secrets.API_KEY }}
-  API_SECRET: ${{ secrets.API_SECRET }}
-
 jobs:
   compare-screenshot-test:
     runs-on: ubuntu-latest
@@ -45,6 +41,12 @@ jobs:
         with:
           gradle-version: wrapper
 
+      - name: Create API credentials
+        run: |
+          echo "$API_CREDENTIALS" > app/bytemask.properties.b64
+          base64 -d -i app/bytemask.properties.b64 > app/bytemask.properties
+        env:
+          API_CREDENTIALS: ${{ secrets.API_CREDENTIALS }}
 
       - uses: dawidd6/action-download-artifact@v6
         continue-on-error: true
