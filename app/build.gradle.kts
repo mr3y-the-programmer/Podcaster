@@ -1,3 +1,4 @@
+import dev.shreyaspatil.bytemask.plugin.config.KeySource
 import java.io.FileInputStream
 import java.time.Instant
 import java.util.Properties
@@ -14,6 +15,7 @@ plugins {
     alias(libs.plugins.appversioning)
     alias(libs.plugins.play.publisher)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.bytemask)
 }
 
 android {
@@ -66,6 +68,16 @@ android {
     }
 }
 
+bytemaskConfig {
+    configure("release") {
+        enableEncryption = true
+        encryptionKeySource = KeySource.SigningConfig(name = "release")
+    }
+    configure("debug") {
+        enableEncryption = true
+    }
+}
+
 appVersioning {
     overrideVersionName { gitTag, providerFactory, variantInfo ->
         val buildNumber = providerFactory
@@ -107,6 +119,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.sync)
     implementation(projects.core.opml)
+    implementation(projects.core.credentialsProvider)
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)
@@ -127,6 +140,7 @@ dependencies {
     implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
 
     implementation(libs.datastore.pref)
+    implementation(libs.bytemask)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)

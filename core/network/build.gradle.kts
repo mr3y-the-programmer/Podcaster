@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.hilt.runtime)
     implementation(projects.core.model)
     implementation(projects.core.logger)
+    implementation(projects.core.credentialsProvider)
     implementation(libs.bundles.ktor)
     implementation(libs.result)
     implementation(libs.kotlinx.serialization)

@@ -17,5 +17,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+bytemask.properties
 keystore.properties
 play_config.json
