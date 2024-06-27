@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.podcaster.android.lib)
     alias(libs.plugins.kotlinx.serialization)
@@ -9,26 +6,6 @@ plugins {
 
 android {
     namespace = "com.mr3y.podcaster.core.network"
-
-    defaultConfig {
-
-        buildConfigField("String", "API_KEY", "\"${getValueOfKey("API_KEY")}\"")
-        buildConfigField("String", "API_SECRET", "\"${getValueOfKey("API_SECRET")}\"")
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
-}
-
-fun getValueOfKey(key: String): String {
-    return if (System.getenv("CI").toBoolean()) {
-        System.getenv(key)
-    } else {
-        val properties = Properties()
-        properties.load(FileInputStream(rootProject.file("local.properties")))
-        properties.getProperty(key)
-    }
 }
 
 dependencies {
@@ -37,6 +14,7 @@ dependencies {
     implementation(libs.hilt.runtime)
     implementation(projects.core.model)
     implementation(projects.core.logger)
+    implementation(projects.core.credentialsProvider)
     implementation(libs.bundles.ktor)
     implementation(libs.result)
     implementation(libs.kotlinx.serialization)

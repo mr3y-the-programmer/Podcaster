@@ -17,10 +17,6 @@ concurrency:
 
 permissions: {}
 
-env:
-  API_KEY: ${{ secrets.API_KEY }}
-  API_SECRET: ${{ secrets.API_SECRET }}
-
 jobs:
   store-screenshot-test:
     runs-on: ubuntu-latest
@@ -45,6 +41,20 @@ jobs:
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: wrapper
+
+      - name: Create debug keystore file
+        run: |
+          echo "$DEBUG_KEYSTORE" > debug.keystore.b64
+          base64 -d -i debug.keystore.b64 > debug.keystore
+        env:
+          DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+
+      - name: Create API credentials
+        run: |
+          echo "$API_CREDENTIALS" > app/bytemask.properties.b64
+          base64 -d -i app/bytemask.properties.b64 > app/bytemask.properties
+        env:
+          API_CREDENTIALS: ${{ secrets.API_CREDENTIALS }}
 
       - name: record screenshot
         id: record-test

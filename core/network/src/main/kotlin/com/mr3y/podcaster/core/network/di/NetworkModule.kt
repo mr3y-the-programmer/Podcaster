@@ -1,7 +1,7 @@
 package com.mr3y.podcaster.core.network.di
 
 import android.content.Context
-import com.mr3y.podcaster.core.network.BuildConfig
+import com.mr3y.podcaster.core.credentials_provider.CredentialsProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,7 +48,9 @@ object NetworkModule {
         }
 
         fun authHeader(epoch: Long): String {
-            val authHash = sha1("${BuildConfig.API_KEY}${BuildConfig.API_SECRET}$epoch".toByteArray())
+            val apiKey = CredentialsProvider.apiKey()
+            val apiSecret = CredentialsProvider.apiSecret()
+            val authHash = sha1("$apiKey$apiSecret$epoch".toByteArray())
             return byteToHex(authHash)
         }
 
@@ -59,7 +61,7 @@ object NetworkModule {
                     val epoch = (System.currentTimeMillis() / 1000)
                     append("User-Agent", "Podcaster/1.0")
                     append("X-Auth-Date", epoch.toString())
-                    append("X-Auth-Key", BuildConfig.API_KEY)
+                    append("X-Auth-Key", CredentialsProvider.apiKey())
                     append("Authorization", authHeader(epoch))
                 }
             }

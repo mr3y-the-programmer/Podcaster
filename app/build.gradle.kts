@@ -1,3 +1,4 @@
+import dev.shreyaspatil.bytemask.plugin.config.KeySource
 import java.io.FileInputStream
 import java.time.Instant
 import java.util.Properties
@@ -14,6 +15,7 @@ plugins {
     alias(libs.plugins.appversioning)
     alias(libs.plugins.play.publisher)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.bytemask)
 }
 
 android {
@@ -24,6 +26,9 @@ android {
     }
 
     signingConfigs {
+        if (System.getenv("CI").toBoolean()) {
+            named("debug") { storeFile = rootProject.file("debug.keystore") }
+        }
         create("release") {
             if (rootProject.file("keystore.properties").exists()) {
                 val keystoreProperties = Properties()
@@ -63,6 +68,16 @@ android {
                 }
             }
         }
+    }
+}
+
+bytemaskConfig {
+    configure("release") {
+        enableEncryption = true
+        encryptionKeySource = KeySource.SigningConfig(name = "release")
+    }
+    configure("debug") {
+        enableEncryption = true
     }
 }
 
@@ -107,6 +122,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.sync)
     implementation(projects.core.opml)
+    implementation(projects.core.credentialsProvider)
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)
