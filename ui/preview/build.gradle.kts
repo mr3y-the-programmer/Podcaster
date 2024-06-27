@@ -7,6 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.compose.bom.alpha))
     implementation(libs.ui.tooling.preview)
 }

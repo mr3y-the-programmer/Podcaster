@@ -174,7 +174,7 @@ fun SubscriptionsScreen(
         context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
     }
     PullToRefresh(
-        isRefreshingDone = !state.isRefreshing,
+        isRefreshing = state.isRefreshing,
         onRefresh = { eventSink(SubscriptionsUIEvent.Refresh) },
     ) {
         Scaffold(

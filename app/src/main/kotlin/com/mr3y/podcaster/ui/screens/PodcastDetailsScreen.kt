@@ -221,7 +221,7 @@ fun PodcastDetailsScreen(
         }
     }
     PullToRefresh(
-        isRefreshingDone = !state.isRefreshing,
+        isRefreshing = state.isRefreshing,
         onRefresh = { eventSink(PodcastDetailsUIEvent.Refresh) },
     ) {
         Scaffold(
