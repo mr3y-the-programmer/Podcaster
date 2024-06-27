@@ -143,7 +143,6 @@ dependencies {
     implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
 
     implementation(libs.datastore.pref)
-    implementation(libs.bytemask)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
