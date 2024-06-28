@@ -8,13 +8,13 @@ the app is still a work-in-progress and there are some features that are not yet
 
 ## Screenshots
 <p align="center">
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/5eb58fb3-0904-4e9a-a294-ca64e4aeec92" width="20%" />
+  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/0ece5346-f572-4c9e-a8ec-bc87a6b608a1" width="20%" />
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/9a73ad83-c9f4-4ef5-a167-45df071a9fea" width="20%" />
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/a3705145-d61d-4071-929b-ef33009b8a93" width="20%" />
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/6ab62293-0ae7-49b2-995e-c06e83fcd94e" width="20%" />
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/cd68c175-224f-4383-9499-f4b252e747bb" width="20%" />
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/7df5effd-04ff-44a7-a104-55b86c217f41" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/54c0b002-f4dd-4fea-b7a6-50f7ce116db3" width="20%" />
+  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/ac65fd2f-81c7-4234-a8b5-9f479a9d082d" width="20%" />
 </p>
 
 ## Features
