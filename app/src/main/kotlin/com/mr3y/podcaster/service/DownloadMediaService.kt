@@ -51,6 +51,8 @@ class DownloadMediaService : DownloadService(
 
     private var downloadManager: DownloadManager? = null
 
+    private lateinit var downloadsListener: DownloadManager.Listener
+
     override fun getDownloadManager(): DownloadManager = buildDownloadManager(this)
 
     override fun getScheduler(): Scheduler = WorkManagerScheduler(this, DOWNLOAD_WORK_NAME)
@@ -82,8 +84,18 @@ class DownloadMediaService : DownloadService(
         // start listening to updates because at this point download
         // manager is guaranteed to have been initialized & podcasts repository
         // instance is guaranteed to have been injected.
-        attachDownloadManagerListener()
+        downloadManager?.apply {
+            downloadsListener = DownloadsListener(podcastsRepository, logger)
+            addListener(downloadsListener)
+        }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        downloadManager?.apply {
+            removeListener(downloadsListener)
+        }
+        super.onDestroy()
     }
 
     private fun buildDownloadManager(context: Context): DownloadManager {
@@ -98,50 +110,46 @@ class DownloadMediaService : DownloadService(
         return downloadManager!!
     }
 
-    private fun attachDownloadManagerListener() {
-        downloadManager?.apply {
-            addListener(
-                object : DownloadManager.Listener {
+    private class DownloadsListener(
+        private val podcastsRepository: PodcastsRepository,
+        private val logger: Logger
+    ) : DownloadManager.Listener {
+        override fun onDownloadRemoved(
+            downloadManager: DownloadManager,
+            download: Download,
+        ) {
+            val episodeId = download.request.id.toLong()
+            podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
+            podcastsRepository.updateEpisodeDownloadProgress(episodeId, 0f)
+        }
 
-                    override fun onDownloadRemoved(
-                        downloadManager: DownloadManager,
-                        download: Download,
-                    ) {
-                        val episodeId = download.request.id.toLong()
-                        podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
-                        podcastsRepository.updateEpisodeDownloadProgress(episodeId, 0f)
+        override fun onDownloadChanged(
+            downloadManager: DownloadManager,
+            download: Download,
+            finalException: Exception?,
+        ) {
+            val episodeId = download.request.id.toLong()
+            when (download.state) {
+                Download.STATE_QUEUED -> {
+                    podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Queued)
+                }
+                Download.STATE_DOWNLOADING -> {
+                    podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloading)
+                }
+                Download.STATE_COMPLETED -> {
+                    podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloaded)
+                }
+                Download.STATE_STOPPED -> {
+                    podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Paused)
+                }
+                Download.STATE_FAILED -> {
+                    logger.e(finalException, "DownloadMediaService") {
+                        "Downloading episode with id: $episodeId failed!"
                     }
-
-                    override fun onDownloadChanged(
-                        downloadManager: DownloadManager,
-                        download: Download,
-                        finalException: Exception?,
-                    ) {
-                        val episodeId = download.request.id.toLong()
-                        when (download.state) {
-                            Download.STATE_QUEUED -> {
-                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Queued)
-                            }
-                            Download.STATE_DOWNLOADING -> {
-                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloading)
-                            }
-                            Download.STATE_COMPLETED -> {
-                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Downloaded)
-                            }
-                            Download.STATE_STOPPED -> {
-                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.Paused)
-                            }
-                            Download.STATE_FAILED -> {
-                                logger.e(finalException, "DownloadMediaService") {
-                                    "Downloading episode with id: $episodeId failed!"
-                                }
-                                podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
-                            }
-                            else -> {}
-                        }
-                    }
-                },
-            )
+                    podcastsRepository.updateEpisodeDownloadStatus(episodeId, EpisodeDownloadStatus.NotDownloaded)
+                }
+                else -> {}
+            }
         }
     }
 
