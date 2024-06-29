@@ -51,7 +51,7 @@ class PodcasterAppStateIntegrationTest {
     private val podcasterAppState = PodcasterAppState(
         podcastsRepository = podcastsRepo,
         applicationScope = scope.backgroundScope,
-        applicationContext = ApplicationProvider.getApplicationContext()
+        applicationContext = ApplicationProvider.getApplicationContext(),
     )
 
     @Test

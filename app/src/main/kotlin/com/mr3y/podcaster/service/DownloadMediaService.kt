@@ -112,7 +112,7 @@ class DownloadMediaService : DownloadService(
 
     private class DownloadsListener(
         private val podcastsRepository: PodcastsRepository,
-        private val logger: Logger
+        private val logger: Logger,
     ) : DownloadManager.Listener {
         override fun onDownloadRemoved(
             downloadManager: DownloadManager,
