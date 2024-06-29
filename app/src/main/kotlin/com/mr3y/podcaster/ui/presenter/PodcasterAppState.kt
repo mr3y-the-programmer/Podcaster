@@ -38,10 +38,10 @@ import kotlin.time.Duration.Companion.seconds
 class PodcasterAppState @Inject constructor(
     private val podcastsRepository: PodcastsRepository,
     @ApplicationScope private val applicationScope: CoroutineScope,
+    private val applicationContext: Context,
 ) {
 
     private var controller: MediaController? = null
-    private var currentContext: Context? = null
     private lateinit var controllerFuture: ListenableFuture<MediaController>
 
     val currentlyPlayingEpisode = podcastsRepository.getCurrentlyPlayingEpisode()
@@ -104,7 +104,6 @@ class PodcasterAppState @Inject constructor(
             },
             MoreExecutors.directExecutor(),
         )
-        currentContext = context
     }
 
     fun play(episode: Episode) {
@@ -217,36 +216,27 @@ class PodcasterAppState @Inject constructor(
     }
 
     fun downloadEpisode(episode: Episode) {
-        val context = currentContext
-        if (context != null) {
-            podcastsRepository.addEpisodeOnDeviceIfNotExist(episode)
-            val downloadRequest = DownloadRequest.Builder(
-                episode.id.toString(),
-                Uri.Builder()
-                    .encodedPath(episode.enclosureUrl)
-                    .build(),
-            ).build()
-            DownloadService.sendAddDownload(
-                context.applicationContext,
-                DownloadMediaService::class.java,
-                downloadRequest,
-                false,
-            )
-        }
+        podcastsRepository.addEpisodeOnDeviceIfNotExist(episode)
+        val downloadRequest = DownloadRequest.Builder(
+            episode.id.toString(),
+            Uri.Builder()
+                .encodedPath(episode.enclosureUrl)
+                .build(),
+        ).build()
+        DownloadService.sendAddDownload(
+            applicationContext,
+            DownloadMediaService::class.java,
+            downloadRequest,
+            false,
+        )
     }
 
     fun resumeDownloading(episodeId: Long) {
-        val context = currentContext
-        if (context != null) {
-            DownloadService.sendSetStopReason(context.applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadResumed, false)
-        }
+        DownloadService.sendSetStopReason(applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadResumed, false)
     }
 
     fun pauseDownloading(episodeId: Long) {
-        val context = currentContext
-        if (context != null) {
-            DownloadService.sendSetStopReason(context.applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadPaused, false)
-        }
+        DownloadService.sendSetStopReason(applicationContext, DownloadMediaService::class.java, episodeId.toString(), DownloadMediaService.DownloadPaused, false)
     }
 
     fun addToQueue(episode: Episode) {
@@ -294,7 +284,6 @@ class PodcasterAppState @Inject constructor(
 
     fun releasePlayer() {
         MediaController.releaseFuture(controllerFuture)
-        currentContext = null
     }
 
     fun consumeErrorPlayingStatus() {
