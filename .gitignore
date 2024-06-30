@@ -18,6 +18,7 @@
 .cxx
 local.properties
 keystore.properties
+bytemask.properties
 debug.keystore
 debug.keystore.b64
 bytemask.properties.b64
