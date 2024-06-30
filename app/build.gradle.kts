@@ -93,6 +93,20 @@ play {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=coil3.annotation.ExperimentalCoilApi",
+            )
+        )
+    }
+}
+
 hilt {
     enableAggregatingTask = true
 }

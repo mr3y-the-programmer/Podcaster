@@ -22,6 +22,7 @@ data class Episode(
     val isCompleted: Boolean = false,
     val progressInSec: Int? = null,
 ) {
+    @Suppress("DEPRECATION")
     override fun toString(): String {
         return "\nEpisode(\n" +
             "id = ${id}L,\n" +

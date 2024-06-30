@@ -7,6 +7,16 @@ android {
     namespace = "com.mr3y.podcaster.core.data"
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            )
+        )
+    }
+}
+
 dependencies {
 
     ksp(libs.hilt.compiler)

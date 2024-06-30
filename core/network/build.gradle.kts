@@ -21,6 +21,17 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            )
+        )
+    }
+}
+
 fun getValueOfKey(key: String): String {
     return if (System.getenv("CI").toBoolean()) {
         System.getenv(key)

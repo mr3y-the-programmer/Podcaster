@@ -7,6 +7,16 @@ android {
     namespace = "com.mr3y.podcaster.core.sync"
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            )
+        )
+    }
+}
+
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.data)

@@ -8,6 +8,17 @@ android {
     namespace = "com.mr3y.podcaster.core.opml"
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            )
+        )
+    }
+}
+
 dependencies {
 
     implementation(projects.core.model)
