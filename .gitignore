@@ -17,7 +17,6 @@
 .externalNativeBuild
 .cxx
 local.properties
-bytemask.properties
 keystore.properties
 debug.keystore
 debug.keystore.b64

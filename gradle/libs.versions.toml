@@ -14,7 +14,6 @@ splashscreen = "1.0.1"
 junit = "4.13.2"
 robolectric = "4.12.2"
 roborazzi = "1.20.0"
-bytemask = "1.0.0-alpha02"
 okio = "3.9.0"
 mockk = "1.13.11"
 assertk = "0.28.1"
@@ -154,7 +153,6 @@ aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "abo
 appversioning = { id = "io.github.reactivecircus.app-versioning", version.ref = "appversioning" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-bytemask = { id = "dev.shreyaspatil.bytemask.plugin", version.ref = "bytemask" }
 podcaster-android-app = { id = "podcaster.android.application", version = "unspecified" }
 podcaster-android-lib = { id = "podcaster.android.library", version = "unspecified" }
 podcaster-compose-android-lib = { id = "podcaster.android.compose.library", version = "unspecified" }
