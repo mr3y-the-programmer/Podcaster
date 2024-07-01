@@ -14,7 +14,7 @@ kotlin {
             listOf(
                 "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            )
+            ),
         )
     }
 }

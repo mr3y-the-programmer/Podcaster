@@ -12,7 +12,7 @@ kotlin {
         freeCompilerArgs.addAll(
             listOf(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            )
+            ),
         )
     }
 }
