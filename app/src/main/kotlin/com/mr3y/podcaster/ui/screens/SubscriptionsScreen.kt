@@ -179,23 +179,25 @@ fun SubscriptionsScreen(
     ) {
         Scaffold(
             topBar = {
-                TopBar(
-                    isTopLevelScreen = true,
-                    onNavIconClick = onNavDrawerClick,
-                    title = {
-                        Text(
-                            text = strings.subscriptions_label,
-                            color = MaterialTheme.colorScheme.onPrimaryTertiary,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                if (state.subscriptions.isNotEmpty()) {
+                    TopBar(
+                        isTopLevelScreen = true,
+                        onNavIconClick = onNavDrawerClick,
+                        title = {
+                            Text(
+                                text = strings.subscriptions_label,
+                                color = MaterialTheme.colorScheme.onPrimaryTertiary,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             },
             containerColor = MaterialTheme.colorScheme.surface,
             snackbarHost = {
