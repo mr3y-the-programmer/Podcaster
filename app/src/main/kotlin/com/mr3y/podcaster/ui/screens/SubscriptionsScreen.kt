@@ -179,25 +179,25 @@ fun SubscriptionsScreen(
     ) {
         Scaffold(
             topBar = {
-                if (state.subscriptions.isNotEmpty()) {
-                    TopBar(
-                        isTopLevelScreen = true,
-                        onNavIconClick = onNavDrawerClick,
-                        title = {
+                TopBar(
+                    isTopLevelScreen = true,
+                    onNavIconClick = onNavDrawerClick,
+                    title = {
+                        if (state.subscriptions.isNotEmpty()) {
                             Text(
                                 text = strings.subscriptions_label,
                                 color = MaterialTheme.colorScheme.onPrimaryTertiary,
                                 style = MaterialTheme.typography.titleMedium,
                             )
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
             },
             containerColor = MaterialTheme.colorScheme.surface,
             snackbarHost = {
