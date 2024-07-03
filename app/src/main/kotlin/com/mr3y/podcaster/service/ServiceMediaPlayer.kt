@@ -77,11 +77,10 @@ class ServiceMediaPlayer(
                     ) {
                         val playingStatus = when {
                             playWhenReady -> PlayingStatus.Playing
-                            playbackState == Player.STATE_BUFFERING -> PlayingStatus.Loading
                             else -> PlayingStatus.Paused
                         }
                         currentlyPlayingEpisode.value?.let { (episode, _, _) ->
-                            val isAboutToPlay = playingStatus == PlayingStatus.Loading || playingStatus == PlayingStatus.Playing
+                            val isAboutToPlay = playingStatus == PlayingStatus.Playing
                             episode.durationInSec?.let {
                                 if (episode.progressInSec == null) return@let
 
