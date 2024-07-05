@@ -190,7 +190,6 @@ fun HomeScreen(
             }
             PodcasterNavGraph(
                 navController = navController,
-                onNavDrawerClick = {},
                 appState = appState,
                 userPreferences = userPreferences,
                 contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),

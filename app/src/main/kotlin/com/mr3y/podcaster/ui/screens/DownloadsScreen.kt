@@ -100,8 +100,7 @@ fun DownloadsScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = false,
-                onNavIconClick = onNavigateUp,
+                onUpButtonClick = onNavigateUp,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,

@@ -67,7 +67,6 @@ fun SettingsScreen(
     userPreferences: UserPreferences,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onNavDrawerClick: () -> Unit,
     onDownloadsClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
@@ -87,7 +86,6 @@ fun SettingsScreen(
                 userPreferences.disableDynamicColor()
             }
         },
-        onNavDrawerClick = onNavDrawerClick,
         onDownloadsClick = onDownloadsClick,
         onImportExportClick = onImportExportClick,
         onLicensesClick = onLicensesClick,
@@ -109,7 +107,6 @@ fun SettingsScreen(
     onSelectingTheme: (Theme) -> Unit,
     isDynamicColorsOn: Boolean,
     onToggleDynamicColor: (Boolean) -> Unit,
-    onNavDrawerClick: () -> Unit,
     onDownloadsClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
@@ -128,8 +125,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = true,
-                onNavIconClick = onNavDrawerClick,
+                onUpButtonClick = null,
                 title = {
                     Text(
                         text = strings.settings_label,
@@ -398,7 +394,6 @@ fun SettingsScreenPreview(
             { _ -> },
             true,
             { _ -> },
-            {},
             {},
             {},
             {},

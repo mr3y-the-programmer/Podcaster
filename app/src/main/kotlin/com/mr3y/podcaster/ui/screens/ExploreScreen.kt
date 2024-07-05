@@ -97,7 +97,6 @@ import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 @Composable
 fun ExploreScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
-    onNavDrawerClick: () -> Unit,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -107,7 +106,6 @@ fun ExploreScreen(
     ExploreScreen(
         state = exploreState,
         onPodcastClick = onPodcastClick,
-        onNavDrawerClick = onNavDrawerClick,
         eventSink = { event ->
             when (event) {
                 is ExploreUIEvent.Search -> viewModel.search()
@@ -128,7 +126,6 @@ fun ExploreScreen(
 fun ExploreScreen(
     state: ExploreUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
-    onNavDrawerClick: () -> Unit,
     eventSink: (ExploreUIEvent) -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
@@ -143,8 +140,7 @@ fun ExploreScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = true,
-                onNavIconClick = onNavDrawerClick,
+                onUpButtonClick = null,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,
@@ -523,7 +519,6 @@ fun ExploreScreenInitialPreview(
         ExploreScreen(
             state = state,
             onPodcastClick = {},
-            onNavDrawerClick = {},
             eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
@@ -548,7 +543,6 @@ fun ExploreScreenPodcastsListPreview() {
         ExploreScreen(
             state = state,
             onPodcastClick = {},
-            onNavDrawerClick = {},
             eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
@@ -573,7 +567,6 @@ fun ExploreScreenErrorPreview() {
         ExploreScreen(
             state = state,
             onPodcastClick = {},
-            onNavDrawerClick = {},
             eventSink = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,

@@ -24,7 +24,6 @@ import com.mr3y.podcaster.ui.screens.SubscriptionsScreen
 @Composable
 fun PodcasterNavGraph(
     navController: NavHostController,
-    onNavDrawerClick: () -> Unit,
     appState: PodcasterAppState,
     userPreferences: UserPreferences,
     contentPadding: PaddingValues,
@@ -40,7 +39,6 @@ fun PodcasterNavGraph(
             SubscriptionsScreen(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
                 onEpisodeClick = { episodeId, artworkUrl -> navController.navigate(Destinations.EpisodeDetails(episodeId, artworkUrl)) },
-                onNavDrawerClick = onNavDrawerClick,
                 appState = appState,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
@@ -49,7 +47,6 @@ fun PodcasterNavGraph(
         composable<Destinations.Explore> {
             ExploreScreen(
                 onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetails(podcastId)) },
-                onNavDrawerClick = onNavDrawerClick,
                 contentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
             )
@@ -76,7 +73,6 @@ fun PodcasterNavGraph(
                 userPreferences = userPreferences,
                 externalContentPadding = contentPadding,
                 excludedWindowInsets = excludedWindowInsets,
-                onNavDrawerClick = onNavDrawerClick,
                 onDownloadsClick = { navController.navigate(Destinations.Downloads) },
                 onImportExportClick = { navController.navigate(Destinations.ImportExport) },
                 onLicensesClick = { navController.navigate(Destinations.Licenses) },
