@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kiwi.navigationcompose.typed.createRoutePattern
@@ -98,27 +99,6 @@ fun HomeScreen(
         }
     }
 
-    val strings = LocalStrings.current
-    val bottomBarTabs = listOf(
-        BottomBarTab(
-            strings.tab_subscriptions_label,
-            Icons.Outlined.Subscriptions,
-            createRoutePattern<Destinations.Subscriptions>(),
-            Destinations.Subscriptions,
-        ),
-        BottomBarTab(
-            strings.tab_explore_label,
-            Icons.Outlined.Search,
-            createRoutePattern<Destinations.Explore>(),
-            Destinations.Explore,
-        ),
-        BottomBarTab(
-            strings.tab_settings_label,
-            Icons.Outlined.Settings,
-            createRoutePattern<Destinations.Settings>(),
-            Destinations.Settings,
-        ),
-    )
     LaunchedEffect(key1 = isPlayerViewExpanded) {
         if (isPlayerViewExpanded) {
             // Save the current status bar appearance to restore it later.
@@ -252,49 +232,89 @@ fun HomeScreen(
             }
         }
         if (isBottomBarVisible) {
-            NavigationBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layout { measurable, constraints ->
-                        val placeable = measurable.measure(constraints)
-                        val height = (placeable.height - bottomBarYOffset.roundToInt()).coerceAtLeast(0)
-                        layout(placeable.width, height) {
-                            placeable.placeRelative(0, 0)
-                        }
-                    }
-                    .graphicsLayer {
-                        alpha = bottomBarAlpha
-                    }
-            ) {
-                bottomBarTabs.forEach { tab ->
-                    val isSelected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
-                    val tabScale by animateFloatAsState(
-                        targetValue = if (isSelected) 1.15f else 1f,
-                        label = "AnimatedTabScale"
-                    )
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) {
-                                navController.navigate(tab.destination) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        },
-                        label = { Text(text = tab.label) },
-                        icon = { Icon(tab.icon, contentDescription = null) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimaryTertiaryContainer,
-                            indicatorColor = MaterialTheme.colorScheme.primaryTertiaryContainer
-                        ),
-                        modifier = Modifier.scale(tabScale)
-                    )
+            BottomBar(
+                navController = navController,
+                yOffset = { bottomBarYOffset },
+                alpha = { bottomBarAlpha },
+                isTabSelected = { tab ->
+                    currentDestination?.hierarchy?.any { it.route == tab.route } == true
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomBar(
+    navController: NavHostController,
+    yOffset: () -> Float,
+    alpha: () -> Float,
+    isTabSelected: (BottomBarTab) -> Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val strings = LocalStrings.current
+    val bottomBarTabs = listOf(
+        BottomBarTab(
+            strings.tab_subscriptions_label,
+            Icons.Outlined.Subscriptions,
+            createRoutePattern<Destinations.Subscriptions>(),
+            Destinations.Subscriptions,
+        ),
+        BottomBarTab(
+            strings.tab_explore_label,
+            Icons.Outlined.Search,
+            createRoutePattern<Destinations.Explore>(),
+            Destinations.Explore,
+        ),
+        BottomBarTab(
+            strings.tab_settings_label,
+            Icons.Outlined.Settings,
+            createRoutePattern<Destinations.Settings>(),
+            Destinations.Settings,
+        ),
+    )
+    NavigationBar(
+        modifier = modifier
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val height =
+                    (placeable.height - yOffset().roundToInt()).coerceAtLeast(0)
+                layout(placeable.width, height) {
+                    placeable.placeRelative(0, 0)
                 }
             }
+            .graphicsLayer {
+                this.alpha = alpha()
+            }
+    ) {
+        bottomBarTabs.forEach { tab ->
+            val isSelected = isTabSelected(tab)
+            val tabScale by animateFloatAsState(
+                targetValue = if (isSelected) 1.15f else 1f,
+                label = "AnimatedTabScale"
+            )
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = {
+                    if (!isSelected) {
+                        navController.navigate(tab.destination) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
+                label = { Text(text = tab.label) },
+                icon = { Icon(tab.icon, contentDescription = null) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryTertiaryContainer,
+                    indicatorColor = MaterialTheme.colorScheme.primaryTertiaryContainer
+                ),
+                modifier = Modifier.scale(tabScale)
+            )
         }
     }
 }
