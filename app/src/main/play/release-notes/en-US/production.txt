@@ -1,1 +1,2 @@
-- Fix bugs & Improve performance.
+- Redesign some parts of the UI for clarity.
+- Fix memory leaks, and in turn Improve app's memory usage.

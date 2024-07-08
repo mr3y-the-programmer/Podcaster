@@ -1,12 +1,5 @@
 package com.mr3y.podcaster.ui.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,15 +25,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NightlightRound
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -80,7 +67,6 @@ import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.model.Podcast
-import com.mr3y.podcaster.core.model.dateTimePublished
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.Podcasts
@@ -93,30 +79,23 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
-import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIState
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
-import com.mr3y.podcaster.ui.theme.Theme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
 @Composable
 fun SubscriptionsScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onSettingsClick: () -> Unit,
-    onNavDrawerClick: () -> Unit,
     appState: PodcasterAppState,
-    userPreferences: UserPreferences,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -128,8 +107,6 @@ fun SubscriptionsScreen(
         state = subscriptionsState,
         onPodcastClick = onPodcastClick,
         onEpisodeClick = onEpisodeClick,
-        onSettingsClick = onSettingsClick,
-        onNavDrawerClick = onNavDrawerClick,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
@@ -137,13 +114,6 @@ fun SubscriptionsScreen(
             when (event) {
                 is SubscriptionsUIEvent.Refresh -> viewModel.refresh()
                 is SubscriptionsUIEvent.RefreshResultConsumed -> viewModel.consumeRefreshResult()
-                is SubscriptionsUIEvent.ToggleAppTheme -> {
-                    if (event.isDark) {
-                        userPreferences.setAppTheme(Theme.Light)
-                    } else {
-                        userPreferences.setAppTheme(Theme.Dark)
-                    }
-                }
                 is SubscriptionsUIEvent.PlayEpisode -> appState.play(event.episode)
                 is SubscriptionsUIEvent.Pause -> appState.pause()
                 is SubscriptionsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
@@ -160,8 +130,6 @@ fun SubscriptionsScreen(
     state: SubscriptionsUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onSettingsClick: () -> Unit,
-    onNavDrawerClick: () -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
@@ -209,34 +177,13 @@ fun SubscriptionsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    isTopLevelScreen = true,
-                    onNavIconClick = onNavDrawerClick,
-                    actions = {
-                        val darkTheme = isAppThemeDark()
-                        IconButton(
-                            onClick = { eventSink(SubscriptionsUIEvent.ToggleAppTheme(darkTheme)) },
-                        ) {
-                            AnimatedContent(
-                                targetState = darkTheme,
-                                transitionSpec = {
-                                    (fadeIn(animationSpec = tween(400, delayMillis = 90)) + slideInHorizontally()).togetherWith(
-                                        fadeOut(animationSpec = tween(90)) + slideOutHorizontally(),
-                                    )
-                                },
-                                label = "Animated toggle theme icon",
-                            ) { isDark ->
-                                Icon(
-                                    imageVector = if (isDark) Icons.Filled.NightlightRound else Icons.Filled.WbSunny,
-                                    contentDescription = strings.icon_theme_content_description,
-                                )
-                            }
-                        }
-                        IconButton(
-                            onClick = onSettingsClick,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings,
-                                contentDescription = strings.icon_settings_content_description,
+                    onUpButtonClick = null,
+                    title = {
+                        if (state.subscriptions.isNotEmpty()) {
+                            Text(
+                                text = strings.subscriptions_label,
+                                color = MaterialTheme.colorScheme.onPrimaryTertiary,
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         }
                     },
@@ -299,11 +246,6 @@ private fun ColumnScope.SubscriptionsHeader(
     onPodcastClick: (podcastId: Long) -> Unit,
 ) {
     val strings = LocalStrings.current
-    Text(
-        text = strings.subscriptions_label,
-        color = MaterialTheme.colorScheme.onPrimaryTertiary,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-    )
     if (isLoading) {
         Spacer(modifier = Modifier.height(40.dp))
         LoadingIndicator(
@@ -431,7 +373,7 @@ private fun ColumnScope.EpisodesList(
                                         .clip(RoundedCornerShape(8.dp)),
                                     contentScale = ContentScale.FillBounds,
                                 )
-                                val formattedEpisodeDate = remember(episode.datePublishedTimestamp) { format(episode.dateTimePublished) }
+                                val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
                                 Text(
                                     text = formattedEpisodeDate,
                                     style = MaterialTheme.typography.bodySmall,
@@ -506,11 +448,6 @@ private fun ColumnScope.EpisodesList(
     }
 }
 
-private fun format(dateTime: ZonedDateTime): String {
-    val pattern = if (ZonedDateTime.now(ZoneId.systemDefault()).year != dateTime.year) "MMM d, yyyy" else "MMM d"
-    return DateTimeFormatter.ofPattern(pattern).format(dateTime.toLocalDate())
-}
-
 @PodcasterPreview
 @Composable
 fun SubscriptionsScreenPreview(
@@ -534,8 +471,6 @@ fun SubscriptionsScreenPreview(
             state = state,
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
-            onSettingsClick = {},
-            onNavDrawerClick = {},
             currentlyPlayingEpisode = null,
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
@@ -566,8 +501,6 @@ fun EmptySubscriptionsScreenPreview() {
             state = state,
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
-            onSettingsClick = {},
-            onNavDrawerClick = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,

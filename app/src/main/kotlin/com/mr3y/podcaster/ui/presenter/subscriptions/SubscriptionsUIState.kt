@@ -21,8 +21,6 @@ sealed interface SubscriptionsUIEvent {
 
     data object RefreshResultConsumed : SubscriptionsUIEvent
 
-    data class ToggleAppTheme(val isDark: Boolean) : SubscriptionsUIEvent
-
     data class PlayEpisode(val episode: Episode) : SubscriptionsUIEvent
 
     data object Pause : SubscriptionsUIEvent

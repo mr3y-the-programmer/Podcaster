@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -20,8 +19,7 @@ import com.mr3y.podcaster.LocalStrings
 
 @Composable
 fun TopBar(
-    isTopLevelScreen: Boolean,
-    onNavIconClick: () -> Unit,
+    onUpButtonClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
@@ -32,18 +30,9 @@ fun TopBar(
     val navIconContentColor = if (colors.navigationIconContentColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else colors.navigationIconContentColor
     TopAppBar(
         navigationIcon = {
-            if (isTopLevelScreen) {
+            if (onUpButtonClick != null) {
                 IconButton(
-                    onClick = onNavIconClick,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = strings.icon_menu_content_description,
-                    )
-                }
-            } else {
-                IconButton(
-                    onClick = onNavIconClick,
+                    onClick = onUpButtonClick,
                     colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.Transparent, contentColor = navIconContentColor),
                 ) {
                     Icon(

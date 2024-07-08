@@ -128,6 +128,7 @@ fun Podcast.toPodcastEntity(): PodcastEntity {
     )
 }
 
+@Suppress("DEPRECATION")
 fun Episode.toEpisodeEntity(): EpisodeEntity {
     return EpisodeEntity(
         id,

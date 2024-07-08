@@ -1,10 +1,12 @@
 package com.mr3y.podcaster.ui.presenter.di
 
+import android.content.Context
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +31,11 @@ object AppStateModule {
 
     @Provides
     @Singleton
-    fun providePodcasterAppStateInstance(repo: PodcastsRepository, @ApplicationScope applicationScope: CoroutineScope): PodcasterAppState {
-        return PodcasterAppState(repo, applicationScope)
+    fun providePodcasterAppStateInstance(
+        repo: PodcastsRepository,
+        @ApplicationScope applicationScope: CoroutineScope,
+        @ApplicationContext applicationContext: Context,
+    ): PodcasterAppState {
+        return PodcasterAppState(repo, applicationScope, applicationContext)
     }
 }

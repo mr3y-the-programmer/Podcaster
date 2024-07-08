@@ -8,6 +8,10 @@ data class Episode(
     val description: String,
     val episodeUrl: String,
     val datePublishedTimestamp: Long,
+    @get:Deprecated(
+        message = "This property is discouraged to access, as it may be inaccurate in most cases",
+        replaceWith = ReplaceWith(expression = "this.dateTimePublished", "com.mr3y.podcaster.core.model.dateTimePublished"),
+    )
     val datePublishedFormatted: String,
     val durationInSec: Int? = null,
     val episodeNum: Int? = null,
@@ -18,6 +22,7 @@ data class Episode(
     val isCompleted: Boolean = false,
     val progressInSec: Int? = null,
 ) {
+    @Suppress("DEPRECATION")
     override fun toString(): String {
         return "\nEpisode(\n" +
             "id = ${id}L,\n" +

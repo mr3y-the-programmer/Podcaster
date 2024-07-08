@@ -51,7 +51,7 @@ import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 
 @Composable
 fun ImportExportScreen(
-    onNavDrawerClick: () -> Unit,
+    onNavigateUp: () -> Unit,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -60,7 +60,7 @@ fun ImportExportScreen(
     val result by viewModel.result.collectAsStateWithLifecycle()
     ImportExportScreen(
         result = result,
-        onNavDrawerClick = onNavDrawerClick,
+        onNavigateUp = onNavigateUp,
         onImporting = viewModel::import,
         onExporting = viewModel::export,
         onConsumeResult = viewModel::consumeResult,
@@ -73,7 +73,7 @@ fun ImportExportScreen(
 @Composable
 fun ImportExportScreen(
     result: OpmlResult,
-    onNavDrawerClick: () -> Unit,
+    onNavigateUp: () -> Unit,
     onImporting: () -> Unit,
     onExporting: () -> Unit,
     onConsumeResult: () -> Unit,
@@ -90,8 +90,7 @@ fun ImportExportScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = true,
-                onNavIconClick = onNavDrawerClick,
+                onUpButtonClick = onNavigateUp,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,
@@ -181,7 +180,7 @@ fun ImportExportScreenPreview(
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         ImportExportScreen(
             result = OpmlResult.Idle,
-            onNavDrawerClick = {},
+            onNavigateUp = {},
             onImporting = { },
             onExporting = { },
             onConsumeResult = {},

@@ -246,6 +246,7 @@ class DefaultPodcastsDao @Inject constructor(
         database.currentlyPlayingEntityQueries.updateCurrentlyPlayingEpisodeSpeed(newSpeed)
     }
 
+    @Suppress("DEPRECATION")
     override fun upsertEpisode(episode: Episode) {
         val queries = database.episodeEntityQueries
         queries.transaction {

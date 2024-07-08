@@ -18,17 +18,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forward30
@@ -347,7 +343,6 @@ fun CollapsedPlayerView(
     onResume: () -> Unit,
     onPause: () -> Unit,
     progress: Int,
-    contentWindowInsets: WindowInsets,
     containerColor: Color,
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope? = null,
@@ -356,7 +351,7 @@ fun CollapsedPlayerView(
     val (episode, playingStatus) = currentlyPlayingEpisode
     with(sharedTransitionScope) {
         Card(
-            shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0), bottomEnd = CornerSize(0)),
+            shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(containerColor = containerColor),
             modifier = modifier.sharedBoundsIfNotNull(
                 sharedTransitionScope = this,
@@ -365,9 +360,7 @@ fun CollapsedPlayerView(
             ),
         ) {
             Column(
-                modifier = Modifier
-                    .padding(contentWindowInsets.asPaddingValues())
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -551,7 +544,6 @@ fun CollapsedPlayerViewPreview(
             onResume = {},
             onPause = {},
             progress = 1450,
-            contentWindowInsets = WindowInsets.navigationBars,
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier.padding(16.dp),
         )
