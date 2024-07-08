@@ -36,8 +36,7 @@ fun LicensesScreen(
     Scaffold(
         topBar = {
             TopBar(
-                isTopLevelScreen = false,
-                onNavIconClick = onNavigateUp,
+                onUpButtonClick = onNavigateUp,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface,

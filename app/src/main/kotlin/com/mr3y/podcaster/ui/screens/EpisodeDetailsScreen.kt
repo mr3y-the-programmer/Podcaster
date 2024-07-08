@@ -161,8 +161,7 @@ fun EpisodeDetailsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    isTopLevelScreen = false,
-                    onNavIconClick = onNavigateUp,
+                    onUpButtonClick = onNavigateUp,
                     title = {
                         Text(
                             text = state.episode?.podcastTitle ?: "",

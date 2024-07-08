@@ -227,8 +227,7 @@ fun PodcastDetailsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    isTopLevelScreen = false,
-                    onNavIconClick = onNavigateUp,
+                    onUpButtonClick = onNavigateUp,
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = if (state.isPodcastLoading || state.podcast == null) {
                             MaterialTheme.colorScheme.surface

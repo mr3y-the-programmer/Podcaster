@@ -95,7 +95,6 @@ import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 fun SubscriptionsScreen(
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onNavDrawerClick: () -> Unit,
     appState: PodcasterAppState,
     contentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
@@ -108,7 +107,6 @@ fun SubscriptionsScreen(
         state = subscriptionsState,
         onPodcastClick = onPodcastClick,
         onEpisodeClick = onEpisodeClick,
-        onNavDrawerClick = onNavDrawerClick,
         currentlyPlayingEpisode = currentlyPlayingEpisode,
         externalContentPadding = contentPadding,
         excludedWindowInsets = excludedWindowInsets,
@@ -132,7 +130,6 @@ fun SubscriptionsScreen(
     state: SubscriptionsUIState,
     onPodcastClick: (podcastId: Long) -> Unit,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
-    onNavDrawerClick: () -> Unit,
     currentlyPlayingEpisode: CurrentlyPlayingEpisode?,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
@@ -180,8 +177,7 @@ fun SubscriptionsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    isTopLevelScreen = true,
-                    onNavIconClick = onNavDrawerClick,
+                    onUpButtonClick = null,
                     title = {
                         if (state.subscriptions.isNotEmpty()) {
                             Text(
@@ -475,7 +471,6 @@ fun SubscriptionsScreenPreview(
             state = state,
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
-            onNavDrawerClick = {},
             currentlyPlayingEpisode = null,
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
@@ -506,7 +501,6 @@ fun EmptySubscriptionsScreenPreview() {
             state = state,
             onPodcastClick = {},
             onEpisodeClick = { _, _ -> },
-            onNavDrawerClick = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             currentlyPlayingEpisode = null,
