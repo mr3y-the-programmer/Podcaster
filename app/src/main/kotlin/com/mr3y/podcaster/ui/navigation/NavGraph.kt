@@ -111,7 +111,7 @@ fun PodcasterNavGraph(
             }
         }
         navigation<Destinations.LibraryGraph>(
-            startDestination = createRoutePattern<Destinations.Library>()
+            startDestination = createRoutePattern<Destinations.Library>(),
         ) {
             composable<Destinations.Library> {
                 LibraryScreen(
