@@ -5,6 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 data class PodcasterStrings(
     val tab_subscriptions_label: String,
     val tab_explore_label: String,
+    val tab_library_label: String,
     val tab_settings_label: String,
     val subscriptions_refresh_result_error: String,
     val subscriptions_refresh_result_mixed: String,
@@ -39,6 +40,7 @@ data class PodcasterStrings(
     val download_work_notification_message: String,
     val downloads_label: String,
     val downloads_empty_list: String,
+    val library_label: String,
     val settings_label: String,
     val appearance_label: String,
     val theme_heading: String,
