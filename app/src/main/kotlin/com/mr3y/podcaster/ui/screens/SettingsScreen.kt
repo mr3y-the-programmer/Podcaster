@@ -67,7 +67,6 @@ fun SettingsScreen(
     userPreferences: UserPreferences,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
-    onDownloadsClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -86,7 +85,6 @@ fun SettingsScreen(
                 userPreferences.disableDynamicColor()
             }
         },
-        onDownloadsClick = onDownloadsClick,
         onImportExportClick = onImportExportClick,
         onLicensesClick = onLicensesClick,
         onFeedbackClick = {
@@ -107,7 +105,6 @@ fun SettingsScreen(
     onSelectingTheme: (Theme) -> Unit,
     isDynamicColorsOn: Boolean,
     onToggleDynamicColor: (Boolean) -> Unit,
-    onDownloadsClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onFeedbackClick: () -> Unit,
@@ -156,13 +153,6 @@ fun SettingsScreen(
                     onSelectingTheme,
                     isDynamicColorsOn,
                     onToggleDynamicColor,
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-                SettingsButton(
-                    text = strings.downloads_label,
-                    icon = Icons.Outlined.FileDownload,
-                    onClick = onDownloadsClick,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 SettingsButton(
@@ -394,7 +384,6 @@ fun SettingsScreenPreview(
             { _ -> },
             true,
             { _ -> },
-            {},
             {},
             {},
             {},

@@ -9,10 +9,16 @@ sealed interface Destinations : Destination {
     data object SubscriptionsGraph : Destinations
 
     @Serializable
-    data object Subscriptions : Destinations
+    data object ExploreGraph : Destinations
 
     @Serializable
-    data object ExploreGraph : Destinations
+    data object LibraryGraph : Destinations
+
+    @Serializable
+    data object SettingsGraph : Destinations
+
+    @Serializable
+    data object Subscriptions : Destinations
 
     @Serializable
     data object Explore : Destinations
@@ -36,10 +42,10 @@ sealed interface Destinations : Destination {
     data class EpisodeDetailsExploreGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
 
     @Serializable
-    data class EpisodeDetailsDownloadsGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
+    data class EpisodeDetailsLibraryGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
 
     @Serializable
-    data object SettingsGraph : Destinations
+    data object Library : Destinations
 
     @Serializable
     data object Settings : Destinations

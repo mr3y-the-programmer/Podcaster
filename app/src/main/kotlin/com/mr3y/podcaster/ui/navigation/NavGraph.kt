@@ -20,6 +20,7 @@ import com.mr3y.podcaster.ui.screens.DownloadsScreen
 import com.mr3y.podcaster.ui.screens.EpisodeDetailsScreen
 import com.mr3y.podcaster.ui.screens.ExploreScreen
 import com.mr3y.podcaster.ui.screens.ImportExportScreen
+import com.mr3y.podcaster.ui.screens.LibraryScreen
 import com.mr3y.podcaster.ui.screens.LicensesScreen
 import com.mr3y.podcaster.ui.screens.PodcastDetailsScreen
 import com.mr3y.podcaster.ui.screens.SettingsScreen
@@ -109,7 +110,37 @@ fun PodcasterNavGraph(
                 )
             }
         }
-
+        navigation<Destinations.LibraryGraph>(
+            startDestination = createRoutePattern<Destinations.Library>()
+        ) {
+            composable<Destinations.Library> {
+                LibraryScreen(
+                    onDownloadsClick = { navController.navigate(Destinations.Downloads) },
+                    externalContentPadding = contentPadding,
+                    excludedWindowInsets = excludedWindowInsets,
+                )
+            }
+            composable<Destinations.Downloads> {
+                DownloadsScreen(
+                    onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetailsLibraryGraph(episodeId, podcastArtworkUrl)) },
+                    onNavigateUp = navController::navigateUpOnce,
+                    appState = appState,
+                    contentPadding = contentPadding,
+                    excludedWindowInsets = excludedWindowInsets,
+                )
+            }
+            composable<Destinations.EpisodeDetailsLibraryGraph> {
+                EpisodeDetailsScreen(
+                    onNavigateUp = navController::navigateUpOnce,
+                    appState = appState,
+                    contentPadding = contentPadding,
+                    excludedWindowInsets = excludedWindowInsets,
+                    viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
+                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) },
+                    ),
+                )
+            }
+        }
         navigation<Destinations.SettingsGraph>(
             startDestination = createRoutePattern<Destinations.Settings>(),
         ) {
@@ -118,18 +149,8 @@ fun PodcasterNavGraph(
                     userPreferences = userPreferences,
                     externalContentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
-                    onDownloadsClick = { navController.navigate(Destinations.Downloads) },
                     onImportExportClick = { navController.navigate(Destinations.ImportExport) },
                     onLicensesClick = { navController.navigate(Destinations.Licenses) },
-                )
-            }
-            composable<Destinations.Downloads> {
-                DownloadsScreen(
-                    onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetailsDownloadsGraph(episodeId, podcastArtworkUrl)) },
-                    onNavigateUp = navController::navigateUpOnce,
-                    appState = appState,
-                    contentPadding = contentPadding,
-                    excludedWindowInsets = excludedWindowInsets,
                 )
             }
             composable<Destinations.Licenses> {
@@ -144,17 +165,6 @@ fun PodcasterNavGraph(
                     onNavigateUp = navController::navigateUpOnce,
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
-                )
-            }
-            composable<Destinations.EpisodeDetailsDownloadsGraph> {
-                EpisodeDetailsScreen(
-                    onNavigateUp = navController::navigateUpOnce,
-                    appState = appState,
-                    contentPadding = contentPadding,
-                    excludedWindowInsets = excludedWindowInsets,
-                    viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) },
-                    ),
                 )
             }
         }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LibraryAdd
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -266,6 +267,12 @@ private fun BottomBar(
             Icons.Outlined.Search,
             createRoutePattern<Destinations.ExploreGraph>(),
             Destinations.ExploreGraph,
+        ),
+        BottomBarTab(
+            strings.tab_library_label,
+            Icons.Outlined.LibraryAdd,
+            createRoutePattern<Destinations.LibraryGraph>(),
+            Destinations.LibraryGraph,
         ),
         BottomBarTab(
             strings.tab_settings_label,
