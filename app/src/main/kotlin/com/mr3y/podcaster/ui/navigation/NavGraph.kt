@@ -40,7 +40,7 @@ fun PodcasterNavGraph(
         modifier = modifier,
     ) {
         navigation<Destinations.SubscriptionsGraph>(
-            startDestination = createRoutePattern<Destinations.Subscriptions>()
+            startDestination = createRoutePattern<Destinations.Subscriptions>(),
         ) {
             composable<Destinations.Subscriptions> {
                 SubscriptionsScreen(
@@ -59,8 +59,8 @@ fun PodcasterNavGraph(
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
                     viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(podcastId) }
-                    )
+                        creationCallback = { factory -> factory.create(podcastId) },
+                    ),
                 )
             }
             composable<Destinations.EpisodeDetailsSubscriptionsGraph> {
@@ -70,13 +70,13 @@ fun PodcasterNavGraph(
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
                     viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) }
-                    )
+                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) },
+                    ),
                 )
             }
         }
         navigation<Destinations.ExploreGraph>(
-            startDestination = createRoutePattern<Destinations.Explore>()
+            startDestination = createRoutePattern<Destinations.Explore>(),
         ) {
             composable<Destinations.Explore> {
                 ExploreScreen(
@@ -93,8 +93,8 @@ fun PodcasterNavGraph(
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
                     viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(podcastId) }
-                    )
+                        creationCallback = { factory -> factory.create(podcastId) },
+                    ),
                 )
             }
             composable<Destinations.EpisodeDetailsExploreGraph> {
@@ -104,14 +104,14 @@ fun PodcasterNavGraph(
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
                     viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) }
-                    )
+                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) },
+                    ),
                 )
             }
         }
 
         navigation<Destinations.SettingsGraph>(
-            startDestination = createRoutePattern<Destinations.Settings>()
+            startDestination = createRoutePattern<Destinations.Settings>(),
         ) {
             composable<Destinations.Settings> {
                 SettingsScreen(
@@ -153,8 +153,8 @@ fun PodcasterNavGraph(
                     contentPadding = contentPadding,
                     excludedWindowInsets = excludedWindowInsets,
                     viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) }
-                    )
+                        creationCallback = { factory -> factory.create(episodeId, podcastArtworkUrl) },
+                    ),
                 )
             }
         }

@@ -8,13 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
-import com.kiwi.navigationcompose.typed.decodeArguments
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.core.model.Episode
-import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import dagger.assisted.Assisted
@@ -22,7 +19,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = EpisodeDetailsViewModel.Factory::class)
 class EpisodeDetailsViewModel @AssistedInject constructor(

@@ -176,7 +176,7 @@ fun HomeScreen(
                 userPreferences = userPreferences,
                 contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
                 excludedWindowInsets = navigationBarWindowInsets,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             currentlyPlayingEpisode?.let { activeEpisode ->
                 val isCollapsed = state.targetValue == PlayerViewState.Collapsed
@@ -210,7 +210,7 @@ fun HomeScreen(
                             containerColor = containerColor,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
-                                .padding(bottom = 4.dp)
+                                .padding(bottom = 4.dp),
                         )
                     } else {
                         ExpandedPlayerView(
@@ -239,7 +239,7 @@ fun HomeScreen(
                 currentDestination = currentDestination,
                 yOffset = { bottomBarYOffset },
                 alpha = { bottomBarAlpha },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -286,13 +286,13 @@ private fun BottomBar(
             }
             .graphicsLayer {
                 this.alpha = alpha()
-            }
+            },
     ) {
         bottomBarTabs.forEach { tab ->
             val isSelected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
             val tabScale by animateFloatAsState(
                 targetValue = if (isSelected) 1.15f else 1f,
-                label = "AnimatedTabScale"
+                label = "AnimatedTabScale",
             )
             NavigationBarItem(
                 selected = isSelected,
@@ -315,9 +315,9 @@ private fun BottomBar(
                 icon = { Icon(tab.icon, contentDescription = null) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.onPrimaryTertiaryContainer,
-                    indicatorColor = MaterialTheme.colorScheme.primaryTertiaryContainer
+                    indicatorColor = MaterialTheme.colorScheme.primaryTertiaryContainer,
                 ),
-                modifier = Modifier.scale(tabScale)
+                modifier = Modifier.scale(tabScale),
             )
         }
     }
