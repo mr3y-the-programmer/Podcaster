@@ -18,23 +18,24 @@ import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import com.mr3y.podcaster.ui.presenter.RefreshResult
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class PodcastDetailsViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = PodcastDetailsViewModel.Factory::class)
+class PodcastDetailsViewModel @AssistedInject constructor(
     private val podcastsRepository: PodcastsRepository,
-    private val savedStateHandle: SavedStateHandle,
+    @Assisted val podcastId: Long,
 ) : BaseMoleculeViewModel<PodcastDetailsUIEvent>() {
-
-    private val navArguments = savedStateHandle.decodeArguments<Destinations.PodcastDetails>()
 
     val state = moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
         PodcastDetailsPresenter(
-            podcastId = navArguments.podcastId,
+            podcastId = podcastId,
             repository = podcastsRepository,
             events = events,
         )
@@ -58,6 +59,11 @@ class PodcastDetailsViewModel @Inject constructor(
 
     fun retry() {
         events.tryEmit(PodcastDetailsUIEvent.Retry)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(podcastId: Long): PodcastDetailsViewModel
     }
 }
 

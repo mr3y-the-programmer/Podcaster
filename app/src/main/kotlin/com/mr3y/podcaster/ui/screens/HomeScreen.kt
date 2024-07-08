@@ -47,8 +47,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -234,11 +236,9 @@ fun HomeScreen(
         if (isBottomBarVisible) {
             BottomBar(
                 navController = navController,
+                currentDestination = currentDestination,
                 yOffset = { bottomBarYOffset },
                 alpha = { bottomBarAlpha },
-                isTabSelected = { tab ->
-                    currentDestination?.hierarchy?.any { it.route == tab.route } == true
-                },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -248,9 +248,9 @@ fun HomeScreen(
 @Composable
 private fun BottomBar(
     navController: NavHostController,
+    currentDestination: NavDestination?,
     yOffset: () -> Float,
     alpha: () -> Float,
-    isTabSelected: (BottomBarTab) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
@@ -258,20 +258,20 @@ private fun BottomBar(
         BottomBarTab(
             strings.tab_subscriptions_label,
             Icons.Outlined.Subscriptions,
-            createRoutePattern<Destinations.Subscriptions>(),
-            Destinations.Subscriptions,
+            createRoutePattern<Destinations.SubscriptionsGraph>(),
+            Destinations.SubscriptionsGraph,
         ),
         BottomBarTab(
             strings.tab_explore_label,
             Icons.Outlined.Search,
-            createRoutePattern<Destinations.Explore>(),
-            Destinations.Explore,
+            createRoutePattern<Destinations.ExploreGraph>(),
+            Destinations.ExploreGraph,
         ),
         BottomBarTab(
             strings.tab_settings_label,
             Icons.Outlined.Settings,
-            createRoutePattern<Destinations.Settings>(),
-            Destinations.Settings,
+            createRoutePattern<Destinations.SettingsGraph>(),
+            Destinations.SettingsGraph,
         ),
     )
     NavigationBar(
@@ -289,7 +289,7 @@ private fun BottomBar(
             }
     ) {
         bottomBarTabs.forEach { tab ->
-            val isSelected = isTabSelected(tab)
+            val isSelected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
             val tabScale by animateFloatAsState(
                 targetValue = if (isSelected) 1.15f else 1f,
                 label = "AnimatedTabScale"
@@ -305,6 +305,10 @@ private fun BottomBar(
                             launchSingleTop = true
                             restoreState = true
                         }
+                    } else if (currentDestination?.route !in bottomBarTabs.map { it.route }) {
+                        currentDestination?.parent?.findStartDestination()?.id?.let {
+                            navController.popBackStackOnce(it)
+                        }
                     }
                 },
                 label = { Text(text = tab.label) },
@@ -316,6 +320,15 @@ private fun BottomBar(
                 modifier = Modifier.scale(tabScale)
             )
         }
+    }
+}
+
+/**
+ * Idempotent version of [NavHostController.popBackStack] function.
+ */
+private fun NavHostController.popBackStackOnce(destinationId: Int, inclusive: Boolean = false) {
+    if (currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+        popBackStack(destinationId, inclusive)
     }
 }
 
