@@ -101,6 +101,7 @@ kotlin {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
                 "-opt-in=coil3.annotation.ExperimentalCoilApi",
             ),
         )

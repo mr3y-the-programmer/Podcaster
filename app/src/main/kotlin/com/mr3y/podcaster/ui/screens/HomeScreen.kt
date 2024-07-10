@@ -120,13 +120,15 @@ fun HomeScreen(
         var isBottomBarVisible by remember { mutableStateOf(true) }
         var bottomBarAlpha by remember { mutableFloatStateOf(1f) }
         SharedTransitionLayout(modifier = Modifier.weight(1f)) {
-        BoxWithConstraints {
-            val density = LocalDensity.current
-            val expandedPlayerViewHeight = maxHeight
-            val collapsedPlayerViewHeight = 104.dp
-            val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() }
-            val navigationBarWindowInsets = NavigationBarDefaults.windowInsets
-            val bottomBarHeight = with(density) { NavigationBarHeight.toPx() + navigationBarWindowInsets.getBottom(this) }
+            BoxWithConstraints {
+                val density = LocalDensity.current
+                val expandedPlayerViewHeight = maxHeight
+                val collapsedPlayerViewHeight = 104.dp
+                val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() }
+                val navigationBarWindowInsets = NavigationBarDefaults.windowInsets
+                val bottomBarHeight = with(density) {
+                    NavigationBarHeight.toPx() + navigationBarWindowInsets.getBottom(this)
+                }
                 val anchors = DraggableAnchors {
                     PlayerViewState.Expanded at 0f
                     PlayerViewState.Collapsed at collapsedPlayerViewOffset
@@ -154,37 +156,37 @@ fun HomeScreen(
                             }
                         }
 
-                    PlayerViewState.Expanded -> {
-                        isBottomBarVisible = false
-                        if (!isPlayerViewExpanded) {
-                            appState.expandPlayerView()
+                        PlayerViewState.Expanded -> {
+                            isBottomBarVisible = false
+                            if (!isPlayerViewExpanded) {
+                                appState.expandPlayerView()
+                            }
                         }
                     }
                 }
-            }
-            LaunchedEffect(Unit) {
-                snapshotFlow { state.offset }
-                    .filter { !it.isNaN() }
-                    .map { it / collapsedPlayerViewOffset }
-                    .collect { fraction ->
-                        bottomBarYOffset = (1f - fraction) * bottomBarHeight
-                        bottomBarAlpha = fraction.coerceAtLeast(0.5f)
-                    }
-            }
-            LaunchedEffect(key1 = state.targetValue) {
-                if (state.targetValue == PlayerViewState.Collapsed) {
-                    isBottomBarVisible = true
+                LaunchedEffect(Unit) {
+                    snapshotFlow { state.offset }
+                        .filter { !it.isNaN() }
+                        .map { it / collapsedPlayerViewOffset }
+                        .collect { fraction ->
+                            bottomBarYOffset = (1f - fraction) * bottomBarHeight
+                            bottomBarAlpha = fraction.coerceAtLeast(0.5f)
+                        }
                 }
-            }
-            PodcasterNavGraph(
-                navController = navController,
-                appState = appState,
-                userPreferences = userPreferences,
-                contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
-                excludedWindowInsets = navigationBarWindowInsets,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            currentlyPlayingEpisode?.let { activeEpisode ->
+                LaunchedEffect(key1 = state.targetValue) {
+                    if (state.targetValue == PlayerViewState.Collapsed) {
+                        isBottomBarVisible = true
+                    }
+                }
+                PodcasterNavGraph(
+                    navController = navController,
+                    appState = appState,
+                    userPreferences = userPreferences,
+                    contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
+                    excludedWindowInsets = navigationBarWindowInsets,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                currentlyPlayingEpisode?.let { activeEpisode ->
                     val isCollapsed by derivedStateOf { state.requireOffset() >= (collapsedPlayerViewOffset * 0.85f) }
                     val containerColor by animateColorAsState(
                         targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
