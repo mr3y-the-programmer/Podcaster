@@ -99,237 +99,218 @@ fun ExpandedPlayerView(
     onBack: () -> Unit,
     containerColor: Color,
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope? = null,
-    animatedVisibilityScope: AnimatedVisibilityScope? = null,
 ) {
     val (episode, playingStatus, playbackSpeed) = currentlyPlayingEpisode
     BackHandler(onBack = onBack)
-    with(sharedTransitionScope) {
-        Scaffold(
-            containerColor = containerColor,
-            modifier = modifier.sharedBoundsIfNotNull(
-                sharedTransitionScope = this,
-                animatedVisibilityScope = animatedVisibilityScope,
-                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.RootBounds)
-            ),
-        ) { contentPadding ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .padding(top = 48.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-            ) {
-                AnimatedContent(
-                    targetState = episode,
-                    transitionSpec = {
-                        (
-                                fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                                        scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
-                                )
-                            .togetherWith(fadeOut(animationSpec = tween(90)) + scaleOut(animationSpec = tween(90)))
-                    },
-                    contentKey = { it.id },
-                    label = "Animated Episode details",
-                ) { targetEpisode ->
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        val sharedArtworkTransitionKey = SharedTransitionElementKey.Artwork(targetEpisode.id).hashCode().toString()
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(targetEpisode.artworkUrl)
-                                .placeholderMemoryCacheKey(sharedArtworkTransitionKey)
-                                .memoryCacheKey(sharedArtworkTransitionKey)
-                                .build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .sharedElementIfNotNull(
-                                    sharedTransitionScope = this@with,
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    state = this@with?.rememberSharedContentState(key = sharedArtworkTransitionKey)
-                                )
-                                .size(360.dp),
-                        )
-                        Text(
-                            text = targetEpisode.title,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.skipToLookaheadSizeIfNotNull(this@with)
-                        )
-
-                        val strings = LocalStrings.current
-                        Text(
-                            text = if (playingStatus == PlayingStatus.Loading) {
-                                strings.buffering_playback
-                            } else {
-                                targetEpisode.podcastTitle ?: ""
-                            },
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-                }
-                Slider(
-                    value = episode.durationInSec?.let { progress.toFloat().div(it.toFloat()) } ?: 1f,
-                    onValueChange = { updatedValue ->
-                        episode.durationInSec?.let {
-                            onSeeking((updatedValue * it).toInt())
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.primaryTertiary,
-                        activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
-                        activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
-                        inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f)
-                    ),
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+    Scaffold(
+        containerColor = containerColor,
+        modifier = modifier,
+    ) { contentPadding ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(top = 48.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+        ) {
+            AnimatedContent(
+                targetState = episode,
+                transitionSpec = {
+                    (
+                            fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                                    scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                            )
+                        .togetherWith(fadeOut(animationSpec = tween(90)) + scaleOut(animationSpec = tween(90)))
+                },
+                contentKey = { it.id },
+                label = "Animated Episode details",
+            ) { targetEpisode ->
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(
-                        text = progress.formatAsDuration(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    )
-                    Text(
-                        text = episode.durationInSec.takeIf { it != null && it > 30 }.formatAsDuration(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    )
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    MoveToPreviousButton(
-                        onClick = onSeekToPrevious,
-                        isEnabled = isSeekingToPreviousEnabled,
-                        modifier = Modifier.size(56.dp),
-                        iconSize = 32.dp,
-                    )
-
-                    OutlinedIconButton(
-                        onClick = { onReplay(10) },
-                        modifier = Modifier.size(56.dp),
-                        shape = CircleShape,
-                        colors = IconButtonDefaults.outlinedIconButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.inverseSurface,
-                        ),
-                        border = null,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Replay10,
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp),
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
-                                onResume()
-                            } else {
-                                onPause()
-                            }
-                        },
+                    AsyncImage(
+                        model = targetEpisode.artworkUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape),
-                        colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryTertiary,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
-                        ),
-                    ) {
-                        when (playingStatus) {
-                            PlayingStatus.Loading -> {
-                                CircularProgressIndicator(
-                                    color = MaterialTheme.colorScheme.onPrimaryTertiary,
-                                    modifier = Modifier.padding(4.dp),
-                                )
-                            }
-                            PlayingStatus.Playing -> {
-                                Icon(
-                                    imageVector = Icons.Filled.Pause,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp),
-                                )
-                            }
-                            PlayingStatus.Paused, PlayingStatus.Error -> {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp),
-                                )
-                            }
-                        }
-                    }
+                            .size(360.dp),
+                    )
+                    Text(
+                        text = targetEpisode.title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                    )
 
-                    OutlinedIconButton(
-                        onClick = { onForward(30) },
-                        modifier = Modifier.size(56.dp),
-                        shape = CircleShape,
-                        colors = IconButtonDefaults.outlinedIconButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.inverseSurface,
-                        ),
-                        border = null,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Forward30,
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp),
-                        )
-                    }
-
-                    MoveToNextButton(
-                        onClick = onSeekToNext,
-                        isEnabled = isSeekingToNextEnabled,
-                        modifier = Modifier.size(56.dp),
-                        iconSize = 32.dp,
+                    val strings = LocalStrings.current
+                    Text(
+                        text = if (playingStatus == PlayingStatus.Loading) {
+                            strings.buffering_playback
+                        } else {
+                            targetEpisode.podcastTitle ?: ""
+                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
+            }
+            Slider(
+                value = episode.durationInSec?.let { progress.toFloat().div(it.toFloat()) } ?: 1f,
+                onValueChange = { updatedValue ->
+                    episode.durationInSec?.let {
+                        onSeeking((updatedValue * it).toInt())
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primaryTertiary,
+                    activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
+                    activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
+                    inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f)
+                ),
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+            ) {
+                Text(
+                    text = progress.formatAsDuration(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                )
+                Text(
+                    text = episode.durationInSec.takeIf { it != null && it > 30 }.formatAsDuration(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                )
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                MoveToPreviousButton(
+                    onClick = onSeekToPrevious,
+                    isEnabled = isSeekingToPreviousEnabled,
+                    modifier = Modifier.size(56.dp),
+                    iconSize = 32.dp,
+                )
+
+                OutlinedIconButton(
+                    onClick = { onReplay(10) },
+                    modifier = Modifier.size(56.dp),
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.outlinedIconButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.inverseSurface,
+                    ),
+                    border = null,
                 ) {
-                    var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
-                    AnimatedContent(
-                        targetState = currentSpeed,
-                        transitionSpec = {
-                            if (targetState > initialState) {
-                                (slideInHorizontally { it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { -it } + fadeOut(animationSpec = tween(90)))
-                            } else {
-                                (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
-                            }
-                        },
-                        label = "Animated Playback Speed",
-                    ) { targetState ->
-                        TextButton(
-                            onClick = {
-                                currentSpeed = onPlaybackSpeedChange(targetState)
-                            },
-                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface),
-                        ) {
-                            Text(
-                                text = "${targetState}x",
-                                style = MaterialTheme.typography.bodyMedium,
+                    Icon(
+                        imageVector = Icons.Filled.Replay10,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        if (playingStatus == PlayingStatus.Paused || playingStatus == PlayingStatus.Error) {
+                            onResume()
+                        } else {
+                            onPause()
+                        }
+                    },
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryTertiary,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryTertiary,
+                    ),
+                ) {
+                    when (playingStatus) {
+                        PlayingStatus.Loading -> {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimaryTertiary,
+                                modifier = Modifier.padding(4.dp),
                             )
                         }
+                        PlayingStatus.Playing -> {
+                            Icon(
+                                imageVector = Icons.Filled.Pause,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                            )
+                        }
+                        PlayingStatus.Paused, PlayingStatus.Error -> {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                            )
+                        }
+                    }
+                }
+
+                OutlinedIconButton(
+                    onClick = { onForward(30) },
+                    modifier = Modifier.size(56.dp),
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.outlinedIconButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.inverseSurface,
+                    ),
+                    border = null,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Forward30,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
+
+                MoveToNextButton(
+                    onClick = onSeekToNext,
+                    isEnabled = isSeekingToNextEnabled,
+                    modifier = Modifier.size(56.dp),
+                    iconSize = 32.dp,
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
+                AnimatedContent(
+                    targetState = currentSpeed,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            (slideInHorizontally { it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { -it } + fadeOut(animationSpec = tween(90)))
+                        } else {
+                            (slideInHorizontally { -it } + fadeIn(animationSpec = tween(220, delayMillis = 90))) togetherWith (slideOutHorizontally { it } + fadeOut(animationSpec = tween(90)))
+                        }
+                    },
+                    label = "Animated Playback Speed",
+                ) { targetState ->
+                    TextButton(
+                        onClick = {
+                            currentSpeed = onPlaybackSpeedChange(targetState)
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.inverseSurface),
+                    ) {
+                        Text(
+                            text = "${targetState}x",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
                     }
                 }
             }
@@ -345,143 +326,81 @@ fun CollapsedPlayerView(
     progress: Int,
     containerColor: Color,
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope? = null,
-    animatedVisibilityScope: AnimatedVisibilityScope? = null,
 ) {
     val (episode, playingStatus) = currentlyPlayingEpisode
-    with(sharedTransitionScope) {
-        Card(
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(containerColor = containerColor),
-            modifier = modifier.sharedBoundsIfNotNull(
-                sharedTransitionScope = this,
-                animatedVisibilityScope = animatedVisibilityScope,
-                state = this?.rememberSharedContentState(key = SharedTransitionElementKey.RootBounds)
-            ),
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        modifier = modifier,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                AsyncImage(
+                    model = episode.artworkUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .clip(MaterialTheme.shapes.small)
+                        .size(64.dp),
+                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.weight(1f),
                 ) {
-                    val sharedArtworkTransitionKey = SharedTransitionElementKey.Artwork(episode.id).hashCode().toString()
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(episode.artworkUrl)
-                            .placeholderMemoryCacheKey(sharedArtworkTransitionKey)
-                            .memoryCacheKey(sharedArtworkTransitionKey)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .sharedElementIfNotNull(
-                                sharedTransitionScope = this@with,
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                state = this@with?.rememberSharedContentState(key = sharedArtworkTransitionKey)
-                            )
-                            .clip(MaterialTheme.shapes.small)
-                            .size(64.dp),
+                    val strings = LocalStrings.current
+                    Text(
+                        text = strings.currently_playing,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Medium,
                     )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        val strings = LocalStrings.current
-                        Text(
-                            text = strings.currently_playing,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        Text(
-                            text = episode.title,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Normal,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
-                        )
-                    }
-
-                    PlayPauseCompactButton(
-                        isSelected = true,
-                        playingStatus = playingStatus,
-                        onPlay = onResume,
-                        onPause = onPause,
-                        contentPadding = 0.dp,
-                        iconSize = 32.dp,
+                    Text(
+                        text = episode.title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                     )
                 }
-                val progressPercentage = episode.durationInSec?.let {
-                    (progress.toFloat() / it.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
-                } ?: 1f
-                val progressColor = MaterialTheme.colorScheme.primaryTertiary
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .background(MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f))
-                        .drawWithContent {
-                            drawContent()
-                            drawRect(
-                                color = progressColor,
-                                size = size.copy(width = size.width * progressPercentage),
-                            )
-                        },
+
+                PlayPauseCompactButton(
+                    isSelected = true,
+                    playingStatus = playingStatus,
+                    onPlay = onResume,
+                    onPause = onPause,
+                    contentPadding = 0.dp,
+                    iconSize = 32.dp,
                 )
             }
+            val progressPercentage = episode.durationInSec?.let {
+                (progress.toFloat() / it.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            } ?: 1f
+            val progressColor = MaterialTheme.colorScheme.primaryTertiary
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f))
+                    .drawWithContent {
+                        drawContent()
+                        drawRect(
+                            color = progressColor,
+                            size = size.copy(width = size.width * progressPercentage),
+                        )
+                    },
+            )
         }
     }
-}
-
-private fun Modifier.sharedElementIfNotNull(
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?,
-    state: SharedTransitionScope.SharedContentState?,
-): Modifier {
-    return if (sharedTransitionScope == null || animatedVisibilityScope == null || state == null)
-        this
-    else
-        with(sharedTransitionScope) {
-            sharedElement(state, animatedVisibilityScope)
-        }
-}
-
-private fun Modifier.sharedBoundsIfNotNull(
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?,
-    state: SharedTransitionScope.SharedContentState?,
-): Modifier {
-    return if (sharedTransitionScope == null || animatedVisibilityScope == null || state == null)
-        this
-    else
-        with(sharedTransitionScope) {
-            sharedBounds(state, animatedVisibilityScope)
-        }
-}
-
-private fun Modifier.skipToLookaheadSizeIfNotNull(
-    sharedTransitionScope: SharedTransitionScope?
-): Modifier {
-    return if (sharedTransitionScope == null)
-        this
-    else
-        with(sharedTransitionScope) {
-            skipToLookaheadSize()
-        }
-}
-
-private sealed interface SharedTransitionElementKey {
-
-    data object RootBounds : SharedTransitionElementKey
-
-    data class Artwork(val episodeId: Long) : SharedTransitionElementKey
 }
 
 private fun Int?.formatAsDuration(): String {
