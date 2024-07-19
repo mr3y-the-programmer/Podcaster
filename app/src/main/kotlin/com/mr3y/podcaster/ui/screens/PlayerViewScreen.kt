@@ -2,6 +2,8 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,7 +14,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,16 +54,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
@@ -75,7 +76,6 @@ import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
-import com.mr3y.podcaster.ui.theme.tertiaryPrimary
 import java.text.DecimalFormat
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -120,9 +120,9 @@ fun ExpandedPlayerView(
                 targetState = episode,
                 transitionSpec = {
                     (
-                        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                            scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
-                        )
+                            fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                                    scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                            )
                         .togetherWith(fadeOut(animationSpec = tween(90)) + scaleOut(animationSpec = tween(90)))
                 },
                 contentKey = { it.id },
@@ -137,25 +137,7 @@ fun ExpandedPlayerView(
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .size(360.dp)
-                            .border(
-                                width = 1.dp,
-                                brush = Brush.horizontalGradient(
-                                    0.0f to Color.Transparent,
-                                    0.5f to MaterialTheme.colorScheme.tertiaryPrimary,
-                                    0.6f to Color.Transparent,
-                                ),
-                                shape = RectangleShape,
-                            )
-                            .border(
-                                width = 1.dp,
-                                brush = Brush.horizontalGradient(
-                                    0.0f to MaterialTheme.colorScheme.tertiaryPrimary,
-                                    0.5f to Color.Transparent,
-                                    0.6f to MaterialTheme.colorScheme.primaryTertiary,
-                                ),
-                                shape = RectangleShape,
-                            ),
+                            .size(360.dp),
                     )
                     Text(
                         text = targetEpisode.title,
@@ -166,6 +148,7 @@ fun ExpandedPlayerView(
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
                     )
+
                     val strings = LocalStrings.current
                     Text(
                         text = if (playingStatus == PlayingStatus.Loading) {
@@ -190,6 +173,7 @@ fun ExpandedPlayerView(
                     thumbColor = MaterialTheme.colorScheme.primaryTertiary,
                     activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
                     activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
+                    inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f)
                 ),
             )
             Row(
@@ -388,6 +372,7 @@ fun CollapsedPlayerView(
                         modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
                     )
                 }
+
                 PlayPauseCompactButton(
                     isSelected = true,
                     playingStatus = playingStatus,

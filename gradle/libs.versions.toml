@@ -26,6 +26,7 @@ espresso-core = "3.6.1"
 lifecycle-runtime = "2.8.3"
 activity-compose = "1.9.0"
 compose-bom = "2024.06.00"
+compose-bom-alpha = "2024.07.00-alpha01"
 compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
@@ -70,6 +71,7 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-bom-alpha = { group = "dev.chrisbanes.compose", name = "compose-bom", version.ref = "compose-bom-alpha" }
 compose-htmlconverter = { group = "be.digitalia.compose.htmlconverter", name = "htmlconverter", version.ref = "compose-htmlconverter" }
 kmpalette-core = { group = "com.kmpalette", name = "kmpalette-core", version.ref = "kmpalette" }
 lyricist = { group = "cafe.adriel.lyricist", name = "lyricist", version.ref = "lyricist" }

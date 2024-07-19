@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
@@ -71,12 +72,17 @@ import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.AddToQueueButton
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
+import com.mr3y.podcaster.ui.components.rememberSharedContentState
+import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent
@@ -89,6 +95,7 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.dateSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
 @Composable
@@ -171,7 +178,7 @@ fun SubscriptionsScreen(
         context.setStatusBarAppearanceLight(isAppearanceLight = isDarkTheme)
     }
     PullToRefresh(
-        isRefreshingDone = !state.isRefreshing,
+        isRefreshing = state.isRefreshing,
         onRefresh = { eventSink(SubscriptionsUIEvent.Refresh) },
     ) {
         Scaffold(
@@ -284,15 +291,15 @@ private fun ColumnScope.SubscriptionsHeader(
                     .verticalScroll(rememberScrollState()),
             ) {
                 items(podcasts, key = { it.id }) { podcast ->
-                    AsyncImage(
-                        model = podcast.artworkUrl,
-                        contentDescription = null,
+                    AnimatedAsyncImage(
+                        artworkUrl = podcast.artworkUrl,
+                        sharedTransitionKey = podcast.id.toString(),
+                        contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .size(120.dp)
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable(onClick = { onPodcastClick(podcast.id) }),
-                        contentScale = ContentScale.FillBounds,
+                            .clickable(onClick = { onPodcastClick(podcast.id) })
                     )
                 }
             }
@@ -364,14 +371,14 @@ private fun ColumnScope.EpisodesList(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.width(72.dp),
                             ) {
-                                AsyncImage(
-                                    model = episode.artworkUrl,
-                                    contentDescription = null,
+                                AnimatedAsyncImage(
+                                    artworkUrl = episode.artworkUrl,
+                                    sharedTransitionKey = episode.id.toString(),
+                                    contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
                                         .size(64.dp)
                                         .aspectRatio(1f)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.FillBounds,
+                                        .clip(RoundedCornerShape(8.dp))
                                 )
                                 val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
                                 Text(
@@ -381,6 +388,11 @@ private fun ColumnScope.EpisodesList(
                                     textAlign = TextAlign.Center,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.sharedElement(
+                                        LocalSharedTransitionScope.current,
+                                        LocalAnimatedVisibilityScope.current,
+                                        rememberSharedContentState(key = episode.dateSharedTransitionKey)
+                                    )
                                 )
                             }
 

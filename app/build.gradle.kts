@@ -101,6 +101,7 @@ kotlin {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
                 "-opt-in=coil3.annotation.ExperimentalCoilApi",
             ),
         )
@@ -124,7 +125,7 @@ dependencies {
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)
-    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.compose.bom.alpha))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
     implementation(libs.molecule)

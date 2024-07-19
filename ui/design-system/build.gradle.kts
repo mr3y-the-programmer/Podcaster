@@ -12,6 +12,7 @@ kotlin {
             listOf(
                 "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
                 "-opt-in=coil3.annotation.ExperimentalCoilApi",
             ),
         )
@@ -19,7 +20,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.compose.bom.alpha))
     implementation(libs.bundles.compose)
 
     implementation(projects.core.model)

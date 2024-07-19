@@ -51,14 +51,19 @@ import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.sampledata.DownloadMetadata
 import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
+import com.mr3y.podcaster.ui.components.rememberSharedContentState
+import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIEvent
@@ -71,6 +76,7 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.dateSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
 @Composable
@@ -155,7 +161,7 @@ fun EpisodeDetailsScreen(
         context.setStatusBarAppearanceLight(isAppearanceLight = !isDarkTheme)
     }
     PullToRefresh(
-        isRefreshingDone = !state.isRefreshing,
+        isRefreshing = state.isRefreshing,
         onRefresh = { eventSink(EpisodeDetailsUIEvent.Refresh) },
     ) {
         Scaffold(
@@ -258,17 +264,15 @@ private fun EpisodeDetails(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val context = LocalContext.current
             val imageSize = 128
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(episode.artworkUrl)
-                    .size(imageSize)
-                    .scale(Scale.FILL)
-                    .allowHardware(false)
-                    .memoryCacheKey("${episode.artworkUrl}.palette")
-                    .build(),
-                contentDescription = null,
+            AnimatedAsyncImage(
+                artworkUrl = episode.artworkUrl,
+                sharedTransitionKey = episode.id.toString(),
+                config = {
+                    this.size(imageSize)
+                        .scale(Scale.FILL)
+                        .allowHardware(false)
+                },
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.size(imageSize.dp),
             )
@@ -278,6 +282,11 @@ private fun EpisodeDetails(
             text = formattedEpisodeDate,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.sharedElement(
+                LocalSharedTransitionScope.current,
+                LocalAnimatedVisibilityScope.current,
+                rememberSharedContentState(key = episode.dateSharedTransitionKey)
+            )
         )
         Text(
             text = episode.title,

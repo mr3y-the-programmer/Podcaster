@@ -1,9 +1,12 @@
 package com.mr3y.podcaster.ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -28,7 +31,9 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +65,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
@@ -115,121 +121,122 @@ fun HomeScreen(
         var bottomBarYOffset by remember { mutableFloatStateOf(0f) }
         var isBottomBarVisible by remember { mutableStateOf(true) }
         var bottomBarAlpha by remember { mutableFloatStateOf(1f) }
-        BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            val density = LocalDensity.current
-            val expandedPlayerViewHeight = maxHeight
-            val collapsedPlayerViewHeight = 104.dp
-            val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() }
-            val navigationBarWindowInsets = NavigationBarDefaults.windowInsets
-            val bottomBarHeight = with(density) { NavigationBarHeight.toPx() + navigationBarWindowInsets.getBottom(this) }
-
-            val anchors = DraggableAnchors {
-                PlayerViewState.Expanded at 0f
-                PlayerViewState.Collapsed at collapsedPlayerViewOffset
-            }
-            val state = remember {
-                AnchoredDraggableState(
-                    initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
-                    anchors = anchors,
-                    positionalThreshold = { distance: Float -> distance * 0.1f },
-                    animationSpec = spring(),
-                    velocityThreshold = { with(density) { 80.dp.toPx() } },
-                )
-            }
-            LaunchedEffect(currentDestination) {
-                if (currentDestination != null && state.currentValue == PlayerViewState.Expanded) {
-                    state.animateTo(PlayerViewState.Collapsed)
+        SharedTransitionLayout(modifier = Modifier.weight(1f)) {
+            BoxWithConstraints {
+                val density = LocalDensity.current
+                val expandedPlayerViewHeight = maxHeight
+                val collapsedPlayerViewHeight = 104.dp
+                val collapsedPlayerViewOffset = with(density) { expandedPlayerViewHeight.toPx() - collapsedPlayerViewHeight.toPx() }
+                val navigationBarWindowInsets = NavigationBarDefaults.windowInsets
+                val bottomBarHeight = with(density) {
+                    NavigationBarHeight.toPx() + navigationBarWindowInsets.getBottom(this)
                 }
-            }
-            LaunchedEffect(state.currentValue) {
-                when (state.currentValue) {
-                    PlayerViewState.Collapsed -> {
-                        if (isPlayerViewExpanded) {
-                            appState.collapsePlayerView()
+                val anchors = DraggableAnchors {
+                    PlayerViewState.Expanded at 0f
+                    PlayerViewState.Collapsed at collapsedPlayerViewOffset
+                }
+                val state = remember {
+                    AnchoredDraggableState(
+                        initialValue = if (isPlayerViewExpanded) PlayerViewState.Expanded else PlayerViewState.Collapsed,
+                        anchors = anchors,
+                        positionalThreshold = { distance: Float -> distance * 0.15f },
+                        snapAnimationSpec = spring(),
+                        decayAnimationSpec = splineBasedDecay(density),
+                        velocityThreshold = { with(density) { 80.dp.toPx() } },
+                    )
+                }
+                LaunchedEffect(currentDestination) {
+                    if (currentDestination != null && state.currentValue == PlayerViewState.Expanded) {
+                        state.animateTo(PlayerViewState.Collapsed)
+                    }
+                }
+                LaunchedEffect(state.currentValue) {
+                    when (state.currentValue) {
+                        PlayerViewState.Collapsed -> {
+                            if (isPlayerViewExpanded) {
+                                appState.collapsePlayerView()
+                            }
+                        }
+
+                        PlayerViewState.Expanded -> {
+                            if (!isPlayerViewExpanded) {
+                                appState.expandPlayerView()
+                            }
                         }
                     }
-
-                    PlayerViewState.Expanded -> {
-                        isBottomBarVisible = false
-                        if (!isPlayerViewExpanded) {
-                            appState.expandPlayerView()
+                }
+                LaunchedEffect(Unit) {
+                    snapshotFlow { state.offset }
+                        .filter { !it.isNaN() }
+                        .map { it / collapsedPlayerViewOffset }
+                        .collect { fraction ->
+                            bottomBarYOffset = (1f - fraction) * bottomBarHeight
+                            bottomBarAlpha = fraction.coerceAtLeast(0.4f)
+                            isBottomBarVisible = fraction > 0f
                         }
-                    }
                 }
-            }
-            LaunchedEffect(Unit) {
-                snapshotFlow { state.offset }
-                    .filter { !it.isNaN() }
-                    .map { it / collapsedPlayerViewOffset }
-                    .collect { fraction ->
-                        bottomBarYOffset = (1f - fraction) * bottomBarHeight
-                        bottomBarAlpha = fraction.coerceAtLeast(0.5f)
-                    }
-            }
-            LaunchedEffect(key1 = state.targetValue) {
-                if (state.targetValue == PlayerViewState.Collapsed) {
-                    isBottomBarVisible = true
+                CompositionLocalProvider(LocalSharedTransitionScope provides this@SharedTransitionLayout) {
+                    PodcasterNavGraph(
+                        navController = navController,
+                        appState = appState,
+                        userPreferences = userPreferences,
+                        contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
+                        excludedWindowInsets = navigationBarWindowInsets,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
-            }
-            PodcasterNavGraph(
-                navController = navController,
-                appState = appState,
-                userPreferences = userPreferences,
-                contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
-                excludedWindowInsets = navigationBarWindowInsets,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            currentlyPlayingEpisode?.let { activeEpisode ->
-                val isCollapsed = state.targetValue == PlayerViewState.Collapsed
-                val containerColor by animateColorAsState(
-                    targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
-                    label = "PlayerViewColorAnimation",
-                )
-                Crossfade(
-                    targetState = isCollapsed,
-                    label = "Animated PlayerView",
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .fillMaxWidth()
-                        .height(expandedPlayerViewHeight)
-                        .offset {
-                            IntOffset(
-                                0,
-                                state
-                                    .requireOffset()
-                                    .toInt(),
+                currentlyPlayingEpisode?.let { activeEpisode ->
+                    val isCollapsed by derivedStateOf { state.requireOffset() >= (collapsedPlayerViewOffset * 0.85f) }
+                    val containerColor by animateColorAsState(
+                        targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+                        label = "PlayerViewColorAnimation",
+                    )
+                    Crossfade(
+                        targetState = isCollapsed,
+                        label = "Animated PlayerView",
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .height(expandedPlayerViewHeight)
+                            .offset {
+                                IntOffset(
+                                    0,
+                                    state
+                                        .requireOffset()
+                                        .toInt(),
+                                )
+                            }
+                            .anchoredDraggable(state, Orientation.Vertical),
+                    ) { collapsed ->
+                        if (collapsed) {
+                            CollapsedPlayerView(
+                                currentlyPlayingEpisode = activeEpisode,
+                                onResume = appState::resume,
+                                onPause = appState::pause,
+                                progress = trackProgress,
+                                containerColor = containerColor,
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(bottom = 4.dp),
+                            )
+                        } else {
+                            ExpandedPlayerView(
+                                currentlyPlayingEpisode = activeEpisode,
+                                onResume = appState::resume,
+                                onPause = appState::pause,
+                                isSeekingToPreviousEnabled = appState.canSeekToPreviousInQueue,
+                                onSeekToPrevious = appState::seekToPreviousInQueue,
+                                isSeekingToNextEnabled = appState.canSeekToNextInQueue,
+                                onSeekToNext = appState::seekToNextInQueue,
+                                onForward = appState::forward,
+                                onReplay = appState::replay,
+                                onPlaybackSpeedChange = appState::changePlaybackSpeed,
+                                progress = trackProgress,
+                                onSeeking = appState::seekTo,
+                                onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
+                                containerColor = containerColor,
                             )
                         }
-                        .anchoredDraggable(state, Orientation.Vertical),
-                ) { collapsed ->
-                    if (collapsed) {
-                        CollapsedPlayerView(
-                            currentlyPlayingEpisode = activeEpisode,
-                            onResume = appState::resume,
-                            onPause = appState::pause,
-                            progress = trackProgress,
-                            containerColor = containerColor,
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(bottom = 4.dp),
-                        )
-                    } else {
-                        ExpandedPlayerView(
-                            currentlyPlayingEpisode = activeEpisode,
-                            onResume = appState::resume,
-                            onPause = appState::pause,
-                            isSeekingToPreviousEnabled = appState.canSeekToPreviousInQueue,
-                            onSeekToPrevious = appState::seekToPreviousInQueue,
-                            isSeekingToNextEnabled = appState.canSeekToNextInQueue,
-                            onSeekToNext = appState::seekToNextInQueue,
-                            onForward = appState::forward,
-                            onReplay = appState::replay,
-                            onPlaybackSpeedChange = appState::changePlaybackSpeed,
-                            progress = trackProgress,
-                            onSeeking = appState::seekTo,
-                            onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
-                            containerColor = containerColor,
-                        )
                     }
                 }
             }
