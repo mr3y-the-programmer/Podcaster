@@ -159,7 +159,6 @@ fun HomeScreen(
                         }
 
                         PlayerViewState.Expanded -> {
-                            isBottomBarVisible = false
                             if (!isPlayerViewExpanded) {
                                 appState.expandPlayerView()
                             }
@@ -173,12 +172,8 @@ fun HomeScreen(
                         .collect { fraction ->
                             bottomBarYOffset = (1f - fraction) * bottomBarHeight
                             bottomBarAlpha = fraction.coerceAtLeast(0.5f)
+                            isBottomBarVisible = fraction > 0f
                         }
-                }
-                LaunchedEffect(key1 = state.targetValue) {
-                    if (state.targetValue == PlayerViewState.Collapsed) {
-                        isBottomBarVisible = true
-                    }
                 }
                 CompositionLocalProvider(LocalSharedTransitionScope provides this@SharedTransitionLayout) {
                     PodcasterNavGraph(
