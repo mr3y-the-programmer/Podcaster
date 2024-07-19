@@ -31,6 +31,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -64,6 +65,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.LocalStrings
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
@@ -178,21 +180,23 @@ fun HomeScreen(
                         isBottomBarVisible = true
                     }
                 }
-                PodcasterNavGraph(
-                    navController = navController,
-                    appState = appState,
-                    userPreferences = userPreferences,
-                    contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
-                    excludedWindowInsets = navigationBarWindowInsets,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                CompositionLocalProvider(LocalSharedTransitionScope provides this@SharedTransitionLayout) {
+                    PodcasterNavGraph(
+                        navController = navController,
+                        appState = appState,
+                        userPreferences = userPreferences,
+                        contentPadding = PaddingValues(bottom = if (currentlyPlayingEpisode != null) collapsedPlayerViewHeight else 0.dp),
+                        excludedWindowInsets = navigationBarWindowInsets,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 currentlyPlayingEpisode?.let { activeEpisode ->
                     val isCollapsed by derivedStateOf { state.requireOffset() >= (collapsedPlayerViewOffset * 0.85f) }
                     val containerColor by animateColorAsState(
                         targetValue = if (isCollapsed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
                         label = "PlayerViewColorAnimation",
                     )
-                    AnimatedContent(
+                    Crossfade(
                         targetState = isCollapsed,
                         label = "Animated PlayerView",
                         modifier = Modifier
@@ -216,8 +220,6 @@ fun HomeScreen(
                                 onPause = appState::pause,
                                 progress = trackProgress,
                                 containerColor = containerColor,
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedVisibilityScope = this,
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)
                                     .padding(bottom = 4.dp),
@@ -238,8 +240,6 @@ fun HomeScreen(
                                 onSeeking = appState::seekTo,
                                 onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
                                 containerColor = containerColor,
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedVisibilityScope = this
                             )
                         }
                     }
