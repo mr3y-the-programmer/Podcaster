@@ -40,8 +40,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.size.Scale
 import com.mr3y.podcaster.LocalStrings
@@ -285,8 +283,8 @@ private fun EpisodeDetails(
             modifier = Modifier.sharedElement(
                 LocalSharedTransitionScope.current,
                 LocalAnimatedVisibilityScope.current,
-                rememberSharedContentState(key = episode.dateSharedTransitionKey)
-            )
+                rememberSharedContentState(key = episode.dateSharedTransitionKey),
+            ),
         )
         Text(
             text = episode.title,

@@ -73,9 +73,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.asDrawable
-import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.size.Scale
 import com.kmpalette.rememberDominantColorState
@@ -91,15 +89,11 @@ import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
-import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
-import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
-import com.mr3y.podcaster.ui.components.rememberSharedContentState
-import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIEvent
@@ -339,9 +333,11 @@ fun PodcastDetailsScreen(
                                             modifier = Modifier.padding(horizontal = 16.dp),
                                         )
                                         if (index != state.episodes.lastIndex) {
-                                            HorizontalDivider(modifier = Modifier
-                                                .padding(horizontal = 16.dp)
-                                                .padding(top = 4.dp))
+                                            HorizontalDivider(
+                                                modifier = Modifier
+                                                    .padding(horizontal = 16.dp)
+                                                    .padding(top = 4.dp),
+                                            )
                                         }
                                     }
                                 }
@@ -382,8 +378,8 @@ private fun Header(
             sharedTransitionKey = sharedTransitionKey,
             config = {
                 this.size(imageSize)
-                .scale(Scale.FILL)
-                .allowHardware(false)
+                    .scale(Scale.FILL)
+                    .allowHardware(false)
             },
             onState = onState,
             contentScale = ContentScale.FillBounds,

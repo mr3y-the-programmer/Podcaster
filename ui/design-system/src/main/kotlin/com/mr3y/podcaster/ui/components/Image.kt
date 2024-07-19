@@ -31,10 +31,10 @@ fun AnimatedAsyncImage(
             .sharedElement(
                 LocalSharedTransitionScope.current,
                 LocalAnimatedVisibilityScope.current,
-                rememberSharedContentState(key = sharedTransitionKey)
+                rememberSharedContentState(key = sharedTransitionKey),
             )
             .then(modifier),
         contentScale = contentScale,
-        onState = onState
+        onState = onState,
     )
 }

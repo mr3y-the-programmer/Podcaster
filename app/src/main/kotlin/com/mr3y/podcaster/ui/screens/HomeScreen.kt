@@ -1,6 +1,5 @@
 package com.mr3y.podcaster.ui.screens
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState

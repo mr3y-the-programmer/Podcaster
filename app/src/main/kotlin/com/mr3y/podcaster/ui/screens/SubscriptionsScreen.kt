@@ -60,8 +60,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
@@ -299,7 +297,7 @@ private fun ColumnScope.SubscriptionsHeader(
                             .size(120.dp)
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable(onClick = { onPodcastClick(podcast.id) })
+                            .clickable(onClick = { onPodcastClick(podcast.id) }),
                     )
                 }
             }
@@ -378,7 +376,7 @@ private fun ColumnScope.EpisodesList(
                                     modifier = Modifier
                                         .size(64.dp)
                                         .aspectRatio(1f)
-                                        .clip(RoundedCornerShape(8.dp))
+                                        .clip(RoundedCornerShape(8.dp)),
                                 )
                                 val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
                                 Text(
@@ -391,8 +389,8 @@ private fun ColumnScope.EpisodesList(
                                     modifier = Modifier.sharedElement(
                                         LocalSharedTransitionScope.current,
                                         LocalAnimatedVisibilityScope.current,
-                                        rememberSharedContentState(key = episode.dateSharedTransitionKey)
-                                    )
+                                        rememberSharedContentState(key = episode.dateSharedTransitionKey),
+                                    ),
                                 )
                             }
 

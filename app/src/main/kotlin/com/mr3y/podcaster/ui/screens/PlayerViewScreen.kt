@@ -2,8 +2,6 @@ package com.mr3y.podcaster.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,14 +54,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
@@ -120,9 +116,9 @@ fun ExpandedPlayerView(
                 targetState = episode,
                 transitionSpec = {
                     (
-                            fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                                    scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
-                            )
+                        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                            scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                        )
                         .togetherWith(fadeOut(animationSpec = tween(90)) + scaleOut(animationSpec = tween(90)))
                 },
                 contentKey = { it.id },
@@ -173,7 +169,7 @@ fun ExpandedPlayerView(
                     thumbColor = MaterialTheme.colorScheme.primaryTertiary,
                     activeTrackColor = MaterialTheme.colorScheme.primaryTertiary,
                     activeTickColor = MaterialTheme.colorScheme.onPrimaryTertiary.copy(alpha = 0.38f),
-                    inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f)
+                    inactiveTrackColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.45f),
                 ),
             )
             Row(

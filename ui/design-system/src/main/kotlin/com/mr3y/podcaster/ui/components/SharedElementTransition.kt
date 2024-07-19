@@ -34,7 +34,7 @@ fun Modifier.sharedElement(
     boundsTransform: BoundsTransform = BoundsTransform { _, _ ->
         spring(
             stiffness = StiffnessMediumLow,
-            visibilityThreshold = Rect.VisibilityThreshold
+            visibilityThreshold = Rect.VisibilityThreshold,
         )
     },
     placeHolderSize: PlaceHolderSize = contentSize,
@@ -42,9 +42,9 @@ fun Modifier.sharedElement(
     zIndexInOverlay: Float = 0f,
     clipInOverlayDuringTransition: OverlayClip = ParentClip,
 ): Modifier {
-    return if (sharedTransitionScope == null || animatedVisibilityScope == null || state == null)
+    return if (sharedTransitionScope == null || animatedVisibilityScope == null || state == null) {
         this
-    else
+    } else {
         with(sharedTransitionScope) {
             sharedElement(
                 state,
@@ -56,17 +56,19 @@ fun Modifier.sharedElement(
                 clipInOverlayDuringTransition,
             )
         }
+    }
 }
 
 fun Modifier.skipToLookaheadSize(
-    sharedTransitionScope: SharedTransitionScope?
+    sharedTransitionScope: SharedTransitionScope?,
 ): Modifier {
-    return if (sharedTransitionScope == null)
+    return if (sharedTransitionScope == null) {
         this
-    else
+    } else {
         with(sharedTransitionScope) {
             skipToLookaheadSize()
         }
+    }
 }
 
 @ExperimentalSharedTransitionApi
@@ -76,7 +78,7 @@ private val ParentClip: OverlayClip =
             state: SharedTransitionScope.SharedContentState,
             bounds: Rect,
             layoutDirection: LayoutDirection,
-            density: Density
+            density: Density,
         ): Path? {
             return state.parentSharedContentState?.clipPathInOverlay
         }

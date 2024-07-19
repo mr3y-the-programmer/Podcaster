@@ -29,10 +29,10 @@ fun PullToRefresh(
                 modifier = Modifier.align(Alignment.TopCenter),
                 isRefreshing = isRefreshing,
                 state = state,
-                color = contentColor
+                color = contentColor,
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         content()
     }
