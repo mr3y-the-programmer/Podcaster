@@ -72,6 +72,7 @@ import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.AddToQueueButton
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
@@ -94,7 +95,6 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import com.mr3y.podcaster.ui.utils.artworkSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.dateSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
@@ -291,25 +291,15 @@ private fun ColumnScope.SubscriptionsHeader(
                     .verticalScroll(rememberScrollState()),
             ) {
                 items(podcasts, key = { it.id }) { podcast ->
-                    val sharedTransitionKey = podcast.artworkSharedTransitionKey
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(podcast.artworkUrl)
-                            .placeholderMemoryCacheKey(sharedTransitionKey)
-                            .memoryCacheKey(sharedTransitionKey)
-                            .build(),
-                        contentDescription = null,
+                    AnimatedAsyncImage(
+                        artworkUrl = podcast.artworkUrl,
+                        sharedTransitionKey = podcast.id.toString(),
+                        contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .sharedElement(
-                                LocalSharedTransitionScope.current,
-                                LocalAnimatedVisibilityScope.current,
-                                rememberSharedContentState(key = sharedTransitionKey)
-                            )
                             .size(120.dp)
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable(onClick = { onPodcastClick(podcast.id) }),
-                        contentScale = ContentScale.FillBounds,
+                            .clickable(onClick = { onPodcastClick(podcast.id) })
                     )
                 }
             }
@@ -381,24 +371,14 @@ private fun ColumnScope.EpisodesList(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.width(72.dp),
                             ) {
-                                val sharedTransitionKey = episode.artworkSharedTransitionKey
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(episode.artworkUrl)
-                                        .placeholderMemoryCacheKey(sharedTransitionKey)
-                                        .memoryCacheKey(sharedTransitionKey)
-                                        .build(),
-                                    contentDescription = null,
+                                AnimatedAsyncImage(
+                                    artworkUrl = episode.artworkUrl,
+                                    sharedTransitionKey = episode.id.toString(),
+                                    contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
-                                        .sharedElement(
-                                            LocalSharedTransitionScope.current,
-                                            LocalAnimatedVisibilityScope.current,
-                                            rememberSharedContentState(key = sharedTransitionKey)
-                                        )
                                         .size(64.dp)
                                         .aspectRatio(1f)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.FillBounds,
+                                        .clip(RoundedCornerShape(8.dp))
                                 )
                                 val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)
                                 Text(

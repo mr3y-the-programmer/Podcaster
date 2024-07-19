@@ -87,6 +87,7 @@ import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.PodcastWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
@@ -115,7 +116,6 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import com.mr3y.podcaster.ui.utils.artworkSharedTransitionKey
 
 @Composable
 fun PodcastDetailsScreen(
@@ -267,14 +267,16 @@ fun PodcastDetailsScreen(
                     }
                     else -> {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize().padding(bottom = 4.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = 4.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = externalContentPadding,
                         ) {
                             item {
                                 Header(
                                     artworkUrl = state.podcast.artworkUrl,
-                                    sharedTransitionKey = state.podcast.artworkSharedTransitionKey,
+                                    sharedTransitionKey = state.podcast.id.toString(),
                                     onState = { state ->
                                         when (state) {
                                             is AsyncImagePainter.State.Success -> bitmap = state.result.image.asDrawable(context.resources).toBitmap().asImageBitmap()
@@ -336,7 +338,9 @@ fun PodcastDetailsScreen(
                                             modifier = Modifier.padding(horizontal = 16.dp),
                                         )
                                         if (index != state.episodes.lastIndex) {
-                                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp).padding(top = 4.dp))
+                                            HorizontalDivider(modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                                .padding(top = 4.dp))
                                         }
                                     }
                                 }
@@ -365,7 +369,6 @@ private fun Header(
         modifier = modifier.fillMaxWidth(),
     ) {
         val imageSize = 128
-        val context = LocalContext.current
         Box(
             Modifier
                 .height((imageSize * 3f / 4f).dp)
@@ -373,24 +376,17 @@ private fun Header(
                 .background(dominantColor),
         )
 
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(artworkUrl)
-                .size(imageSize)
+        AnimatedAsyncImage(
+            artworkUrl = artworkUrl,
+            sharedTransitionKey = sharedTransitionKey,
+            config = {
+                this.size(imageSize)
                 .scale(Scale.FILL)
                 .allowHardware(false)
-                .placeholderMemoryCacheKey(sharedTransitionKey)
-                .memoryCacheKey(sharedTransitionKey)
-                .build(),
+            },
             onState = onState,
-            contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
-                .sharedElement(
-                    LocalSharedTransitionScope.current,
-                    LocalAnimatedVisibilityScope.current,
-                    rememberSharedContentState(key = sharedTransitionKey)
-                )
                 .padding(horizontal = 16.dp)
                 .padding(top = (imageSize * 1f / 4f).dp)
                 .size(imageSize.dp)

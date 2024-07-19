@@ -51,6 +51,7 @@ import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.sampledata.DownloadMetadata
 import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
@@ -75,7 +76,6 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import com.mr3y.podcaster.ui.utils.artworkSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.dateSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
@@ -264,27 +264,17 @@ private fun EpisodeDetails(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val context = LocalContext.current
             val imageSize = 128
-            val sharedTransitionKey = episode.artworkSharedTransitionKey
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(episode.artworkUrl)
-                    .size(imageSize)
-                    .scale(Scale.FILL)
-                    .allowHardware(false)
-                    .placeholderMemoryCacheKey(sharedTransitionKey)
-                    .memoryCacheKey(sharedTransitionKey)
-                    .build(),
-                contentDescription = null,
+            AnimatedAsyncImage(
+                artworkUrl = episode.artworkUrl,
+                sharedTransitionKey = episode.id.toString(),
+                config = {
+                    this.size(imageSize)
+                        .scale(Scale.FILL)
+                        .allowHardware(false)
+                },
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .sharedElement(
-                        LocalSharedTransitionScope.current,
-                        LocalAnimatedVisibilityScope.current,
-                        rememberSharedContentState(key = sharedTransitionKey)
-                    )
-                    .size(imageSize.dp),
+                modifier = Modifier.size(imageSize.dp),
             )
         }
         val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)

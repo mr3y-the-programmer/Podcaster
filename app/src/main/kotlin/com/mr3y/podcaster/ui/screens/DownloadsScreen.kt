@@ -46,6 +46,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.EpisodeDownloadStatus
 import com.mr3y.podcaster.core.model.EpisodeWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
+import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
@@ -62,7 +63,6 @@ import com.mr3y.podcaster.ui.preview.PodcasterPreview
 import com.mr3y.podcaster.ui.theme.PodcasterTheme
 import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
-import com.mr3y.podcaster.ui.utils.artworkSharedTransitionKey
 
 @Composable
 fun DownloadsScreen(
@@ -174,24 +174,14 @@ private fun DownloadsList(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.width(72.dp),
                     ) {
-                        val sharedTransitionKey = episode.artworkSharedTransitionKey
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(episode.artworkUrl)
-                                .placeholderMemoryCacheKey(sharedTransitionKey)
-                                .memoryCacheKey(sharedTransitionKey)
-                                .build(),
-                            contentDescription = null,
+                        AnimatedAsyncImage(
+                            artworkUrl = episode.artworkUrl,
+                            sharedTransitionKey = episode.id.toString(),
+                            contentScale = ContentScale.FillBounds,
                             modifier = Modifier
-                                .sharedElement(
-                                    LocalSharedTransitionScope.current,
-                                    LocalAnimatedVisibilityScope.current,
-                                    rememberSharedContentState(key = sharedTransitionKey)
-                                )
                                 .size(64.dp)
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.FillBounds,
                         )
                     }
 
