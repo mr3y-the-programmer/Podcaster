@@ -171,7 +171,7 @@ fun HomeScreen(
                         .map { it / collapsedPlayerViewOffset }
                         .collect { fraction ->
                             bottomBarYOffset = (1f - fraction) * bottomBarHeight
-                            bottomBarAlpha = fraction.coerceAtLeast(0.5f)
+                            bottomBarAlpha = fraction.coerceAtLeast(0.4f)
                             isBottomBarVisible = fraction > 0f
                         }
                 }
