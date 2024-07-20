@@ -1,5 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,6 +62,7 @@ import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
+import com.mr3y.podcaster.ui.components.sharedBounds
 import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -280,10 +282,11 @@ private fun EpisodeDetails(
             text = formattedEpisodeDate,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.sharedElement(
+            modifier = Modifier.sharedBounds(
                 LocalSharedTransitionScope.current,
                 LocalAnimatedVisibilityScope.current,
                 rememberSharedContentState(key = episode.dateSharedTransitionKey),
+                resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
             ),
         )
         Text(

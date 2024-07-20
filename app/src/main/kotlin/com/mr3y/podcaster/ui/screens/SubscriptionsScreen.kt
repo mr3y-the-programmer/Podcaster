@@ -1,5 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -80,6 +81,7 @@ import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
+import com.mr3y.podcaster.ui.components.sharedBounds
 import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
@@ -386,10 +388,11 @@ private fun ColumnScope.EpisodesList(
                                     textAlign = TextAlign.Center,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.sharedElement(
+                                    modifier = Modifier.sharedBounds(
                                         LocalSharedTransitionScope.current,
                                         LocalAnimatedVisibilityScope.current,
                                         rememberSharedContentState(key = episode.dateSharedTransitionKey),
+                                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                                     ),
                                 )
                             }
