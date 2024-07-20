@@ -61,12 +61,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kiwi.navigationcompose.typed.createRoutePattern
-import com.kiwi.navigationcompose.typed.navigate
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
+import com.mr3y.podcaster.ui.navigation.createRoutePattern
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.resources.Subscriptions

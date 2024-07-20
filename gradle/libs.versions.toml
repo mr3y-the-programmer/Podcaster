@@ -30,8 +30,7 @@ compose-bom-alpha = "2024.07.00-alpha01"
 compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
-navigation = "2.7.7"
-navigation-typed = "0.10.0"
+navigation = "2.8.0-beta05"
 molecule = "2.0.0"
 media3 = "1.3.1"
 coroutines = "1.8.1"
@@ -88,7 +87,6 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 material3 = { group = "androidx.compose.material3", name = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-navigation-typed = { group = "com.kiwi.navigation-compose.typed", name = "core", version.ref = "navigation-typed" }
 molecule = { group = "app.cash.molecule", name = "molecule-runtime", version.ref = "molecule" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
@@ -183,7 +181,6 @@ compose = [
 ]
 navigation = [
     "navigation",
-    "navigation-typed",
     "hilt-navigation-compose"
 ]
 media3 = [
