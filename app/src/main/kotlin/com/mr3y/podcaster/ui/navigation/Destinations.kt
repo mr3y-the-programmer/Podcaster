@@ -1,9 +1,8 @@
 package com.mr3y.podcaster.ui.navigation
 
-import com.kiwi.navigationcompose.typed.Destination
 import kotlinx.serialization.Serializable
 
-sealed interface Destinations : Destination {
+sealed interface Destinations {
 
     @Serializable
     data object SubscriptionsGraph : Destinations

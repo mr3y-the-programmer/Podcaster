@@ -9,9 +9,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.kiwi.navigationcompose.typed.createRoutePattern
-import com.kiwi.navigationcompose.typed.navigate
-import com.kiwi.navigationcompose.typed.navigation
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.UserPreferences
@@ -38,13 +38,13 @@ fun PodcasterNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = createRoutePattern<Destinations.SubscriptionsGraph>(),
+        startDestination = Destinations.SubscriptionsGraph,
         modifier = modifier,
     ) {
         navigation<Destinations.SubscriptionsGraph>(
-            startDestination = createRoutePattern<Destinations.Subscriptions>(),
+            startDestination = Destinations.Subscriptions,
         ) {
-            animatedComposable<Destinations.Subscriptions> { _, _ ->
+            composable<Destinations.Subscriptions> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     SubscriptionsScreen(
                         onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetailsSubscriptionsGraph(podcastId)) },
@@ -55,7 +55,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.PodcastDetailsSubscriptionsGraph> { _, destination ->
+            composable<Destinations.PodcastDetailsSubscriptionsGraph> { navBackStackEntry ->
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     PodcastDetailsScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -64,12 +64,12 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(destination.podcastId) },
+                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsSubscriptionsGraph>().podcastId) },
                         ),
                     )
                 }
             }
-            animatedComposable<Destinations.EpisodeDetailsSubscriptionsGraph> { _, destination ->
+            composable<Destinations.EpisodeDetailsSubscriptionsGraph> { navBackStackEntry ->
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     EpisodeDetailsScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -77,16 +77,19 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(destination.episodeId, destination.podcastArtworkUrl) },
+                            creationCallback = { factory ->
+                                val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsSubscriptionsGraph>()
+                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                            },
                         ),
                     )
                 }
             }
         }
         navigation<Destinations.ExploreGraph>(
-            startDestination = createRoutePattern<Destinations.Explore>(),
+            startDestination = Destinations.Explore,
         ) {
-            animatedComposable<Destinations.Explore> { _, _ ->
+            composable<Destinations.Explore> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     ExploreScreen(
                         onPodcastClick = { podcastId -> navController.navigate(Destinations.PodcastDetailsExploreGraph(podcastId)) },
@@ -95,7 +98,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.PodcastDetailsExploreGraph> { _, destination ->
+            composable<Destinations.PodcastDetailsExploreGraph> { navBackStackEntry ->
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     PodcastDetailsScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -104,12 +107,12 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(destination.podcastId) },
+                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsExploreGraph>().podcastId) },
                         ),
                     )
                 }
             }
-            animatedComposable<Destinations.EpisodeDetailsExploreGraph> { _, destination ->
+            composable<Destinations.EpisodeDetailsExploreGraph> { navBackStackEntry ->
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     EpisodeDetailsScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -117,16 +120,19 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(destination.episodeId, destination.podcastArtworkUrl) },
+                            creationCallback = { factory ->
+                                val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsExploreGraph>()
+                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                            },
                         ),
                     )
                 }
             }
         }
         navigation<Destinations.LibraryGraph>(
-            startDestination = createRoutePattern<Destinations.Library>(),
+            startDestination = Destinations.Library,
         ) {
-            animatedComposable<Destinations.Library> { _, _ ->
+            composable<Destinations.Library> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     LibraryScreen(
                         onDownloadsClick = { navController.navigate(Destinations.Downloads) },
@@ -135,7 +141,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.Downloads> { _, _ ->
+            composable<Destinations.Downloads> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     DownloadsScreen(
                         onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetailsLibraryGraph(episodeId, podcastArtworkUrl)) },
@@ -146,7 +152,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.EpisodeDetailsLibraryGraph> { _, destination ->
+            composable<Destinations.EpisodeDetailsLibraryGraph> { navBackStackEntry ->
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     EpisodeDetailsScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -154,16 +160,19 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(destination.episodeId, destination.podcastArtworkUrl) },
+                            creationCallback = { factory ->
+                                val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsLibraryGraph>()
+                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                            },
                         ),
                     )
                 }
             }
         }
         navigation<Destinations.SettingsGraph>(
-            startDestination = createRoutePattern<Destinations.Settings>(),
+            startDestination = Destinations.Settings,
         ) {
-            animatedComposable<Destinations.Settings> { _, _ ->
+            composable<Destinations.Settings> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     SettingsScreen(
                         userPreferences = userPreferences,
@@ -174,7 +183,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.Licenses> { _, _ ->
+            composable<Destinations.Licenses> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     LicensesScreen(
                         onNavigateUp = navController::navigateUpOnce,
@@ -183,7 +192,7 @@ fun PodcasterNavGraph(
                     )
                 }
             }
-            animatedComposable<Destinations.ImportExport> { _, _ ->
+            composable<Destinations.ImportExport> {
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     ImportExportScreen(
                         onNavigateUp = navController::navigateUpOnce,
