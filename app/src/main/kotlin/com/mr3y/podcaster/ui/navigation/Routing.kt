@@ -51,6 +51,6 @@ internal fun createRouteSlug(serializer: KSerializer<*>): String =
 @ExperimentalSerializationApi
 internal fun SerialDescriptor.isNavTypeOptional(index: Int): Boolean =
     isElementOptional(index) ||
-            getElementDescriptor(index).let {
-                it.isNullable || it.kind == PrimitiveKind.STRING
-            }
+        getElementDescriptor(index).let {
+            it.isNullable || it.kind == PrimitiveKind.STRING
+        }
