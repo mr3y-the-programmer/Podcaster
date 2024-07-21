@@ -47,8 +47,12 @@ import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.TopBar
+import com.mr3y.podcaster.ui.components.animateEnterExit
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
+import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.downloads.DownloadsUIState
 import com.mr3y.podcaster.ui.presenter.downloads.DownloadsViewModel
@@ -106,6 +110,11 @@ fun DownloadsScreen(
                     scrolledContainerColor = Color.Transparent,
                 ),
                 modifier = Modifier
+                    .renderInSharedTransitionScopeOverlay(
+                        LocalSharedTransitionScope.current,
+                        zIndexInOverlay = 1f
+                    )
+                    .animateEnterExit(LocalAnimatedVisibilityScope.current)
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
                     .padding(end = 16.dp),

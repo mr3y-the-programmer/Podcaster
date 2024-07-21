@@ -27,13 +27,12 @@ fun AnimatedAsyncImage(
             .memoryCacheKey(sharedTransitionKey)
             .build(),
         contentDescription = contentDescription,
-        modifier = Modifier
+        modifier = modifier
             .sharedElement(
                 LocalSharedTransitionScope.current,
                 LocalAnimatedVisibilityScope.current,
                 rememberSharedContentState(key = sharedTransitionKey),
-            )
-            .then(modifier),
+            ),
         contentScale = contentScale,
         onState = onState,
     )

@@ -16,6 +16,8 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment.Companion.Center
@@ -100,6 +102,38 @@ fun Modifier.sharedBounds(
                 renderInOverlayDuringTransition,
                 zIndexInOverlay,
                 clipInOverlayDuringTransition
+            )
+        }
+    }
+}
+
+fun Modifier.renderInSharedTransitionScopeOverlay(
+    sharedTransitionScope: SharedTransitionScope?,
+    zIndexInOverlay: Float = 0f,
+    clipInOverlayDuringTransition: (LayoutDirection, Density) -> Path? = { _, _ -> null }
+): Modifier {
+    return if (sharedTransitionScope == null) {
+        this
+    } else {
+        with(sharedTransitionScope) {
+            renderInSharedTransitionScopeOverlay(
+                zIndexInOverlay = zIndexInOverlay,
+                clipInOverlayDuringTransition = clipInOverlayDuringTransition
+            )
+        }
+    }
+}
+
+fun Modifier.animateEnterExit(
+    animatedVisibilityScope: AnimatedVisibilityScope?
+): Modifier {
+    return if (animatedVisibilityScope == null) {
+        this
+    } else {
+        with(animatedVisibilityScope) {
+            animateEnterExit(
+                enter = fadeIn() + slideInVertically { -it },
+                exit = fadeOut() + slideOutVertically { -it },
             )
         }
     }

@@ -60,8 +60,10 @@ import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
+import com.mr3y.podcaster.ui.components.animateEnterExit
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
+import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.components.sharedBounds
 import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
@@ -180,7 +182,13 @@ fun EpisodeDetailsScreen(
                         containerColor = MaterialTheme.colorScheme.surface,
                         navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(
+                            LocalSharedTransitionScope.current,
+                            zIndexInOverlay = 1f
+                        )
+                        .animateEnterExit(LocalAnimatedVisibilityScope.current)
+                        .fillMaxWidth(),
                 )
             },
             snackbarHost = { SnackbarHost(snackBarHostState, Modifier.padding(externalContentPadding)) },

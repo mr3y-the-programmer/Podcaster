@@ -89,11 +89,15 @@ import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
+import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
+import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
 import com.mr3y.podcaster.ui.components.PullToRefresh
 import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
+import com.mr3y.podcaster.ui.components.animateEnterExit
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
+import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIEvent
@@ -240,7 +244,13 @@ fun PodcastDetailsScreen(
                             dominantColorState.onColor
                         },
                     ),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(
+                            LocalSharedTransitionScope.current,
+                            zIndexInOverlay = 1f
+                        )
+                        .animateEnterExit(LocalAnimatedVisibilityScope.current)
+                        .fillMaxWidth(),
                 )
             },
             containerColor = MaterialTheme.colorScheme.surface,
