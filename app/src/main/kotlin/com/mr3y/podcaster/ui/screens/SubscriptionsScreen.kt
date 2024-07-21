@@ -82,7 +82,6 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.sharedBounds
-import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent

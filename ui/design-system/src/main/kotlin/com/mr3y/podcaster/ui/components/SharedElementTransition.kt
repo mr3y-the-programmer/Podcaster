@@ -85,7 +85,7 @@ fun Modifier.sharedBounds(
     placeHolderSize: PlaceHolderSize = contentSize,
     renderInOverlayDuringTransition: Boolean = true,
     zIndexInOverlay: Float = 0f,
-    clipInOverlayDuringTransition: OverlayClip = ParentClip
+    clipInOverlayDuringTransition: OverlayClip = ParentClip,
 ): Modifier {
     return if (sharedTransitionScope == null || animatedVisibilityScope == null || state == null) {
         this
@@ -101,7 +101,7 @@ fun Modifier.sharedBounds(
                 placeHolderSize,
                 renderInOverlayDuringTransition,
                 zIndexInOverlay,
-                clipInOverlayDuringTransition
+                clipInOverlayDuringTransition,
             )
         }
     }
@@ -110,7 +110,7 @@ fun Modifier.sharedBounds(
 fun Modifier.renderInSharedTransitionScopeOverlay(
     sharedTransitionScope: SharedTransitionScope?,
     zIndexInOverlay: Float = 0f,
-    clipInOverlayDuringTransition: (LayoutDirection, Density) -> Path? = { _, _ -> null }
+    clipInOverlayDuringTransition: (LayoutDirection, Density) -> Path? = { _, _ -> null },
 ): Modifier {
     return if (sharedTransitionScope == null) {
         this
@@ -118,14 +118,14 @@ fun Modifier.renderInSharedTransitionScopeOverlay(
         with(sharedTransitionScope) {
             renderInSharedTransitionScopeOverlay(
                 zIndexInOverlay = zIndexInOverlay,
-                clipInOverlayDuringTransition = clipInOverlayDuringTransition
+                clipInOverlayDuringTransition = clipInOverlayDuringTransition,
             )
         }
     }
 }
 
 fun Modifier.animateEnterExit(
-    animatedVisibilityScope: AnimatedVisibilityScope?
+    animatedVisibilityScope: AnimatedVisibilityScope?,
 ): Modifier {
     return if (animatedVisibilityScope == null) {
         this

@@ -112,7 +112,7 @@ fun DownloadsScreen(
                 modifier = Modifier
                     .renderInSharedTransitionScopeOverlay(
                         LocalSharedTransitionScope.current,
-                        zIndexInOverlay = 1f
+                        zIndexInOverlay = 1f,
                     )
                     .animateEnterExit(LocalAnimatedVisibilityScope.current)
                     .fillMaxWidth()

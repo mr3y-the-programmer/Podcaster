@@ -65,7 +65,6 @@ import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.components.sharedBounds
-import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIEvent
@@ -185,7 +184,7 @@ fun EpisodeDetailsScreen(
                     modifier = Modifier
                         .renderInSharedTransitionScopeOverlay(
                             LocalSharedTransitionScope.current,
-                            zIndexInOverlay = 1f
+                            zIndexInOverlay = 1f,
                         )
                         .animateEnterExit(LocalAnimatedVisibilityScope.current)
                         .fillMaxWidth(),
