@@ -50,7 +50,7 @@ import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.sampledata.DownloadMetadata
 import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
-import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
+import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
@@ -65,6 +65,7 @@ import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.components.sharedBounds
+import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.episodedetails.EpisodeDetailsUIEvent
@@ -272,7 +273,7 @@ private fun EpisodeDetails(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val imageSize = 128
-            AnimatedAsyncImage(
+            CoilImage(
                 artworkUrl = episode.artworkUrl,
                 sharedTransitionKey = episode.id.toString(),
                 config = {
@@ -281,7 +282,13 @@ private fun EpisodeDetails(
                         .allowHardware(false)
                 },
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier.size(imageSize.dp),
+                modifier = Modifier
+                    .size(imageSize.dp)
+                    .sharedElement(
+                        LocalSharedTransitionScope.current,
+                        LocalAnimatedVisibilityScope.current,
+                        rememberSharedContentState(key = episode.id.toString()),
+                    ),
             )
         }
         val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)

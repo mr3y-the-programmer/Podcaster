@@ -86,7 +86,7 @@ import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.PodcastWithDetails
 import com.mr3y.podcaster.ui.components.AddToQueueButton
-import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
+import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
@@ -97,7 +97,9 @@ import com.mr3y.podcaster.ui.components.RemoveFromQueueButton
 import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.animateEnterExit
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
+import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
+import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsUIEvent
@@ -383,7 +385,7 @@ private fun Header(
                 .background(dominantColor),
         )
 
-        AnimatedAsyncImage(
+        CoilImage(
             artworkUrl = artworkUrl,
             sharedTransitionKey = sharedTransitionKey,
             config = {
@@ -397,6 +399,11 @@ private fun Header(
                 .padding(horizontal = 16.dp)
                 .padding(top = (imageSize * 1f / 4f).dp)
                 .size(imageSize.dp)
+                .sharedElement(
+                    LocalSharedTransitionScope.current,
+                    LocalAnimatedVisibilityScope.current,
+                    rememberSharedContentState(key = sharedTransitionKey),
+                )
                 .border(2.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp)),
         )
 

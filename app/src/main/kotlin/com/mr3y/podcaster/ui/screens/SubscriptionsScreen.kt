@@ -71,7 +71,7 @@ import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.core.sampledata.EpisodesWithDownloadMetadata
 import com.mr3y.podcaster.core.sampledata.Podcasts
 import com.mr3y.podcaster.ui.components.AddToQueueButton
-import com.mr3y.podcaster.ui.components.AnimatedAsyncImage
+import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
@@ -82,6 +82,7 @@ import com.mr3y.podcaster.ui.components.TopBar
 import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.sharedBounds
+import com.mr3y.podcaster.ui.components.sharedElement
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.RefreshResult
 import com.mr3y.podcaster.ui.presenter.subscriptions.SubscriptionsUIEvent
@@ -290,13 +291,18 @@ private fun ColumnScope.SubscriptionsHeader(
                     .verticalScroll(rememberScrollState()),
             ) {
                 items(podcasts, key = { it.id }) { podcast ->
-                    AnimatedAsyncImage(
+                    CoilImage(
                         artworkUrl = podcast.artworkUrl,
                         sharedTransitionKey = podcast.id.toString(),
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .size(120.dp)
                             .aspectRatio(1f)
+                            .sharedElement(
+                                LocalSharedTransitionScope.current,
+                                LocalAnimatedVisibilityScope.current,
+                                rememberSharedContentState(key = podcast.id.toString()),
+                            )
                             .clip(RoundedCornerShape(8.dp))
                             .clickable(onClick = { onPodcastClick(podcast.id) }),
                     )
@@ -370,13 +376,18 @@ private fun ColumnScope.EpisodesList(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.width(72.dp),
                             ) {
-                                AnimatedAsyncImage(
+                                CoilImage(
                                     artworkUrl = episode.artworkUrl,
                                     sharedTransitionKey = episode.id.toString(),
                                     contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
                                         .size(64.dp)
                                         .aspectRatio(1f)
+                                        .sharedElement(
+                                            LocalSharedTransitionScope.current,
+                                            LocalAnimatedVisibilityScope.current,
+                                            rememberSharedContentState(key = episode.id.toString()),
+                                        )
                                         .clip(RoundedCornerShape(8.dp)),
                                 )
                                 val formattedEpisodeDate = rememberFormattedEpisodeDate(episode)

@@ -9,7 +9,7 @@ import coil3.compose.AsyncImagePainter.State
 import coil3.request.ImageRequest
 
 @Composable
-fun AnimatedAsyncImage(
+fun CoilImage(
     artworkUrl: String,
     sharedTransitionKey: String,
     modifier: Modifier = Modifier,
@@ -27,12 +27,7 @@ fun AnimatedAsyncImage(
             .memoryCacheKey(sharedTransitionKey)
             .build(),
         contentDescription = contentDescription,
-        modifier = modifier
-            .sharedElement(
-                LocalSharedTransitionScope.current,
-                LocalAnimatedVisibilityScope.current,
-                rememberSharedContentState(key = sharedTransitionKey),
-            ),
+        modifier = modifier,
         contentScale = contentScale,
         onState = onState,
     )
