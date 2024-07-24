@@ -17,6 +17,9 @@ the app is still a work-in-progress and there are some features that are not yet
   <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/ac65fd2f-81c7-4234-a8b5-9f479a9d082d" width="20%" />
 </p>
 
+### Shared Element transitions:
+https://github.com/user-attachments/assets/dafa41b6-bcbf-4609-9440-778c034ce2b0
+
 ## Features
 - ✅ Access to millions of podcasts.
 - ✅ Subscribe to a podcast by RSS feed url.
@@ -26,6 +29,7 @@ the app is still a work-in-progress and there are some features that are not yet
 - ✅ Support for playlists (Queue feature)
 - ✅ Continue playing episodes from where you left off.
 - ✅ Material 3 dynamic theming & light/dark theme.
+- ✅ Nice-looking animations.
 - ✅ Import/Export your subscriptions from/to OPML.
 - ❌ Improving support for RTL languages & adding more translations.
 - ❌ History feature.
