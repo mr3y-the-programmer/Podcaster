@@ -122,6 +122,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.sync)
     implementation(projects.core.opml)
+    implementation(projects.widget)
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)

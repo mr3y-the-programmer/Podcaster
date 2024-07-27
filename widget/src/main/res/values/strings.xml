@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_widget_description">Play your podcasts\' episodes</string>
+    <string name="no_episode_playing">No episode is currently playing..</string>
+    <string name="invalid_size">Invalid size, Resize your widget</string>
+</resources>
