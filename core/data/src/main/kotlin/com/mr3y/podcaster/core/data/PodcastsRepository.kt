@@ -64,6 +64,8 @@ interface PodcastsRepository {
 
     fun getQueueEpisodes(): List<Episode>
 
+    fun getFavouriteEpisodes(): Flow<List<Episode>>
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)
@@ -73,6 +75,8 @@ interface PodcastsRepository {
     fun isEpisodeInQueue(episodeId: Long): Boolean
 
     fun deleteAllInQueueExcept(episodesIds: Set<Long>)
+
+    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long)
 
     fun markEpisodeAsCompleted(episodeId: Long)
 

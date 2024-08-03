@@ -1,0 +1,7 @@
+ALTER TABLE episodeEntity ADD COLUMN isFavourite INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL;
+
+CREATE TRIGGER IF NOT EXISTS trigger_invalidate
+AFTER UPDATE OF isFavourite ON episodeEntity
+BEGIN UPDATE currentlyPlayingEntity SET playingStatus = playingStatus WHERE episodeId = new.id;
+END;
+

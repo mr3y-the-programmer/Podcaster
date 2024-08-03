@@ -145,6 +145,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getQueueEpisodes(): List<Episode> = podcastsDao.getQueueEpisodes()
 
+    override fun getFavouriteEpisodes(): Flow<List<Episode>> = podcastsDao.getFavouriteEpisodes()
+
     override fun addEpisodeToQueue(episode: Episode) {
         podcastsDao.addEpisodeToQueue(episode)
     }
@@ -160,6 +162,8 @@ class DefaultPodcastsRepository @Inject constructor(
     override fun isEpisodeInQueue(episodeId: Long): Boolean = podcastsDao.isEpisodeInQueue(episodeId)
 
     override fun deleteAllInQueueExcept(episodesIds: Set<Long>) = podcastsDao.deleteAllInQueueExcept(episodesIds)
+
+    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long) = podcastsDao.toggleEpisodeFavouriteStatus(isFavourite, episodeId)
 
     override fun markEpisodeAsCompleted(episodeId: Long) {
         podcastsDao.markEpisodeAsCompleted(episodeId)

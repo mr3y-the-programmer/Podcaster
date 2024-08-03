@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS episodeEntity (
     enclosureSizeInBytes INTEGER NOT NULL,
     podcastTitle TEXT,
     isCompleted INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL,
-    progressInSec INTEGER AS kotlin.Int
+    progressInSec INTEGER AS kotlin.Int,
+    isFavourite INTEGER AS kotlin.Boolean DEFAULT 0 NOT NULL
 );
 
 getEpisodesForPodcasts:
@@ -28,6 +29,9 @@ SELECT * FROM episodeEntity WHERE isCompleted == 1;
 
 getEpisode:
 SELECT * FROM episodeEntity WHERE id == :id;
+
+getFavouriteEpisodes:
+SELECT * FROM episodeEntity WHERE isFavourite == 1;
 
 hasEpisode:
 SELECT 1 FROM episodeEntity WHERE id = :id;
@@ -52,6 +56,9 @@ WHERE id = :id;
 
 setEpisodeCompleted:
 UPDATE episodeEntity SET isCompleted = 1 WHERE id = :id;
+
+toggleEpisodeFavouriteStatus:
+UPDATE episodeEntity SET isFavourite = :isFavourite WHERE id = :id;
 
 updateEpisodeProgress:
 UPDATE episodeEntity SET progressInSec = :progressInSec WHERE id = :id;

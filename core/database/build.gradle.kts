@@ -34,6 +34,16 @@ sqldelight {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            ),
+        )
+    }
+}
+
 dependencies {
 
     implementation(projects.core.model)

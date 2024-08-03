@@ -21,6 +21,7 @@ data class Episode(
     val podcastTitle: String? = null,
     val isCompleted: Boolean = false,
     val progressInSec: Int? = null,
+    val isFavourite: Boolean = false,
 ) {
     @Suppress("DEPRECATION")
     override fun toString(): String {
@@ -40,7 +41,8 @@ data class Episode(
             "enclosureSizeInBytes = ${enclosureSizeInBytes}L,\n" +
             "podcastTitle = \"$podcastTitle\",\n" +
             "isCompleted = $isCompleted,\n" +
-            "progressInSec = $progressInSec\n" +
+            "progressInSec = $progressInSec,\n" +
+            "isFavourite = $isFavourite\n" +
             ")"
     }
 }
