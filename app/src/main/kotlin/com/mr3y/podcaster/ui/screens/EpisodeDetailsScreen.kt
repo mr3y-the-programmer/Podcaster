@@ -112,7 +112,9 @@ fun EpisodeDetailsScreen(
                 is EpisodeDetailsUIEvent.PauseDownloading -> appState.pauseDownloading(event.episodeId)
                 is EpisodeDetailsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
                 is EpisodeDetailsUIEvent.RemoveEpisodeFromQueue -> appState.removeFromQueue(event.episodeId)
-                is EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus -> { viewModel.toggleFavoriteStatus(event.isFavorite) }
+                is EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus -> {
+                    viewModel.toggleFavoriteStatus(event.isFavorite)
+                }
                 is EpisodeDetailsUIEvent.ErrorPlayingStatusConsumed -> appState.consumeErrorPlayingStatus()
             }
         },
@@ -351,7 +353,7 @@ private fun EpisodeDetails(
             Spacer(modifier = Modifier.width(8.dp))
             FavoriteButton(
                 isFavorite = episode.isFavourite,
-                onToggle = onToggleFavoriteStatus
+                onToggle = onToggleFavoriteStatus,
             )
         }
         val styledDescription = rememberHtmlToAnnotatedString(episode.description)

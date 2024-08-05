@@ -160,7 +160,7 @@ fun PodcasterNavGraph(
                         onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetailsLibraryGraph(episodeId, podcastArtworkUrl)) },
                         onNavigateUp = navController::navigateUpOnce,
                         contentPadding = contentPadding,
-                        excludedWindowInsets = excludedWindowInsets
+                        excludedWindowInsets = excludedWindowInsets,
                     )
                 }
             }

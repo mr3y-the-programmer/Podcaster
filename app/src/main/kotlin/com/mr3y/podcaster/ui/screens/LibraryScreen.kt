@@ -86,13 +86,13 @@ fun LibraryScreen(
             LibraryDestinationEntry(
                 label = strings.downloads_label,
                 icon = Icons.Outlined.FileDownload,
-                onClick = onDownloadsClick
+                onClick = onDownloadsClick,
             )
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
             LibraryDestinationEntry(
                 label = strings.favorites_label,
                 icon = Icons.Outlined.Favorite,
-                onClick = onFavoritesClick
+                onClick = onFavoritesClick,
             )
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
         }

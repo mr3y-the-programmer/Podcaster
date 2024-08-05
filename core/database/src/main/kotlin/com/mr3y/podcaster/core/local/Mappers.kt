@@ -75,7 +75,7 @@ fun mapToEpisode(
         podcastTitle,
         isCompleted,
         progressInSec,
-        isFavourite
+        isFavourite,
     )
 }
 
@@ -150,6 +150,6 @@ fun Episode.toEpisodeEntity(): EpisodeEntity {
         podcastTitle,
         isCompleted,
         progressInSec,
-        isFavourite
+        isFavourite,
     )
 }

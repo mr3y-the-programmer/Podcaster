@@ -51,20 +51,21 @@ fun FavoriteButton(
             containerColor = Color.Transparent,
             contentColor = contentColor,
             checkedContainerColor = Color.Transparent,
-            checkedContentColor = contentColor
+            checkedContentColor = contentColor,
         ),
         border = null,
-        modifier = modifier
+        modifier = modifier,
     ) {
         var showSparkles by remember { mutableStateOf(false) }
         val animatedFillFraction by animateFloatAsState(
             targetValue = if (isFavorite) 0f else 1f,
             animationSpec = tween(durationMillis = 2_000, easing = EaseOutQuart),
             finishedListener = {
-                if (isFavorite)
+                if (isFavorite) {
                     showSparkles = true
+                }
             },
-            label = "HeartFillAnimation"
+            label = "HeartFillAnimation",
         )
         val sparkleAlphaAnimation = remember { Animatable(1f) }
         val sparkleTranslationAnimation = remember { Animatable(1f) }
@@ -90,8 +91,8 @@ fun FavoriteButton(
                     val pathSize = getBounds().size
                     val matrix = Matrix()
                     matrix.postScale(
-                        (size.width * 0.6f / pathSize.width) ,
-                        (size.height * 0.6f / pathSize.height)
+                        (size.width * 0.6f / pathSize.width),
+                        (size.height * 0.6f / pathSize.height),
                     )
                     matrix.postTranslate(-(pathSize.width * 0.25f), -(pathSize.height * 0.25f))
                     this.asAndroidPath().transform(matrix)
@@ -102,7 +103,7 @@ fun FavoriteButton(
                 clipPath(heartPath) {
                     drawRect(
                         color = contentColor,
-                        topLeft = Offset(x = 0f, animatedFillFraction * size.height)
+                        topLeft = Offset(x = 0f, animatedFillFraction * size.height),
                     )
                 }
             }
@@ -114,18 +115,18 @@ fun FavoriteButton(
                     val endRadius = radius * 0.7f
                     val startPos = Offset(
                         cos(theta) * startRadius,
-                        sin(theta) * startRadius
+                        sin(theta) * startRadius,
                     )
                     val endPos = Offset(
                         cos(theta) * endRadius,
-                        sin(theta) * endRadius
+                        sin(theta) * endRadius,
                     )
                     drawLine(
                         color = contentColor,
                         strokeWidth = 2f,
                         start = center + (startPos * sparkleTranslationAnimation.value),
                         end = center + (endPos * sparkleTranslationAnimation.value),
-                        alpha = sparkleAlphaAnimation.value
+                        alpha = sparkleAlphaAnimation.value,
                     )
                 }
             }
@@ -144,7 +145,7 @@ fun FavoriteButtonPreview(
         var isFavorite by remember { mutableStateOf(false) }
         FavoriteButton(
             isFavorite = isFavorite,
-            onToggle = { isFavorite = it }
+            onToggle = { isFavorite = it },
         )
     }
 }

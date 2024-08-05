@@ -75,5 +75,5 @@ val EnStrings = PodcasterStrings(
     import_corrupted_file_error = "File may be corrupted! process failed.",
     import_unknown_error = "Sorry, Something went wrong",
     favorites_label = "Favorites",
-    favorites_empty_list = "You have no favorite episodes. start adding some to your favorites and they will show up here"
+    favorites_empty_list = "You have no favorite episodes. start adding some to your favorites and they will show up here",
 )
