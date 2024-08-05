@@ -64,6 +64,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
+import com.mr3y.podcaster.ui.components.FavoriteButton
 import com.mr3y.podcaster.ui.components.MoveToNextButton
 import com.mr3y.podcaster.ui.components.MoveToPreviousButton
 import com.mr3y.podcaster.ui.components.PlayPauseCompactButton
@@ -92,6 +93,7 @@ fun ExpandedPlayerView(
     isSeekingToPreviousEnabled: Boolean,
     onSeekToNext: () -> Unit,
     onSeekToPrevious: () -> Unit,
+    onToggleFavoriteStatus: (Boolean) -> Unit,
     onBack: () -> Unit,
     containerColor: Color,
     modifier: Modifier = Modifier,
@@ -283,6 +285,7 @@ fun ExpandedPlayerView(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 var currentSpeed by remember(currentlyPlayingEpisode) { mutableFloatStateOf(playbackSpeed) }
@@ -309,6 +312,10 @@ fun ExpandedPlayerView(
                         )
                     }
                 }
+                FavoriteButton(
+                    isFavorite = episode.isFavourite,
+                    onToggle = onToggleFavoriteStatus,
+                )
             }
         }
     }
@@ -437,6 +444,7 @@ fun ExpandedPlayerViewPreview(
             onPlaybackSpeedChange = { it },
             progress = 1150,
             onSeeking = {},
+            onToggleFavoriteStatus = {},
             onBack = {},
             containerColor = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxSize(),

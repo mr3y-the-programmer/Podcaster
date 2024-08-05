@@ -22,8 +22,12 @@ kotlin {
 dependencies {
     implementation(platform(libs.compose.bom.alpha))
     implementation(libs.bundles.compose)
+    implementation(libs.core.ktx)
 
     implementation(projects.core.model)
     implementation(projects.ui.preview)
     implementation(projects.ui.resources)
+
+    // For previews
+    debugImplementation(libs.ui.tooling)
 }

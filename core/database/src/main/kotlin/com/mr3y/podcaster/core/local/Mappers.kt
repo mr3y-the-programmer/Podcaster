@@ -56,6 +56,7 @@ fun mapToEpisode(
     podcastTitle: String?,
     isCompleted: Boolean,
     progressInSec: Int?,
+    isFavourite: Boolean,
 ): Episode {
     return Episode(
         id,
@@ -74,6 +75,7 @@ fun mapToEpisode(
         podcastTitle,
         isCompleted,
         progressInSec,
+        isFavourite
     )
 }
 
@@ -102,11 +104,12 @@ fun mapToEpisodeWithDownloadMetadata(
     podcastTitle: String?,
     isCompleted: Boolean,
     progressInSec: Int?,
+    isFavourite: Boolean,
     downloadStatus: EpisodeDownloadStatus,
     downloadProgress: Float,
 ): EpisodeWithDownloadMetadata {
     return EpisodeWithDownloadMetadata(
-        episode = mapToEpisode(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isCompleted, progressInSec),
+        episode = mapToEpisode(id, podcastId, guid, title, description, episodeUrl, datePublishedTimestamp, datePublishedFormatted, durationInSec, episodeNum, artworkUrl, enclosureUrl, enclosureSizeInBytes, podcastTitle, isCompleted, progressInSec, isFavourite),
         downloadMetadata = mapToEpisodeDownloadMetadata(id, downloadStatus, downloadProgress),
     )
 }
@@ -147,5 +150,6 @@ fun Episode.toEpisodeEntity(): EpisodeEntity {
         podcastTitle,
         isCompleted,
         progressInSec,
+        isFavourite
     )
 }

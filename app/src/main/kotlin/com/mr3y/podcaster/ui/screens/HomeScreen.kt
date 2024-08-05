@@ -231,6 +231,9 @@ fun HomeScreen(
                                 onPlaybackSpeedChange = appState::changePlaybackSpeed,
                                 progress = trackProgress,
                                 onSeeking = appState::seekTo,
+                                onToggleFavoriteStatus = {
+                                    appState.toggleEpisodeFavoriteStatus(isFavorite = it, episode = activeEpisode.episode)
+                                },
                                 onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
                                 containerColor = containerColor,
                             )

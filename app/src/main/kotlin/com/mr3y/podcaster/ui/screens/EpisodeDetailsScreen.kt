@@ -53,6 +53,7 @@ import com.mr3y.podcaster.ui.components.AddToQueueButton
 import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.DownloadButton
 import com.mr3y.podcaster.ui.components.Error
+import com.mr3y.podcaster.ui.components.FavoriteButton
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
@@ -111,6 +112,7 @@ fun EpisodeDetailsScreen(
                 is EpisodeDetailsUIEvent.PauseDownloading -> appState.pauseDownloading(event.episodeId)
                 is EpisodeDetailsUIEvent.AddEpisodeToQueue -> appState.addToQueue(event.episode)
                 is EpisodeDetailsUIEvent.RemoveEpisodeFromQueue -> appState.removeFromQueue(event.episodeId)
+                is EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus -> { viewModel.toggleFavoriteStatus(event.isFavorite) }
                 is EpisodeDetailsUIEvent.ErrorPlayingStatusConsumed -> appState.consumeErrorPlayingStatus()
             }
         },
@@ -231,6 +233,7 @@ fun EpisodeDetailsScreen(
                             onDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.DownloadEpisode(it)) },
                             onResumeDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.ResumeDownloading(it)) },
                             onPauseDownloadingEpisode = { eventSink(EpisodeDetailsUIEvent.PauseDownloading(it)) },
+                            onToggleFavoriteStatus = { eventSink(EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus(it)) },
                             isSelected = isSelected,
                             playingStatus = playingStatus,
                             externalContentPadding = externalContentPadding,
@@ -256,6 +259,7 @@ private fun EpisodeDetails(
     onDownloadingEpisode: (Episode) -> Unit,
     onResumeDownloadingEpisode: (episodeId: Long) -> Unit,
     onPauseDownloadingEpisode: (episodeId: Long) -> Unit,
+    onToggleFavoriteStatus: (Boolean) -> Unit,
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
     externalContentPadding: PaddingValues,
@@ -343,6 +347,11 @@ private fun EpisodeDetails(
                 onResumingDownload = { onResumeDownloadingEpisode(episode.id) },
                 onPausingDownload = { onPauseDownloadingEpisode(episode.id) },
                 contentColor = MaterialTheme.colorScheme.primaryTertiary,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            FavoriteButton(
+                isFavorite = episode.isFavourite,
+                onToggle = onToggleFavoriteStatus
             )
         }
         val styledDescription = rememberHtmlToAnnotatedString(episode.description)

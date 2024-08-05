@@ -2,6 +2,7 @@ package com.mr3y.podcaster.core.local.dao
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
@@ -147,5 +148,68 @@ class DefaultPodcastsDaoTest {
 
         sut.deleteUntouchedEpisodes(podcastId = 456857L)
         assertThat(sut.getEpisodesForPodcast(podcastId = 456857L)).isEqualTo(listOf(episodes[0]))
+    }
+
+    @Test
+    fun `assert updating favourite episodes is working as expected`() = runTest(testDispatcher) {
+        sut.getFavouriteEpisodes().test {
+            // add some sample data to db
+            sut.addEpisode(EpisodeWithDetails.copy(isFavourite = false))
+
+            assertThat(awaitItem()).isEmpty()
+
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails)
+
+            assertThat(awaitItem()).isEmpty()
+            assertThat(awaitItem()).isEqualTo(listOf(EpisodeWithDetails.copy(isFavourite = true)))
+
+            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails)
+
+            assertThat(awaitItem()).isEmpty()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `assert current episode invalidation is triggered when its favourite status is toggled`() = runTest(testDispatcher) {
+        sut.getCurrentlyPlayingEpisode().test {
+            // Initially, there is no playing episode
+            assertThat(awaitItem()).isNull()
+
+            val currentlyPlayingEpisode = CurrentlyPlayingEpisode(EpisodeWithDetails.copy(isFavourite = false), PlayingStatus.Playing, 1.0f)
+            sut.setCurrentlyPlayingEpisode(currentlyPlayingEpisode)
+
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
+
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails)
+
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode.copy(episode = currentlyPlayingEpisode.episode.copy(isFavourite = true)))
+
+            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails)
+
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode.copy(episode = currentlyPlayingEpisode.episode.copy(isFavourite = false)))
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `assert current episode isn't invalidated when another episode favourite status is toggled`() = runTest(testDispatcher) {
+        sut.getCurrentlyPlayingEpisode().test {
+            // Initially, there is no playing episode
+            assertThat(awaitItem()).isNull()
+
+            val currentlyPlayingEpisode = CurrentlyPlayingEpisode(EpisodeWithDetails.copy(isFavourite = false), PlayingStatus.Playing, 1.0f)
+            sut.setCurrentlyPlayingEpisode(currentlyPlayingEpisode)
+
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
+
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, Episodes[4])
+
+            assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
+
+            expectNoEvents()
+        }
     }
 }

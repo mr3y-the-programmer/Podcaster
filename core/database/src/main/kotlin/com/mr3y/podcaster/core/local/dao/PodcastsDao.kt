@@ -101,6 +101,8 @@ interface PodcastsDao {
 
     fun getQueueEpisodes(): List<Episode>
 
+    fun getFavouriteEpisodes(): Flow<List<Episode>>
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)
@@ -110,6 +112,8 @@ interface PodcastsDao {
     fun isEpisodeInQueue(episodeId: Long): Boolean
 
     fun deleteAllInQueueExcept(episodesIds: Set<Long>)
+
+    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode)
 }
 
 class DefaultPodcastsDao @Inject constructor(
@@ -353,6 +357,10 @@ class DefaultPodcastsDao @Inject constructor(
             .executeAsList()
     }
 
+    override fun getFavouriteEpisodes(): Flow<List<Episode>> {
+        return database.episodeEntityQueries.getFavouriteEpisodes(mapper = ::mapToEpisode).asFlow().mapToList(dispatcher)
+    }
+
     override fun addEpisodeToQueue(episode: Episode) {
         if (isEpisodeAvailableNonObservable(episode.id)) {
             database.queueEntityQueries.insertNewQueueEpisode(episode.id)
@@ -389,5 +397,17 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun deleteAllInQueueExcept(episodesIds: Set<Long>) {
         database.queueEntityQueries.clearQueueExceptEpisodes(episodesIds)
+    }
+
+    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode) {
+        if (isEpisodeAvailableNonObservable(episode.id)) {
+            database.episodeEntityQueries.toggleEpisodeFavouriteStatus(isFavourite, episode.id)
+            return
+        }
+
+        database.episodeEntityQueries.transaction {
+            database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+            database.episodeEntityQueries.toggleEpisodeFavouriteStatus(isFavourite, episode.id)
+        }
     }
 }

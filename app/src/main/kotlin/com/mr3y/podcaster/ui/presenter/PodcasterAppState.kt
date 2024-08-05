@@ -282,6 +282,10 @@ class PodcasterAppState @Inject constructor(
         return podcastsRepository.isEpisodeInQueue(episodeId)
     }
 
+    fun toggleEpisodeFavoriteStatus(isFavorite: Boolean, episode: Episode) {
+        podcastsRepository.toggleEpisodeFavouriteStatus(isFavorite, episode)
+    }
+
     fun releasePlayer() {
         MediaController.releaseFuture(controllerFuture)
     }

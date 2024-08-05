@@ -11,6 +11,12 @@ BEFORE DELETE ON episodeEntity
 BEGIN DELETE FROM currentlyPlayingEntity WHERE episodeId = old.id;
 END;
 
+-- If the currently playing episode changed its favourite status, then notify observers instantly by triggering invalidation
+CREATE TRIGGER IF NOT EXISTS trigger_invalidate
+AFTER UPDATE OF isFavourite ON episodeEntity
+BEGIN UPDATE currentlyPlayingEntity SET playingStatus = playingStatus WHERE episodeId = new.id;
+END;
+
 getCurrentlyPlayingEpisode:
 SELECT * FROM currentlyPlayingEntity;
 
