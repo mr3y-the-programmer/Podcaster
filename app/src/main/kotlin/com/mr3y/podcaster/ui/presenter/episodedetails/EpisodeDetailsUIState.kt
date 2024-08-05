@@ -35,5 +35,7 @@ sealed interface EpisodeDetailsUIEvent {
 
     data class RemoveEpisodeFromQueue(val episodeId: Long) : EpisodeDetailsUIEvent
 
+    data class ToggleEpisodeFavoriteStatus(val isFavorite: Boolean) : EpisodeDetailsUIEvent
+
     data object ErrorPlayingStatusConsumed : EpisodeDetailsUIEvent
 }

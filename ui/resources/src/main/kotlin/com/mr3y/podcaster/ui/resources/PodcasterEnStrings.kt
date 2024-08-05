@@ -74,4 +74,5 @@ val EnStrings = PodcasterStrings(
     import_empty_file_error = "Empty file! nothing to import",
     import_corrupted_file_error = "File may be corrupted! process failed.",
     import_unknown_error = "Sorry, Something went wrong",
+    favorites_label = "Favorites"
 )

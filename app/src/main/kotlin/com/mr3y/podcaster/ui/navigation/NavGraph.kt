@@ -136,6 +136,7 @@ fun PodcasterNavGraph(
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     LibraryScreen(
                         onDownloadsClick = { navController.navigate(Destinations.Downloads) },
+                        onFavoritesClick = {},
                         externalContentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                     )

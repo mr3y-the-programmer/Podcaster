@@ -48,6 +48,10 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         events.tryEmit(EpisodeDetailsUIEvent.Retry)
     }
 
+    fun toggleFavoriteStatus(isFavorite: Boolean) {
+        events.tryEmit(EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus(isFavorite))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(episodeId: Long, podcastArtworkUrl: String): EpisodeDetailsViewModel
@@ -77,7 +81,7 @@ internal fun EpisodeDetailsPresenter(
     LaunchedEffect(Unit) {
         events.collect { event ->
             when (event) {
-                EpisodeDetailsUIEvent.Retry -> {
+                is EpisodeDetailsUIEvent.Retry -> {
                     val temp = episode
                     if (temp == null) {
                         isLoading = true
@@ -85,7 +89,7 @@ internal fun EpisodeDetailsPresenter(
                         isLoading = false
                     }
                 }
-                EpisodeDetailsUIEvent.Refresh -> {
+                is EpisodeDetailsUIEvent.Refresh -> {
                     val temp = episode
                     if (temp != null) {
                         isRefreshing = true
@@ -98,7 +102,13 @@ internal fun EpisodeDetailsPresenter(
                         refreshResult = if (result != null) RefreshResult.Ok else RefreshResult.Error
                     }
                 }
-                EpisodeDetailsUIEvent.RefreshResultConsumed -> refreshResult = null
+                is EpisodeDetailsUIEvent.RefreshResultConsumed -> refreshResult = null
+                is EpisodeDetailsUIEvent.ToggleEpisodeFavoriteStatus -> {
+                    episode?.let {
+                        repository.toggleEpisodeFavouriteStatus(event.isFavorite, it)
+                    }
+                    episode = repository.getEpisode(episodeId, podcastArtworkUrl, false)
+                }
                 else -> {}
             }
         }

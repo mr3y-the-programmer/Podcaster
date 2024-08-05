@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +47,7 @@ import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
 @Composable
 fun LibraryScreen(
     onDownloadsClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
     externalContentPadding: PaddingValues,
     excludedWindowInsets: WindowInsets?,
     modifier: Modifier = Modifier,
@@ -80,34 +83,54 @@ fun LibraryScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClickLabel = null,
-                        role = Role.Button,
-                        onClick = onDownloadsClick,
-                    ),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.FileDownload,
-                    contentDescription = null,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = strings.downloads_label,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            LibraryDestinationEntry(
+                label = strings.downloads_label,
+                icon = Icons.Outlined.FileDownload,
+                onClick = onDownloadsClick
+            )
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+            LibraryDestinationEntry(
+                label = strings.favorites_label,
+                icon = Icons.Outlined.Favorite,
+                onClick = onFavoritesClick
+            )
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
         }
+    }
+}
+
+@Composable
+private fun LibraryDestinationEntry(
+    label: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClickLabel = null,
+                role = Role.Button,
+                onClick = onClick,
+            ),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -119,6 +142,7 @@ fun LibraryScreenPreview(
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         LibraryScreen(
             onDownloadsClick = {},
+            onFavoritesClick = {},
             externalContentPadding = PaddingValues(0.dp),
             excludedWindowInsets = null,
             modifier = Modifier.fillMaxSize(),

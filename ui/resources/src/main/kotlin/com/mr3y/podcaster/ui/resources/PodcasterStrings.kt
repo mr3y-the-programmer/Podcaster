@@ -64,4 +64,5 @@ data class PodcasterStrings(
     val import_empty_file_error: String,
     val import_corrupted_file_error: String,
     val import_unknown_error: String,
+    val favorites_label: String
 )
