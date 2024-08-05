@@ -113,7 +113,7 @@ interface PodcastsDao {
 
     fun deleteAllInQueueExcept(episodesIds: Set<Long>)
 
-    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long)
+    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode)
 }
 
 class DefaultPodcastsDao @Inject constructor(
@@ -399,7 +399,15 @@ class DefaultPodcastsDao @Inject constructor(
         database.queueEntityQueries.clearQueueExceptEpisodes(episodesIds)
     }
 
-    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long) {
-        database.episodeEntityQueries.toggleEpisodeFavouriteStatus(isFavourite, episodeId)
+    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode) {
+        if (isEpisodeAvailableNonObservable(episode.id)) {
+            database.episodeEntityQueries.toggleEpisodeFavouriteStatus(isFavourite, episode.id)
+            return
+        }
+
+        database.episodeEntityQueries.transaction {
+            database.episodeEntityQueries.insertEpisode(episode.toEpisodeEntity())
+            database.episodeEntityQueries.toggleEpisodeFavouriteStatus(isFavourite, episode.id)
+        }
     }
 }

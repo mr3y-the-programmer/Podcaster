@@ -158,12 +158,12 @@ class DefaultPodcastsDaoTest {
 
             assertThat(awaitItem()).isEmpty()
 
-            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails.id)
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails)
 
             assertThat(awaitItem()).isEmpty()
             assertThat(awaitItem()).isEqualTo(listOf(EpisodeWithDetails.copy(isFavourite = true)))
 
-            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails.id)
+            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails)
 
             assertThat(awaitItem()).isEmpty()
 
@@ -182,11 +182,11 @@ class DefaultPodcastsDaoTest {
 
             assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
 
-            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails.id)
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, EpisodeWithDetails)
 
             assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode.copy(episode = currentlyPlayingEpisode.episode.copy(isFavourite = true)))
 
-            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails.id)
+            sut.toggleEpisodeFavouriteStatus(isFavourite = false, EpisodeWithDetails)
 
             assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode.copy(episode = currentlyPlayingEpisode.episode.copy(isFavourite = false)))
 
@@ -205,7 +205,7 @@ class DefaultPodcastsDaoTest {
 
             assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
 
-            sut.toggleEpisodeFavouriteStatus(isFavourite = true, 17536508L)
+            sut.toggleEpisodeFavouriteStatus(isFavourite = true, Episodes[4])
 
             assertThat(awaitItem()).isEqualTo(currentlyPlayingEpisode)
 

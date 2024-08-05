@@ -163,7 +163,7 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun deleteAllInQueueExcept(episodesIds: Set<Long>) = podcastsDao.deleteAllInQueueExcept(episodesIds)
 
-    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long) = podcastsDao.toggleEpisodeFavouriteStatus(isFavourite, episodeId)
+    override fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode) = podcastsDao.toggleEpisodeFavouriteStatus(isFavourite, episode)
 
     override fun markEpisodeAsCompleted(episodeId: Long) {
         podcastsDao.markEpisodeAsCompleted(episodeId)

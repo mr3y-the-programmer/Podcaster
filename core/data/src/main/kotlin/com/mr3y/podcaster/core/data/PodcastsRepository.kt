@@ -76,7 +76,7 @@ interface PodcastsRepository {
 
     fun deleteAllInQueueExcept(episodesIds: Set<Long>)
 
-    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episodeId: Long)
+    fun toggleEpisodeFavouriteStatus(isFavourite: Boolean, episode: Episode)
 
     fun markEpisodeAsCompleted(episodeId: Long)
 
