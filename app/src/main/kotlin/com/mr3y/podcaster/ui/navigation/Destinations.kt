@@ -53,6 +53,9 @@ sealed interface Destinations {
     data object Downloads : Destinations
 
     @Serializable
+    data object Favorites : Destinations
+
+    @Serializable
     data object Licenses : Destinations
 
     @Serializable

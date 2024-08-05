@@ -20,6 +20,7 @@ import com.mr3y.podcaster.ui.presenter.podcastdetails.PodcastDetailsViewModel
 import com.mr3y.podcaster.ui.screens.DownloadsScreen
 import com.mr3y.podcaster.ui.screens.EpisodeDetailsScreen
 import com.mr3y.podcaster.ui.screens.ExploreScreen
+import com.mr3y.podcaster.ui.screens.FavoritesScreen
 import com.mr3y.podcaster.ui.screens.ImportExportScreen
 import com.mr3y.podcaster.ui.screens.LibraryScreen
 import com.mr3y.podcaster.ui.screens.LicensesScreen
@@ -136,7 +137,7 @@ fun PodcasterNavGraph(
                 CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                     LibraryScreen(
                         onDownloadsClick = { navController.navigate(Destinations.Downloads) },
-                        onFavoritesClick = {},
+                        onFavoritesClick = { navController.navigate(Destinations.Favorites) },
                         externalContentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                     )
@@ -150,6 +151,16 @@ fun PodcasterNavGraph(
                         appState = appState,
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
+                    )
+                }
+            }
+            composable<Destinations.Favorites> {
+                CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
+                    FavoritesScreen(
+                        onEpisodeClick = { episodeId, podcastArtworkUrl -> navController.navigate(Destinations.EpisodeDetailsLibraryGraph(episodeId, podcastArtworkUrl)) },
+                        onNavigateUp = navController::navigateUpOnce,
+                        contentPadding = contentPadding,
+                        excludedWindowInsets = excludedWindowInsets
                     )
                 }
             }
