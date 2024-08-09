@@ -2,8 +2,12 @@ package com.mr3y.podcaster.ui.presenter.favorites
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
@@ -26,7 +30,15 @@ class FavoritesViewModel @Inject constructor(
 @Composable
 internal fun FavoritesPresenter(
     repository: PodcastsRepository,
-): List<Episode> {
+): FavoritesUIState {
+    var isLoading by remember { mutableStateOf(true) }
     val favorites by repository.getFavouriteEpisodes().collectAsState(initial = emptyList())
-    return favorites
+
+    LaunchedEffect(Unit) {
+        repository.countFavouriteEpisodes().apply {
+            isLoading = false
+        }
+    }
+
+    return FavoritesUIState(isLoading, favorites)
 }

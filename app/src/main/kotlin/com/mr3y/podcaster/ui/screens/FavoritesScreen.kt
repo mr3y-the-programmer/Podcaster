@@ -42,6 +42,7 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.core.sampledata.Episodes
 import com.mr3y.podcaster.ui.components.CoilImage
+import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.LocalAnimatedVisibilityScope
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.components.TopBar
@@ -50,6 +51,7 @@ import com.mr3y.podcaster.ui.components.rememberHtmlToAnnotatedString
 import com.mr3y.podcaster.ui.components.rememberSharedContentState
 import com.mr3y.podcaster.ui.components.renderInSharedTransitionScopeOverlay
 import com.mr3y.podcaster.ui.components.sharedElement
+import com.mr3y.podcaster.ui.presenter.favorites.FavoritesUIState
 import com.mr3y.podcaster.ui.presenter.favorites.FavoritesViewModel
 import com.mr3y.podcaster.ui.preview.DynamicColorsParameterProvider
 import com.mr3y.podcaster.ui.preview.PodcasterPreview
@@ -66,9 +68,9 @@ fun FavoritesScreen(
     modifier: Modifier = Modifier,
     viewModel: FavoritesViewModel = hiltViewModel(),
 ) {
-    val favorites by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     FavoritesScreen(
-        favorites = favorites,
+        state = state,
         onEpisodeClick = onEpisodeClick,
         onNavigateUp = onNavigateUp,
         externalContentPadding = contentPadding,
@@ -79,7 +81,7 @@ fun FavoritesScreen(
 
 @Composable
 fun FavoritesScreen(
-    favorites: List<Episode>,
+    state: FavoritesUIState,
     onEpisodeClick: (episodeId: Long, artworkUrl: String) -> Unit,
     onNavigateUp: () -> Unit,
     externalContentPadding: PaddingValues,
@@ -114,16 +116,21 @@ fun FavoritesScreen(
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier,
     ) { contentPadding ->
+        val contentModifier = Modifier
+            .padding(contentPadding)
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
 
-        FavoriteList(
-            favorites = favorites,
-            onEpisodeClick = onEpisodeClick,
-            externalContentPadding = externalContentPadding,
-            modifier = Modifier
-                .padding(contentPadding)
-                .padding(horizontal = 16.dp)
-                .fillMaxSize(),
-        )
+        if (state.isLoading) {
+            LoadingIndicator(modifier = contentModifier)
+        } else {
+            FavoriteList(
+                favorites = state.favorites,
+                onEpisodeClick = onEpisodeClick,
+                externalContentPadding = externalContentPadding,
+                modifier = contentModifier,
+            )
+        }
     }
 }
 
@@ -227,7 +234,7 @@ fun FavoritesScreenPreview(
 ) {
     PodcasterTheme(dynamicColor = isDynamicColorsOn) {
         FavoritesScreen(
-            favorites = Episodes.slice(0..2),
+            state = FavoritesUIState(isLoading = false, Episodes.slice(0..2)),
             onEpisodeClick = { _, _ -> },
             onNavigateUp = { },
             externalContentPadding = PaddingValues(0.dp),
@@ -242,7 +249,7 @@ fun FavoritesScreenPreview(
 fun FavoritesScreenEmptyFavoritesPreview() {
     PodcasterTheme(dynamicColor = false) {
         FavoritesScreen(
-            favorites = emptyList(),
+            state = FavoritesUIState(isLoading = false, emptyList()),
             onEpisodeClick = { _, _ -> },
             onNavigateUp = { },
             externalContentPadding = PaddingValues(0.dp),

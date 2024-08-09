@@ -33,6 +33,9 @@ SELECT * FROM episodeEntity WHERE id == :id;
 getFavouriteEpisodes:
 SELECT * FROM episodeEntity WHERE isFavourite == 1;
 
+countFavouriteEpisodes:
+SELECT count(*) FROM episodeEntity WHERE isFavourite == 1;
+
 hasEpisode:
 SELECT 1 FROM episodeEntity WHERE id = :id;
 

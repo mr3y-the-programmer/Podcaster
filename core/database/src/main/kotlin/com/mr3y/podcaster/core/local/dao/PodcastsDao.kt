@@ -103,6 +103,8 @@ interface PodcastsDao {
 
     fun getFavouriteEpisodes(): Flow<List<Episode>>
 
+    fun countFavouriteEpisodes(): Long
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)
@@ -359,6 +361,10 @@ class DefaultPodcastsDao @Inject constructor(
 
     override fun getFavouriteEpisodes(): Flow<List<Episode>> {
         return database.episodeEntityQueries.getFavouriteEpisodes(mapper = ::mapToEpisode).asFlow().mapToList(dispatcher)
+    }
+
+    override fun countFavouriteEpisodes(): Long {
+        return database.episodeEntityQueries.countFavouriteEpisodes().executeAsOne()
     }
 
     override fun addEpisodeToQueue(episode: Episode) {
