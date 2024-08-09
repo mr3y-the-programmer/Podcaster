@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
-import com.mr3y.podcaster.core.model.Episode
 import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
