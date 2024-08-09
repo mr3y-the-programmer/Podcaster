@@ -66,6 +66,8 @@ interface PodcastsRepository {
 
     fun getFavouriteEpisodes(): Flow<List<Episode>>
 
+    fun countFavouriteEpisodes(): Long
+
     fun addEpisodeToQueue(episode: Episode)
 
     fun replaceEpisodeInQueue(newEpisode: Episode, oldEpisodeId: Long)

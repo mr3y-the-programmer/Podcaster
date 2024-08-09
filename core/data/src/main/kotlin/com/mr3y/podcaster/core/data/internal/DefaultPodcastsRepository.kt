@@ -147,6 +147,8 @@ class DefaultPodcastsRepository @Inject constructor(
 
     override fun getFavouriteEpisodes(): Flow<List<Episode>> = podcastsDao.getFavouriteEpisodes()
 
+    override fun countFavouriteEpisodes() = podcastsDao.countFavouriteEpisodes()
+
     override fun addEpisodeToQueue(episode: Episode) {
         podcastsDao.addEpisodeToQueue(episode)
     }
