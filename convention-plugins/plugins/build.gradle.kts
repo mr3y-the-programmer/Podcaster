@@ -34,6 +34,10 @@ gradlePlugin {
             id = "podcaster.android.library"
             implementationClass = "com.mr3y.podcaster.gradle.AndroidLibraryConventionPlugin"
         }
+        register("androidTestLibrary") {
+            id = "podcaster.android.test.library"
+            implementationClass = "com.mr3y.podcaster.gradle.AndroidTestConventionPlugin"
+        }
         register("androidComposeLibrary") {
             id = "podcaster.android.compose.library"
             implementationClass = "com.mr3y.podcaster.gradle.AndroidComposeLibraryConventionPlugin"
