@@ -50,6 +50,10 @@ datastore = "1.1.1"
 aboutlibraries = "11.2.2"
 appversioning = "1.3.2"
 gpp = "3.10.1"
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.2.4"
+baselineprofile = "1.2.4"
+profileinstaller = "1.3.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -129,6 +133,9 @@ datastore-pref = { group = "androidx.datastore", name = "datastore-preferences",
 aboutlibraries-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 xmlutil-core = { group = "io.github.pdvrieze.xmlutil", name = "core", version.ref = "xmlutil" }
 xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serialization", version.ref = "xmlutil" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 # Convention plugins dependencies
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -155,8 +162,11 @@ play-publisher = { id = "com.github.triplet.play", version.ref = "gpp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 podcaster-android-app = { id = "podcaster.android.application", version = "unspecified" }
 podcaster-android-lib = { id = "podcaster.android.library", version = "unspecified" }
+podcaster-android-test-lib = { id = "podcaster.android.test.library", version = "unspecified" }
 podcaster-compose-android-lib = { id = "podcaster.android.compose.library", version = "unspecified" }
 podcaster-jvm-lib = { id = "podcaster.jvm.library", version = "unspecified" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 
 [bundles]
 androidx-core = [

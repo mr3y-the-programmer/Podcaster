@@ -1,5 +1,6 @@
 package com.mr3y.podcaster.ui.screens
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +62,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mr3y.podcaster.BuildConfig
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.Episode
@@ -110,6 +112,12 @@ fun SubscriptionsScreen(
 ) {
     val subscriptionsState by viewModel.state.collectAsStateWithLifecycle()
     val currentlyPlayingEpisode by appState.currentlyPlayingEpisode.collectAsStateWithLifecycle()
+
+    if (!BuildConfig.DEBUG) {
+        ReportDrawnWhen {
+            !subscriptionsState.isEpisodesLoading && !subscriptionsState.isSubscriptionsLoading
+        }
+    }
     SubscriptionsScreen(
         state = subscriptionsState,
         onPodcastClick = onPodcastClick,

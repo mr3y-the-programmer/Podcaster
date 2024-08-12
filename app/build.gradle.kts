@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.appversioning)
     alias(libs.plugins.play.publisher)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -142,6 +143,8 @@ dependencies {
     implementation(libs.firebase.crashlytics, excludeAndroidxDataStore)
 
     implementation(libs.datastore.pref)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(projects.baselineprofile)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.runtime)
