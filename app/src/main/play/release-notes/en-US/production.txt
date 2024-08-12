@@ -1,4 +1,2 @@
-- 🆕 Replace navigation drawer with bottom navigation bar.
-- ✨ Animate nicely between elements that are shared between different screens.
-- Fix memory leaks, and in turn Improve app's memory usage.
-- Multiple fixes & Improvements.
+- 🆕 Support marking some episodes as favourites.
+- Improve Performance, in particular optimize app startup time.
