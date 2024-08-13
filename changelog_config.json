@@ -9,6 +9,10 @@
       "labels": ["bug"]
     },
     {
+      "title": "## 🎇 Performance",
+      "labels": ["Performance"]
+    },
+    {
       "title": "## 🔧 Chore",
       "labels": ["dependencies", "chore"]
     }
