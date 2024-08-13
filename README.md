@@ -30,6 +30,7 @@ https://github.com/user-attachments/assets/dafa41b6-bcbf-4609-9440-778c034ce2b0
 - ✅ Continue playing episodes from where you left off.
 - ✅ Material 3 dynamic theming & light/dark theme.
 - ✅ Nice-looking animations.
+- ✅ Like Episodes.
 - ✅ Import/Export your subscriptions from/to OPML.
 - ❌ Improving support for RTL languages & adding more translations.
 - ❌ History feature.
