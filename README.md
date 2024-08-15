@@ -8,13 +8,13 @@ the app is still a work-in-progress and there are some features that are not yet
 
 ## Screenshots
 <p align="center">
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/0ece5346-f572-4c9e-a8ec-bc87a6b608a1" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/9a73ad83-c9f4-4ef5-a167-45df071a9fea" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/a3705145-d61d-4071-929b-ef33009b8a93" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/6ab62293-0ae7-49b2-995e-c06e83fcd94e" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/cd68c175-224f-4383-9499-f4b252e747bb" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/7df5effd-04ff-44a7-a104-55b86c217f41" width="20%" />
-  <img src="https://github.com/mr3y-the-programmer/Podcaster/assets/26522145/ac65fd2f-81c7-4234-a8b5-9f479a9d082d" width="20%" />
+  <img src="https://github.com/user-attachments/assets/6f9ed9f5-0bcf-4925-8b45-830aa7448141" width="20%" />
+  <img src="https://github.com/user-attachments/assets/b9d2fa6d-238b-4359-97fb-dca04101176a" width="20%" />
+  <img src="https://github.com/user-attachments/assets/db89d4c9-1cf2-436c-8278-9a976646d1aa" width="20%" />
+  <img src="https://github.com/user-attachments/assets/8a01338c-c34c-4036-a517-a43eaa7d29dc" width="20%" />
+  <img src="https://github.com/user-attachments/assets/13a651d5-9403-4230-8da1-43454d7d8972" width="20%" />
+  <img src="https://github.com/user-attachments/assets/c4ad1e4a-7ee2-419f-898b-7ac31fc11115" width="20%" />
+  <img src="https://github.com/user-attachments/assets/ff1e3f74-9ce7-44db-b957-109c846f8f6f" width="20%" />
 </p>
 
 ### Shared Element transitions:
