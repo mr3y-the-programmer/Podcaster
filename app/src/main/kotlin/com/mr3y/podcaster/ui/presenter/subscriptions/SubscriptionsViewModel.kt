@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.Snapshot
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
@@ -68,8 +69,10 @@ internal fun SubscriptionsPresenter(
 
         if (podcasts.isEmpty() || episodes.isEmpty()) {
             delay(1000)
-            isSubscriptionsLoading = false
-            isEpisodesLoading = false
+            Snapshot.withMutableSnapshot {
+                isSubscriptionsLoading = false
+                isEpisodesLoading = false
+            }
         }
     }
 
