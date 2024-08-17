@@ -2,6 +2,7 @@ package com.mr3y.podcaster.core.local.dao
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.mr3y.podcaster.CurrentlyPlayingEntity
 import com.mr3y.podcaster.PodcasterDatabase
@@ -35,9 +36,9 @@ interface PodcastsDao {
 
     fun isPodcastAvailable(podcastId: Long): Flow<Boolean>
 
-    fun hasPodcasts(): Flow<Boolean>
+    fun countPodcasts(): Flow<Long>
 
-    fun hasDownloads(): Flow<Boolean>
+    fun countDownloads(): Flow<Long>
 
     fun isPodcastAvailableNonObservable(podcastId: Long): Boolean
 
@@ -145,18 +146,12 @@ class DefaultPodcastsDao @Inject constructor(
             .map { it == 1L }
     }
 
-    override fun hasPodcasts(): Flow<Boolean> {
-        return database.podcastEntityQueries.countPodcasts()
-            .asFlow()
-            .mapToOneOrNull(dispatcher)
-            .map { it != null && it != 0L }
+    override fun countPodcasts(): Flow<Long> {
+        return database.podcastEntityQueries.countPodcasts().asFlow().mapToOne(dispatcher)
     }
 
-    override fun hasDownloads(): Flow<Boolean> {
-        return database.downloadableEpisodeEntityQueries.countDownloads()
-            .asFlow()
-            .mapToOneOrNull(dispatcher)
-            .map { it != null && it != 0L }
+    override fun countDownloads(): Flow<Long> {
+        return database.downloadableEpisodeEntityQueries.countDownloads().asFlow().mapToOne(dispatcher)
     }
 
     override fun isPodcastAvailableNonObservable(podcastId: Long): Boolean {

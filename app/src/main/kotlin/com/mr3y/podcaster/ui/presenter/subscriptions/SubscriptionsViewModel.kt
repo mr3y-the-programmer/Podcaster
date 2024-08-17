@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.Snapshot
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
@@ -17,7 +18,9 @@ import com.mr3y.podcaster.ui.presenter.RefreshResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -55,30 +58,21 @@ internal fun SubscriptionsPresenter(
     val queueEpisodesIds by repository.getQueueEpisodesIds().collectAsState(initial = emptyList())
     var refreshResult: RefreshResult? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(Unit) {
-        launch {
-            // if the user has no subscriptions yet
-            repository.hasSubscriptions()
-                .filter { isSubscribedToAnyPodcast -> !isSubscribedToAnyPodcast }
-                .collect {
-                    isSubscriptionsLoading = false
-                    isEpisodesLoading = false
-                }
-        }
-        launch {
-            snapshotFlow { podcasts }
-                .drop(1) // Ignore initial value
-                .collect {
-                    isSubscriptionsLoading = false
-                }
+    LaunchedEffect(podcasts, episodes) {
+        if (podcasts.isNotEmpty()) {
+            isSubscriptionsLoading = false
         }
 
-        launch {
-            snapshotFlow { episodes }
-                .drop(1) // Ignore initial value
-                .collect {
-                    isEpisodesLoading = false
-                }
+        if (episodes.isNotEmpty()) {
+            isEpisodesLoading = false
+        }
+
+        if (podcasts.isEmpty() || episodes.isEmpty()) {
+            delay(1000)
+            Snapshot.withMutableSnapshot {
+                isSubscriptionsLoading = false
+                isEpisodesLoading = false
+            }
         }
     }
 

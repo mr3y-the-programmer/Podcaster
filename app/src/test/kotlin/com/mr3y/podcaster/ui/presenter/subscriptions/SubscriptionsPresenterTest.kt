@@ -50,9 +50,6 @@ class SubscriptionsPresenterTest : BasePresenterTest<SubscriptionsUIEvent>() {
             assertThat(currentState.episodes).isEmpty()
             currentState = awaitItem()
             assertThat(currentState.subscriptions).isEqualTo(listOf(Podcasts[0]))
-            // each episode addition triggers separate state update, and we added 2 episodes
-            assertThat(currentState.episodes).hasSize(1)
-            currentState = awaitItem()
             assertThat(currentState.episodes).hasSize(2)
 
             expectNoEvents()
