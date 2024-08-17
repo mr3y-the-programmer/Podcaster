@@ -14,6 +14,8 @@ import app.cash.molecule.launchMolecule
 import com.mr3y.podcaster.core.data.PodcastsRepository
 import com.mr3y.podcaster.ui.presenter.BaseMoleculeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -37,21 +39,12 @@ internal fun DownloadsPresenter(
     var isLoading by remember { mutableStateOf(true) }
     val downloads by repository.getDownloads().collectAsState(initial = emptyList())
 
-    LaunchedEffect(Unit) {
-        launch {
-            // if the user has no downloads
-            repository.hasDownloads()
-                .filter { hasDownloads -> !hasDownloads }
-                .collect {
-                    isLoading = false
-                }
-        }
-        launch {
-            snapshotFlow { downloads }
-                .drop(1)
-                .collect {
-                    isLoading = false
-                }
+    LaunchedEffect(downloads) {
+        if (downloads.isNotEmpty()) {
+            isLoading = false
+        } else {
+            delay(1000)
+            isLoading = false
         }
     }
 

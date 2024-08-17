@@ -30,9 +30,9 @@ interface PodcastsRepository {
 
     fun isPodcastFromSubscriptionsNonObservable(podcastId: Long): Boolean
 
-    fun hasSubscriptions(): Flow<Boolean>
+    fun countSubscriptions(): Flow<Long>
 
-    fun hasDownloads(): Flow<Boolean>
+    fun countDownloads(): Flow<Long>
 
     suspend fun getEpisode(episodeId: Long, podcastArtworkUrl: String, forceRefresh: Boolean): Episode?
 
