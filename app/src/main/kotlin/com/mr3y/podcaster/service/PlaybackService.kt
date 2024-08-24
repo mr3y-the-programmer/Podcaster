@@ -42,25 +42,12 @@ class PlaybackService : MediaSessionService() {
 
     override fun onCreate() {
         super.onCreate()
-        val audioAttributes = AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
-        val mediaSourceFactory = ProgressiveMediaSource.Factory(DownloadMediaService.buildCacheDataSourceFactory(this))
-        val audioOnlyRenderersFactory = RenderersFactory { handler, _, audioListener, _, _ ->
-            arrayOf(MediaCodecAudioRenderer(this, MediaCodecSelector.DEFAULT, handler, audioListener))
-        }
-        val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory, mediaSourceFactory)
-            .setAudioAttributes(audioAttributes, true)
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-        mediaSession = MediaSession.Builder(this, player)
-            .setCallback(PlaybackMediaSessionCallback())
-            .build()
+        getOrCreateMediaSessionInstance()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        mediaPlayer = ServiceMediaPlayer(mediaSession!!.player, podcastsRepository)
+        val currentSession = getOrCreateMediaSessionInstance()
+        mediaPlayer = ServiceMediaPlayer(currentSession.player, podcastsRepository)
         mediaPlayer.attachPlayerListener()
         mediaPlayer.startListeningForUpdatesIn(serviceScope)
         return super.onStartCommand(intent, flags, startId)
@@ -81,6 +68,30 @@ class PlaybackService : MediaSessionService() {
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
+
+    private fun getOrCreateMediaSessionInstance(): MediaSession {
+        return mediaSession ?: run {
+            val audioAttributes = AudioAttributes.Builder()
+                .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
+                .setUsage(C.USAGE_MEDIA)
+                .build()
+            val mediaSourceFactory = ProgressiveMediaSource.Factory(DownloadMediaService.buildCacheDataSourceFactory(this))
+            val audioOnlyRenderersFactory = RenderersFactory { handler, _, audioListener, _, _ ->
+                arrayOf(MediaCodecAudioRenderer(this, MediaCodecSelector.DEFAULT, handler, audioListener))
+            }
+            val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory, mediaSourceFactory)
+                .setAudioAttributes(audioAttributes, true)
+                .setHandleAudioBecomingNoisy(true)
+                .build()
+
+            MediaSession.Builder(this, player)
+                .setCallback(PlaybackMediaSessionCallback())
+                .build()
+                .also {
+                    mediaSession = it
+                }
+        }
+    }
 
     private fun release() {
         mediaSession?.run {
