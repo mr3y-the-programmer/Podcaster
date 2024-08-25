@@ -1,2 +1,1 @@
-- 🆕 Support marking some episodes as favourites.
-- Improve Performance, in particular optimize app startup time.
+- Fix a bug which caused the background playback to not start properly.
