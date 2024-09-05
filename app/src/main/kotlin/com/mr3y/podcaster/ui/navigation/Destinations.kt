@@ -23,25 +23,19 @@ sealed interface Destinations {
     data object Explore : Destinations
 
     @Serializable
-    sealed class PodcastDetails(val podcastId: Long) : Destinations
+    data class PodcastDetailsSubscriptionsGraph(val id: Long) : Destinations
 
     @Serializable
-    data class PodcastDetailsSubscriptionsGraph(val id: Long) : PodcastDetails(id)
+    data class PodcastDetailsExploreGraph(val id: Long) : Destinations
 
     @Serializable
-    data class PodcastDetailsExploreGraph(val id: Long) : PodcastDetails(id)
+    data class EpisodeDetailsSubscriptionsGraph(val id: Long, val artworkUrl: String) : Destinations
 
     @Serializable
-    sealed class EpisodeDetails(val episodeId: Long, val podcastArtworkUrl: String) : Destinations
+    data class EpisodeDetailsExploreGraph(val id: Long, val artworkUrl: String) : Destinations
 
     @Serializable
-    data class EpisodeDetailsSubscriptionsGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
-
-    @Serializable
-    data class EpisodeDetailsExploreGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
-
-    @Serializable
-    data class EpisodeDetailsLibraryGraph(val id: Long, val artworkUrl: String) : EpisodeDetails(id, artworkUrl)
+    data class EpisodeDetailsLibraryGraph(val id: Long, val artworkUrl: String) : Destinations
 
     @Serializable
     data object Library : Destinations

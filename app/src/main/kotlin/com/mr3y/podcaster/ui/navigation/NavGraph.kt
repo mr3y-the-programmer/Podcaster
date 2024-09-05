@@ -65,7 +65,7 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsSubscriptionsGraph>().podcastId) },
+                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsSubscriptionsGraph>().id) },
                         ),
                     )
                 }
@@ -80,7 +80,7 @@ fun PodcasterNavGraph(
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
                             creationCallback = { factory ->
                                 val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsSubscriptionsGraph>()
-                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                                factory.create(destination.id, destination.artworkUrl)
                             },
                         ),
                     )
@@ -108,7 +108,7 @@ fun PodcasterNavGraph(
                         contentPadding = contentPadding,
                         excludedWindowInsets = excludedWindowInsets,
                         viewModel = hiltViewModel<PodcastDetailsViewModel, PodcastDetailsViewModel.Factory>(
-                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsExploreGraph>().podcastId) },
+                            creationCallback = { factory -> factory.create(navBackStackEntry.toRoute<Destinations.PodcastDetailsExploreGraph>().id) },
                         ),
                     )
                 }
@@ -123,7 +123,7 @@ fun PodcasterNavGraph(
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
                             creationCallback = { factory ->
                                 val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsExploreGraph>()
-                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                                factory.create(destination.id, destination.artworkUrl)
                             },
                         ),
                     )
@@ -174,7 +174,7 @@ fun PodcasterNavGraph(
                         viewModel = hiltViewModel<EpisodeDetailsViewModel, EpisodeDetailsViewModel.Factory>(
                             creationCallback = { factory ->
                                 val destination = navBackStackEntry.toRoute<Destinations.EpisodeDetailsLibraryGraph>()
-                                factory.create(destination.episodeId, destination.podcastArtworkUrl)
+                                factory.create(destination.id, destination.artworkUrl)
                             },
                         ),
                     )

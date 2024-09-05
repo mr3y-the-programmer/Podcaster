@@ -56,6 +56,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -234,6 +235,22 @@ fun HomeScreen(
                                 onToggleFavoriteStatus = {
                                     appState.toggleEpisodeFavoriteStatus(isFavorite = it, episode = activeEpisode.episode)
                                 },
+                                onEpisodeClick = {
+                                    scope.launch { state.animateTo(PlayerViewState.Collapsed) }
+
+                                    val isOnExploreTab = currentDestination?.hierarchy?.any { it.route == createRoutePattern<Destinations.ExploreGraph>() } == true
+                                    if (!isOnExploreTab) {
+                                        navController.navigateToGraph(Destinations.ExploreGraph)
+                                    }
+                                    // Avoid having multiple copies of the same episode stacked on top of each other similar to `launchSingleTop`
+                                    // but the problem with `launchSingleTop` is it will prevent navigating to the same destination that has a different arguments
+                                    if (
+                                        currentDestination?.hasRoute(route = Destinations.EpisodeDetailsExploreGraph::class) == false ||
+                                        navBackStackEntry?.arguments?.getLong("id") != activeEpisode.episode.id
+                                        ) {
+                                        navController.navigate(Destinations.EpisodeDetailsExploreGraph(activeEpisode.episode.id, activeEpisode.episode.artworkUrl))
+                                    }
+                                },
                                 onBack = { scope.launch { state.animateTo(PlayerViewState.Collapsed) } },
                                 containerColor = containerColor,
                             )
@@ -313,13 +330,7 @@ private fun BottomBar(
                 selected = isSelected,
                 onClick = {
                     if (!isSelected) {
-                        navController.navigate(tab.destination) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navController.navigateToGraph(tab.destination)
                     } else if (currentDestination?.route !in bottomBarTabs.map { it.route }) {
                         currentDestination?.parent?.findStartDestination()?.id?.let {
                             navController.popBackStackOnce(it)
@@ -335,6 +346,16 @@ private fun BottomBar(
                 modifier = Modifier.scale(tabScale),
             )
         }
+    }
+}
+
+private fun NavHostController.navigateToGraph(destinationGraph: Destinations) {
+    navigate(destinationGraph) {
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
     }
 }
 
