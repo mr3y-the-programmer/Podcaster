@@ -154,8 +154,8 @@ fun ExpandedPlayerView(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClickLabel = strings.navigate_to_episode_a11y_label(targetEpisode.title),
-                            onClick = onEpisodeClick
-                        )
+                            onClick = onEpisodeClick,
+                        ),
                     )
 
                     Text(

@@ -247,7 +247,7 @@ fun HomeScreen(
                                     if (
                                         currentDestination?.hasRoute(route = Destinations.EpisodeDetailsExploreGraph::class) == false ||
                                         navBackStackEntry?.arguments?.getLong("id") != activeEpisode.episode.id
-                                        ) {
+                                    ) {
                                         navController.navigate(Destinations.EpisodeDetailsExploreGraph(activeEpisode.episode.id, activeEpisode.episode.artworkUrl))
                                     }
                                 },
