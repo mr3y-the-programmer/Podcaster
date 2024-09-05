@@ -25,6 +25,7 @@ val EnStrings = PodcasterStrings(
     retry_label = "Retry",
     currently_playing = "Currently Playing",
     buffering_playback = "Buffering...",
+    navigate_to_episode_a11y_label = { "Navigate to $it details page" },
     search_for_podcast_placeholder = "Search for a podcast or add RSS Url",
     recent_searches_label = "Recent Searches",
     close_label = "CLOSE",

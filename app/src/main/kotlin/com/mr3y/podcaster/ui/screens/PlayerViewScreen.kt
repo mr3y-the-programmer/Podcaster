@@ -12,6 +12,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -94,6 +96,7 @@ fun ExpandedPlayerView(
     onSeekToNext: () -> Unit,
     onSeekToPrevious: () -> Unit,
     onToggleFavoriteStatus: (Boolean) -> Unit,
+    onEpisodeClick: () -> Unit,
     onBack: () -> Unit,
     containerColor: Color,
     modifier: Modifier = Modifier,
@@ -137,6 +140,8 @@ fun ExpandedPlayerView(
                         modifier = Modifier
                             .size(360.dp),
                     )
+
+                    val strings = LocalStrings.current
                     Text(
                         text = targetEpisode.title,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -145,9 +150,14 @@ fun ExpandedPlayerView(
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClickLabel = strings.navigate_to_episode_a11y_label(targetEpisode.title),
+                            onClick = onEpisodeClick
+                        )
                     )
 
-                    val strings = LocalStrings.current
                     Text(
                         text = if (playingStatus == PlayingStatus.Loading) {
                             strings.buffering_playback
@@ -445,6 +455,7 @@ fun ExpandedPlayerViewPreview(
             progress = 1150,
             onSeeking = {},
             onToggleFavoriteStatus = {},
+            onEpisodeClick = {},
             onBack = {},
             containerColor = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxSize(),
