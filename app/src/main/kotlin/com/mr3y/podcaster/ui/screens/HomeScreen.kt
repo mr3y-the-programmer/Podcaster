@@ -66,7 +66,6 @@ import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.ui.components.LocalSharedTransitionScope
 import com.mr3y.podcaster.ui.navigation.Destinations
 import com.mr3y.podcaster.ui.navigation.PodcasterNavGraph
-import com.mr3y.podcaster.ui.navigation.createRoutePattern
 import com.mr3y.podcaster.ui.presenter.PodcasterAppState
 import com.mr3y.podcaster.ui.presenter.UserPreferences
 import com.mr3y.podcaster.ui.resources.Subscriptions
@@ -238,7 +237,7 @@ fun HomeScreen(
                                 onEpisodeClick = {
                                     scope.launch { state.animateTo(PlayerViewState.Collapsed) }
 
-                                    val isOnExploreTab = currentDestination?.hierarchy?.any { it.route == createRoutePattern<Destinations.ExploreGraph>() } == true
+                                    val isOnExploreTab = currentDestination?.hierarchy?.any { it.hasRoute(route = Destinations.ExploreGraph::class) } == true
                                     if (!isOnExploreTab) {
                                         navController.navigateToGraph(Destinations.ExploreGraph)
                                     }
@@ -284,25 +283,21 @@ private fun BottomBar(
         BottomBarTab(
             strings.tab_subscriptions_label,
             Icons.Outlined.Subscriptions,
-            createRoutePattern<Destinations.SubscriptionsGraph>(),
             Destinations.SubscriptionsGraph,
         ),
         BottomBarTab(
             strings.tab_explore_label,
             Icons.Outlined.Search,
-            createRoutePattern<Destinations.ExploreGraph>(),
             Destinations.ExploreGraph,
         ),
         BottomBarTab(
             strings.tab_library_label,
             Icons.Outlined.LibraryAdd,
-            createRoutePattern<Destinations.LibraryGraph>(),
             Destinations.LibraryGraph,
         ),
         BottomBarTab(
             strings.tab_settings_label,
             Icons.Outlined.Settings,
-            createRoutePattern<Destinations.SettingsGraph>(),
             Destinations.SettingsGraph,
         ),
     )
@@ -321,7 +316,7 @@ private fun BottomBar(
             },
     ) {
         bottomBarTabs.forEach { tab ->
-            val isSelected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
+            val isSelected = currentDestination?.hierarchy?.any { it.hasRoute(route = tab.destination::class) } == true
             val tabScale by animateFloatAsState(
                 targetValue = if (isSelected) 1.15f else 1f,
                 label = "AnimatedTabScale",
@@ -331,7 +326,7 @@ private fun BottomBar(
                 onClick = {
                     if (!isSelected) {
                         navController.navigateToGraph(tab.destination)
-                    } else if (currentDestination?.route !in bottomBarTabs.map { it.route }) {
+                    } else if (bottomBarTabs.all { currentDestination?.hasRoute(route = it.destination::class) == false }) {
                         currentDestination?.parent?.findStartDestination()?.id?.let {
                             navController.popBackStackOnce(it)
                         }
@@ -371,7 +366,6 @@ private fun NavHostController.popBackStackOnce(destinationId: Int, inclusive: Bo
 data class BottomBarTab(
     val label: String,
     val icon: ImageVector,
-    val route: String,
     val destination: Destinations,
 )
 
