@@ -61,11 +61,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.CurrentlyPlayingEpisode
 import com.mr3y.podcaster.core.model.PlayingStatus
 import com.mr3y.podcaster.core.sampledata.EpisodeWithDetails
+import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.FavoriteButton
 import com.mr3y.podcaster.ui.components.MoveToNextButton
 import com.mr3y.podcaster.ui.components.MoveToPreviousButton
@@ -133,8 +133,8 @@ fun ExpandedPlayerView(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    AsyncImage(
-                        model = targetEpisode.artworkUrl,
+                    CoilImage(
+                        artworkUrl = targetEpisode.artworkUrl,
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
@@ -356,8 +356,8 @@ fun CollapsedPlayerView(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-                AsyncImage(
-                    model = episode.artworkUrl,
+                CoilImage(
+                    artworkUrl = episode.artworkUrl,
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier

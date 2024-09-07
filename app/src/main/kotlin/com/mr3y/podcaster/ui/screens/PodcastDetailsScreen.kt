@@ -73,7 +73,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.asDrawable
-import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter.State
 import coil3.request.allowHardware
 import coil3.size.Scale
 import com.kmpalette.rememberDominantColorState
@@ -284,11 +284,8 @@ fun PodcastDetailsScreen(
                                 Header(
                                     artworkUrl = state.podcast.artworkUrl,
                                     sharedTransitionKey = state.podcast.id.toString(),
-                                    onState = { state ->
-                                        when (state) {
-                                            is AsyncImagePainter.State.Success -> bitmap = state.result.image.asDrawable(context.resources).toBitmap().asImageBitmap()
-                                            else -> {}
-                                        }
+                                    onSuccess = {
+                                        bitmap = it.result.image.asDrawable(context.resources).toBitmap().asImageBitmap()
                                     },
                                     dominantColor = dominantColorState.color,
                                     subscriptionState = state.subscriptionState,
@@ -366,7 +363,7 @@ fun PodcastDetailsScreen(
 private fun Header(
     artworkUrl: String,
     sharedTransitionKey: String,
-    onState: ((AsyncImagePainter.State) -> Unit)?,
+    onSuccess: ((State.Success) -> Unit)?,
     dominantColor: Color,
     subscriptionState: SubscriptionState,
     isSubscriptionInEditMode: Boolean,
@@ -393,7 +390,7 @@ private fun Header(
                     .scale(Scale.FILL)
                     .allowHardware(false)
             },
-            onState = onState,
+            onSuccess = onSuccess,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
