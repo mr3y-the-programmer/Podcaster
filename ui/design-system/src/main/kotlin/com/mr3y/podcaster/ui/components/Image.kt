@@ -2,15 +2,15 @@ package com.mr3y.podcaster.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.group
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter.State
@@ -83,12 +83,12 @@ val Placeholder: ImageVector
             defaultWidth = 180.dp,
             defaultHeight = 139.dp,
             viewportWidth = 180f,
-            viewportHeight = 139f
+            viewportHeight = 139f,
         ).apply {
             group {
                 path(
                     fill = SolidColor(Color(0xFFD0D0D0)),
-                    strokeLineWidth = 1f
+                    strokeLineWidth = 1f,
                 ) {
                     moveTo(0.001f, 0f)
                     lineTo(180.12f, 0f)
@@ -98,7 +98,7 @@ val Placeholder: ImageVector
                 }
                 path(
                     fill = SolidColor(Color(0xFFFFFFFF)),
-                    strokeLineWidth = 1f
+                    strokeLineWidth = 1f,
                 ) {
                     moveTo(104.917f, 66.875f)
                     lineTo(70.668f, 101.124f)
