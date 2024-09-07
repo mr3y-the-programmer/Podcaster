@@ -74,10 +74,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.mr3y.podcaster.LocalStrings
 import com.mr3y.podcaster.core.model.Podcast
 import com.mr3y.podcaster.core.sampledata.Podcasts
+import com.mr3y.podcaster.ui.components.CoilImage
 import com.mr3y.podcaster.ui.components.Error
 import com.mr3y.podcaster.ui.components.LoadingIndicator
 import com.mr3y.podcaster.ui.components.TopBar
@@ -457,8 +457,8 @@ private fun PodcastsList(
                         .fillParentMaxWidth()
                         .clickable(onClick = { onPodcastClick(podcast.id) }),
                 ) {
-                    AsyncImage(
-                        model = podcast.artworkUrl,
+                    CoilImage(
+                        artworkUrl = podcast.artworkUrl,
                         contentDescription = null,
                         modifier = Modifier
                             .size(120.dp)
