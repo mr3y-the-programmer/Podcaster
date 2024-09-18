@@ -51,7 +51,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             composeExtension.apply {
-                enableStrongSkippingMode.set(true)
                 reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
             }
 
