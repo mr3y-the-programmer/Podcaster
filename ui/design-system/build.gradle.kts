@@ -20,7 +20,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(platform(libs.compose.bom.alpha))
+    implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.core.ktx)
 
