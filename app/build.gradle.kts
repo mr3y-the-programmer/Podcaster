@@ -126,7 +126,7 @@ dependencies {
     implementation(projects.ui.resources)
     implementation(projects.ui.preview)
     implementation(projects.ui.designSystem)
-    implementation(platform(libs.compose.bom.alpha))
+    implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
     implementation(libs.molecule)
