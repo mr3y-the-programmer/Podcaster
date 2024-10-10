@@ -4,7 +4,6 @@
 </div>
 
 A podcast listening app that showcases using Jetpack Media 3 in a real, offline-first app.
-the app is still a work-in-progress and there are some features that are not yet implemented.
 
 ## Screenshots
 <p align="center">
@@ -65,7 +64,7 @@ Github:
 
 ## License
 ```
-Copyright [2024] [MR3Y]
+Copyright 2024 MR3Y
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
