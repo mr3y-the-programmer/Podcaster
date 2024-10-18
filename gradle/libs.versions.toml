@@ -2,7 +2,7 @@
 minSdk = "26"
 targetSdk = "34"
 compileSdk = "34"
-agp = "8.7.1"
+agp = "8.6.1"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.25"
 ktlint = "12.1.1"
@@ -26,7 +26,7 @@ espresso-core = "3.6.1"
 lifecycle-runtime = "2.8.6"
 activity-compose = "1.9.3"
 compose-bom = "2024.10.00"
-compose-htmlconverter = "1.0.1"
+compose-htmlconverter = "0.9.5"
 kmpalette = "3.1.0"
 lyricist = "1.7.0"
 navigation = "2.8.3"
@@ -101,7 +101,7 @@ workmanager-core = { group = "androidx.work", name = "work-runtime-ktx", version
 workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager" }
 coil-mp = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
-coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor2", version.ref = "coil" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 coil-test = { group = "io.coil-kt.coil3", name = "coil-test", version.ref = "coil" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
