@@ -68,6 +68,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -593,7 +594,7 @@ private fun Episode(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = rememberHtmlToAnnotatedString(text = episode.description),
+                text = rememberHtmlToAnnotatedString(text = episode.description, indentUnit = TextUnit.Unspecified),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3,
