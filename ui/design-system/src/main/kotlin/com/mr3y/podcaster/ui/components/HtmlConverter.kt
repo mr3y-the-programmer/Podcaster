@@ -15,7 +15,7 @@ fun rememberHtmlToAnnotatedString(
     return remember(text) {
         htmlToAnnotatedString(
             text,
-            style = if (indentUnit != null) HtmlStyle(indentUnit = indentUnit) else HtmlStyle.DEFAULT
+            style = if (indentUnit != null) HtmlStyle(indentUnit = indentUnit) else HtmlStyle.DEFAULT,
         )
     }
 }
