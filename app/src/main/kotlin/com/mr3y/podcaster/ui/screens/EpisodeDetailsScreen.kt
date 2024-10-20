@@ -223,7 +223,6 @@ fun EpisodeDetailsScreen(
                         )
                     }
                     else -> {
-                        val urlHandler = LocalUriHandler.current
                         EpisodeDetails(
                             episode = state.episode,
                             downloadMetadata = state.downloadMetadata,
@@ -239,7 +238,6 @@ fun EpisodeDetailsScreen(
                             isSelected = isSelected,
                             playingStatus = playingStatus,
                             externalContentPadding = externalContentPadding,
-                            onUrlClick = urlHandler::openUri,
                         )
                     }
                 }
@@ -248,7 +246,6 @@ fun EpisodeDetailsScreen(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun EpisodeDetails(
     episode: Episode,
@@ -265,7 +262,6 @@ private fun EpisodeDetails(
     isSelected: Boolean,
     playingStatus: PlayingStatus?,
     externalContentPadding: PaddingValues,
-    onUrlClick: (url: String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -357,14 +353,9 @@ private fun EpisodeDetails(
             )
         }
         val styledDescription = rememberHtmlToAnnotatedString(episode.description)
-        ClickableText(
+        Text(
             text = styledDescription,
             style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-            onClick = { position ->
-                styledDescription
-                    .getUrlAnnotations(position, position)
-                    .firstOrNull()?.let { range -> onUrlClick(range.item.url) }
-            },
         )
     }
 }

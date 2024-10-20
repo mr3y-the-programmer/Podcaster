@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -193,7 +194,7 @@ private fun FavoriteList(
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            text = rememberHtmlToAnnotatedString(text = episode.description),
+                            text = rememberHtmlToAnnotatedString(text = episode.description, indentUnit = TextUnit.Unspecified),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 3,
