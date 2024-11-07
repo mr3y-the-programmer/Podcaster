@@ -2,7 +2,7 @@
 minSdk = "26"
 targetSdk = "34"
 compileSdk = "35"
-agp = "8.7.2"
+agp = "8.6.1"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.26"
 ktlint = "12.1.1"
