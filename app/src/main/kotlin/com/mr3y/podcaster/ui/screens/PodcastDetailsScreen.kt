@@ -118,6 +118,7 @@ import com.mr3y.podcaster.ui.theme.onPrimaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiaryContainer
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.TopBarMoreOptionsButton
 
 @Composable
 fun PodcastDetailsScreen(
@@ -247,6 +248,18 @@ fun PodcastDetailsScreen(
                             dominantColorState.onColor
                         },
                     ),
+                    actions = {
+                        if (state.podcast != null && !state.isPodcastLoading) {
+                            TopBarMoreOptionsButton(
+                                title = state.podcast.title,
+                                sharedText = state.podcast.website,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = dominantColorState.onColor,
+                                )
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .renderInSharedTransitionScopeOverlay(
                             LocalSharedTransitionScope.current,

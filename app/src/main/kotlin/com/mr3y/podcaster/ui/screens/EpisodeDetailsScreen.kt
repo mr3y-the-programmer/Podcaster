@@ -76,6 +76,7 @@ import com.mr3y.podcaster.ui.theme.isAppThemeDark
 import com.mr3y.podcaster.ui.theme.onPrimaryTertiary
 import com.mr3y.podcaster.ui.theme.primaryTertiary
 import com.mr3y.podcaster.ui.theme.setStatusBarAppearanceLight
+import com.mr3y.podcaster.ui.utils.TopBarMoreOptionsButton
 import com.mr3y.podcaster.ui.utils.dateSharedTransitionKey
 import com.mr3y.podcaster.ui.utils.rememberFormattedEpisodeDate
 
@@ -183,6 +184,14 @@ fun EpisodeDetailsScreen(
                         containerColor = MaterialTheme.colorScheme.surface,
                         navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
+                    actions = {
+                        if (state.episode != null && !state.isLoading) {
+                            TopBarMoreOptionsButton(
+                                title = state.episode.title,
+                                sharedText = state.episode.episodeUrl
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .renderInSharedTransitionScopeOverlay(
                             LocalSharedTransitionScope.current,
