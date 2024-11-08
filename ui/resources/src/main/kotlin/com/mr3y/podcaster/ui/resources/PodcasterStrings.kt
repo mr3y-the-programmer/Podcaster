@@ -67,4 +67,6 @@ data class PodcasterStrings(
     val import_unknown_error: String,
     val favorites_label: String,
     val favorites_empty_list: String,
+    val share_label: String,
+    val icon_more_options_content_description: String,
 )

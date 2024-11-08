@@ -77,4 +77,6 @@ val EnStrings = PodcasterStrings(
     import_unknown_error = "Sorry, Something went wrong",
     favorites_label = "Favorites",
     favorites_empty_list = "You have no favorite episodes. start adding some to your favorites and they will show up here",
+    share_label = "Share",
+    icon_more_options_content_description = "More options",
 )
