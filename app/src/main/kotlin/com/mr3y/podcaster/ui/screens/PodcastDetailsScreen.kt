@@ -251,8 +251,8 @@ fun PodcastDetailsScreen(
                     actions = {
                         if (state.podcast != null && !state.isPodcastLoading) {
                             TopBarMoreOptionsButton(
-                                title = state.podcast.title,
-                                sharedText = state.podcast.website,
+                                shareActionTitle = state.podcast.title,
+                                shareActionText = state.podcast.website,
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = Color.Transparent,
                                     contentColor = dominantColorState.onColor,

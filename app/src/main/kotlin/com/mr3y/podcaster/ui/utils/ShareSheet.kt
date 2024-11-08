@@ -2,7 +2,6 @@ package com.mr3y.podcaster.ui.utils
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -24,8 +23,8 @@ import com.mr3y.podcaster.LocalStrings
 
 @Composable
 fun TopBarMoreOptionsButton(
-    title: String,
-    sharedText: String,
+    shareActionTitle: String,
+    shareActionText: String,
     modifier: Modifier = Modifier,
     colors: IconButtonColors? = null
 ) {
@@ -56,14 +55,14 @@ fun TopBarMoreOptionsButton(
 
     LaunchedEffect(showShareSheet) {
         if (showShareSheet) {
-            launchShareSheet(context, title, sharedText)
+            context.launchShareSheet(shareActionTitle, shareActionText)
             showShareSheet = false
             showOptions = false
         }
     }
 }
 
-internal fun launchShareSheet(context: Context, title: String, url: String) {
+internal fun Context.launchShareSheet(title: String, url: String) {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TITLE, title)
@@ -72,5 +71,5 @@ internal fun launchShareSheet(context: Context, title: String, url: String) {
     }
 
     val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
+    startActivity(shareIntent)
 }
