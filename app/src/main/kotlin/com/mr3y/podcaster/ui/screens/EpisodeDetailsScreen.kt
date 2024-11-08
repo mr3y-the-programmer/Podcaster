@@ -188,7 +188,7 @@ fun EpisodeDetailsScreen(
                         if (state.episode != null && !state.isLoading) {
                             TopBarMoreOptionsButton(
                                 shareActionTitle = state.episode.title,
-                                shareActionText = state.episode.episodeUrl
+                                shareActionText = state.episode.episodeUrl,
                             )
                         }
                     },

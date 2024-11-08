@@ -26,7 +26,7 @@ fun TopBarMoreOptionsButton(
     shareActionTitle: String,
     shareActionText: String,
     modifier: Modifier = Modifier,
-    colors: IconButtonColors? = null
+    colors: IconButtonColors? = null,
 ) {
     var showOptions by remember { mutableStateOf(false) }
     var showShareSheet by remember { mutableStateOf(false) }
@@ -35,11 +35,11 @@ fun TopBarMoreOptionsButton(
     IconButton(
         onClick = { showOptions = !showOptions },
         colors = colors ?: IconButtonDefaults.iconButtonColors(),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(
             imageVector = Icons.Filled.MoreVert,
-            contentDescription = strings.icon_more_options_content_description
+            contentDescription = strings.icon_more_options_content_description,
         )
     }
 
@@ -49,7 +49,7 @@ fun TopBarMoreOptionsButton(
     ) {
         DropdownMenuItem(
             text = { Text(strings.share_label) },
-            onClick = { showShareSheet = true }
+            onClick = { showShareSheet = true },
         )
     }
 

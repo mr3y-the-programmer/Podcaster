@@ -256,7 +256,7 @@ fun PodcastDetailsScreen(
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = Color.Transparent,
                                     contentColor = dominantColorState.onColor,
-                                )
+                                ),
                             )
                         }
                     },
