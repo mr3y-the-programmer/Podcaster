@@ -1,2 +1,1 @@
-- 🆕 Navigate to Episode page from player view when clicking on title.
-- Show a placeholder image when loading images fail.
+- 🆕 Add the option to share podcast/episode url.
