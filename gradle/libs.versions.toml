@@ -1,8 +1,8 @@
 [versions]
 minSdk = "26"
-targetSdk = "34"
-compileSdk = "35"
-agp = "8.10.0"
+targetSdk = "36"
+compileSdk = "36"
+agp = "8.9.2"
 kotlin = "2.1.20"
 ksp = "2.1.20-1.0.32"
 ktlint = "12.2.0"
@@ -42,7 +42,7 @@ kermit = "2.0.5"
 # TODO: There is a regression in sqldelight 2.0.2 that causes sqldelight gradle tasks to fail on windows
 #  For more info, See https://github.com/sqldelight/sqldelight/issues/5129, https://github.com/sqldelight/sqldelight/issues/5204,
 #  https://slack-chats.kotlinlang.org/t/23461955/hello-i-started-using-the-sqldelight-libraries-in-my-kmp-pro, https://github.com/sqldelight/sqldelight/issues/5312
-sqldelight = "2.0.2"
+sqldelight = "2.0.1"
 sqlite-jdbc = "3.18.0" # sqlite version used in Android API level 26 (our minSdk)
 google-services = "4.4.2"
 firebase-bom = "33.13.0"
