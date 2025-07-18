@@ -1,1 +1,1 @@
-- 🆕 Add the option to share podcast/episode url.
+- Internal changes to support latest Android versions.
