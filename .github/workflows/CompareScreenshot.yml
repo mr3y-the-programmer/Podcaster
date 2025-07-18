@@ -46,7 +46,7 @@ jobs:
           gradle-version: wrapper
 
 
-      - uses: dawidd6/action-download-artifact@v9
+      - uses: dawidd6/action-download-artifact@v11
         continue-on-error: true
         with:
           name: screenshot
